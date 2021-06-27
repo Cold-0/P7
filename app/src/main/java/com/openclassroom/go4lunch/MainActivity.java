@@ -10,18 +10,22 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassroom.go4lunch.databinding.ActivityMainBinding;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,10 +41,14 @@ public class MainActivity extends AppCompatActivity {
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
-        mBinding.loginButton.setOnClickListener(v -> SignIn());
-        mBinding.logoutButton.setOnClickListener(v -> SignOut());
+        setButtonsCallback();
 
         SignIn();
+    }
+
+    private void setButtonsCallback() {
+        mBinding.loginButton.setOnClickListener(v -> SignIn());
+        mBinding.logoutButton.setOnClickListener(v -> SignOut());
     }
 
     private void SignOut() {
@@ -48,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 .signOut(this)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(getApplicationContext(), getString(R.string.signed_out), Toast.LENGTH_SHORT).show();
+                        Snackbar.make(mBinding.getRoot(), R.string.signed_out, Snackbar.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -76,24 +84,37 @@ public class MainActivity extends AppCompatActivity {
         Intent signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setIsSmartLockEnabled(false)
+                .setIsSmartLockEnabled(false, true)
                 .build();
 
         signInLauncher.launch(signInIntent);
     }
 
+    private void updateViewWithUser(@NonNull FirebaseUser user)
+    {
+        if (user.getPhotoUrl() != null) {
+            Glide.with(this)
+                    .load(user.getPhotoUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(mBinding.userImageView);
+        }
+    }
+
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         IdpResponse response = result.getIdpResponse();
-        if (result.getResultCode() == RESULT_OK) {
+
+        if (response == null) {
+            // Canceled Signed In
+            Snackbar.make(mBinding.getRoot(), R.string.canceled_sign_in, Snackbar.LENGTH_SHORT).show();
+        } else if (result.getResultCode() == RESULT_OK) {
             // Successfully signed in
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            Log.i(TAG, "onSignInResult: Success");
+            assert user != null;
+            updateViewWithUser(user);
+            Snackbar.make(mBinding.getRoot(), getString(R.string.connected_as_user, Objects.requireNonNull(user).getDisplayName()), Snackbar.LENGTH_SHORT).show();
         } else {
-            // Sign in failed. If response is null the user canceled the
-            // sign-in flow using the back button. Otherwise check
-            // response.getError().getErrorCode() and handle the error.
-            Log.e(TAG, "onSignInResult: Failed " + response.getError().getMessage());
-
+            // Sign in failed
+            Snackbar.make(mBinding.getRoot(), R.string.sign_in_failed, Snackbar.LENGTH_SHORT).show();
         }
     }
 }

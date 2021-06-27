@@ -4,6 +4,10 @@
     <string name="facebook_application_id" translatable="false">551612552508490</string>
     <string name="facebook_login_protocol_scheme" translatable="false">551612552508490</string>
     <string name="logout">Logout</string>
-    <string name="signed_out">Signed Out</string>
     <string name="login">LogIn</string>
+    <string name="canceled_sign_in">Canceled Sign In</string>
+    <string name="signed_in">Signed In</string>
+    <string name="signed_out">Signed Out</string>
+    <string name="sign_in_failed">Sign In Failed</string>
+    <string name="connected_as_user">Connected as %1$s</string>
 </resources>
