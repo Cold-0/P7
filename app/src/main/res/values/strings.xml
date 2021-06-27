@@ -5,4 +5,5 @@
     <string name="facebook_login_protocol_scheme" translatable="false">551612552508490</string>
     <string name="logout">Logout</string>
     <string name="signed_out">Signed Out</string>
+    <string name="login">LogIn</string>
 </resources>

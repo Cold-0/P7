@@ -29,13 +29,17 @@ public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding mBinding;
 
+    ActivityResultLauncher<Intent> signInLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
+        mBinding.loginButton.setOnClickListener(v -> SignIn());
         mBinding.logoutButton.setOnClickListener(v -> SignOut());
+
         SignIn();
     }
 
@@ -50,15 +54,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SignIn() {
-        final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
-                new FirebaseAuthUIActivityResultContract(),
-                new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>() {
-                    @Override
-                    public void onActivityResult(FirebaseAuthUIAuthenticationResult result) {
-                        onSignInResult(result);
+
+        if (signInLauncher == null) {
+            signInLauncher = registerForActivityResult(
+                    new FirebaseAuthUIActivityResultContract(),
+                    new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>() {
+                        @Override
+                        public void onActivityResult(FirebaseAuthUIAuthenticationResult result) {
+                            onSignInResult(result);
+                        }
                     }
-                }
-        );
+            );
+        }
 
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -69,7 +76,9 @@ public class MainActivity extends AppCompatActivity {
         Intent signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
+                .setIsSmartLockEnabled(false)
                 .build();
+
         signInLauncher.launch(signInIntent);
     }
 
