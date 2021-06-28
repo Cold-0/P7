@@ -11,4 +11,8 @@
     <string name="sign_in_failed">Sign In Failed</string>
     <string name="connected_as_user">Connected as %1$s</string>
     <string name="not_connected">Not connected</string>
+    <string name="delete_account">Delete account</string>
+    <string name="sign_out">SignOut</string>
+    <string name="sign_in">Sign In</string>
+    <string name="account_have_been_deleted">Account have been deleted</string>
 </resources>

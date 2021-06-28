@@ -54,8 +54,9 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setButtonsCallback() {
-        mBinding.loginButton.setOnClickListener(v -> SignIn());
-        mBinding.logoutButton.setOnClickListener(v -> SignOut());
+        mBinding.signInButton.setOnClickListener(v -> SignIn());
+        mBinding.signOutButton.setOnClickListener(v -> SignOut());
+        mBinding.deleteButton.setOnClickListener(v -> DeleteAccount());
     }
 
     private void updateProfile() {
@@ -89,12 +90,25 @@ public class MainActivity extends BaseActivity {
 
         // Update SignIn/SignOut button
         if (user == null) {
-            mBinding.loginButton.setEnabled(true);
-            mBinding.logoutButton.setEnabled(false);
+            mBinding.signInButton.setEnabled(true);
+            mBinding.signOutButton.setEnabled(false);
+            mBinding.deleteButton.setEnabled(false);
         } else {
-            mBinding.loginButton.setEnabled(false);
-            mBinding.logoutButton.setEnabled(true);
+            mBinding.signInButton.setEnabled(false);
+            mBinding.signOutButton.setEnabled(true);
+            mBinding.deleteButton.setEnabled(true);
         }
+    }
+
+    private void DeleteAccount() {
+        AuthUI.getInstance()
+                .delete(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Snackbar.make(mBinding.getRoot(), R.string.account_have_been_deleted, Snackbar.LENGTH_SHORT).show();
+                        updateProfile();
+                    }
+                });
     }
 
     private void SignOut() {
