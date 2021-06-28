@@ -10,4 +10,5 @@
     <string name="signed_out">Signed Out</string>
     <string name="sign_in_failed">Sign In Failed</string>
     <string name="connected_as_user">Connected as %1$s</string>
+    <string name="not_connected">Not connected</string>
 </resources>
