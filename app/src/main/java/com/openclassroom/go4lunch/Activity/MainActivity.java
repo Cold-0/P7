@@ -1,6 +1,7 @@
 package com.openclassroom.go4lunch.Activity;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
@@ -8,9 +9,11 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.bumptech.glide.Glide;
@@ -20,6 +23,8 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,15 +33,24 @@ import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ActivityMainBinding;
 import com.openclassroom.go4lunch.databinding.HeaderNavViewBinding;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends AuthBaseActivity implements GoogleMap.OnMapLoadedCallback, NavigationView.OnNavigationItemSelectedListener {
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class MainActivity extends AuthBaseActivity implements NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks {
+
+    private static final String TAG = SettingsActivity.class.getName();
 
     private ActivityMainBinding mBinding;
     private HeaderNavViewBinding mHeaderNavViewBinding;
     private ActivityResultLauncher<Intent> mSignInLauncher;
+
+    static final private int RC_FINE_LOCATION = 950001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +60,16 @@ public class MainActivity extends AuthBaseActivity implements GoogleMap.OnMapLoa
 
         configureToolBar();
         configureBottomNavBar();
-
         configureDrawerLayout();
         configureNavigationView();
-
         configureAuth();
+        configurePlaces();
+        getLocationPermission();
+    }
+
+    private void configurePlaces() {
+        // Initialize the SDK
+        Places.initialize(getApplicationContext(), "AIzaSyDKGO85LUqOK1es8zZp7RZuMmQl9Ojwfag");
     }
 
     @Override
@@ -142,14 +161,6 @@ public class MainActivity extends AuthBaseActivity implements GoogleMap.OnMapLoa
     }
 
     // --------------------
-    // Google Map
-    // --------------------
-    @Override
-    public void onMapLoaded() {
-
-    }
-
-    // --------------------
     // Bottom Nav Bar
     // --------------------
     private void configureBottomNavBar() {
@@ -212,5 +223,32 @@ public class MainActivity extends AuthBaseActivity implements GoogleMap.OnMapLoa
         mBinding.getRoot().closeDrawer(GravityCompat.START);
 
         return true;
+    }
+
+    private void getLocationPermission() {
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
+        if (!EasyPermissions.hasPermissions(this, perms)) {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, getString(R.string.rationale_location_permission),
+                    RC_FINE_LOCATION, perms);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull @NotNull List<String> perms) {
+
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull @NotNull List<String> perms) {
+
     }
 }

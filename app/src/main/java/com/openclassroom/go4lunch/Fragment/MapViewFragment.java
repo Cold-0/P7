@@ -26,9 +26,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mMapViewViewModel = new ViewModelProvider(this).get(MapViewViewModel.class);
         mBinding = FragmentMapviewBinding.inflate(inflater, container, false);
-        View root = mBinding.getRoot();
 
-        return root;
+        return mBinding.getRoot();
     }
 
     @Override
@@ -39,7 +38,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
-        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))
                 .title("Marker"));
