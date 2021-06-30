@@ -1,11 +1,9 @@
-package com.openclassroom.go4lunch;
-
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
+package com.openclassroom.go4lunch.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.activity.result.ActivityResultLauncher;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -13,33 +11,30 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
-import com.openclassroom.go4lunch.Activity.Utility.BaseActivity;
-import com.openclassroom.go4lunch.databinding.ActivityMainBinding;
-
+import com.openclassroom.go4lunch.Activity.Abstract.AuthBaseActivity;
+import com.openclassroom.go4lunch.R;
+import com.openclassroom.go4lunch.databinding.ActivityProfileBinding;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends BaseActivity {
+public class ProfileActivity extends AuthBaseActivity {
 
-    private static final String TAG = MainActivity.class.getName();
+    private static final String TAG = ProfileActivity.class.getName();
 
-    ActivityMainBinding mBinding;
-
-    ActivityResultLauncher<Intent> signInLauncher;
+    private ActivityProfileBinding mBinding;
+    private ActivityResultLauncher<Intent> mSignInLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        mBinding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
-        signInLauncher = registerForActivityResult(
+        mSignInLauncher = registerForActivityResult(
                 new FirebaseAuthUIActivityResultContract(),
                 this::onSignInResult
         );
@@ -103,22 +98,18 @@ public class MainActivity extends BaseActivity {
     private void DeleteAccount() {
         AuthUI.getInstance()
                 .delete(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Snackbar.make(mBinding.getRoot(), R.string.account_have_been_deleted, Snackbar.LENGTH_SHORT).show();
-                        updateProfile();
-                    }
+                .addOnCompleteListener(task -> {
+                    Snackbar.make(mBinding.getRoot(), R.string.account_have_been_deleted, Snackbar.LENGTH_SHORT).show();
+                    updateProfile();
                 });
     }
 
     private void SignOut() {
         AuthUI.getInstance()
                 .signOut(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Snackbar.make(mBinding.getRoot(), R.string.signed_out, Snackbar.LENGTH_SHORT).show();
-                        updateProfile();
-                    }
+                .addOnCompleteListener(task -> {
+                    Snackbar.make(mBinding.getRoot(), R.string.signed_out, Snackbar.LENGTH_SHORT).show();
+                    updateProfile();
                 });
     }
 
@@ -133,9 +124,11 @@ public class MainActivity extends BaseActivity {
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
                 .setIsSmartLockEnabled(false, true)
+                .setLogo(R.drawable.com_facebook_close)
+                .setTheme(R.style.Theme_Go4Lunch)
                 .build();
 
-        signInLauncher.launch(signInIntent);
+        mSignInLauncher.launch(signInIntent);
     }
 
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {

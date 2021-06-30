@@ -15,4 +15,18 @@
     <string name="sign_out">SignOut</string>
     <string name="sign_in">Sign In</string>
     <string name="account_have_been_deleted">Account have been deleted</string>
+    <string name="title_activity_main_view">MainViewActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Map View</string>
+    <string name="menu_gallery">List View</string>
+    <string name="menu_slideshow">Workmates</string>
+    <string name="menu_your_lunch">Your Lunch</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_logout">Logout</string>
 </resources>
