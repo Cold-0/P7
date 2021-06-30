@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.ViewHolder;
+package com.openclassroom.go4lunch.View.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -6,9 +6,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.openclassroom.go4lunch.Model.Restaurant;
-import com.openclassroom.go4lunch.Model.Workmate;
-import com.openclassroom.go4lunch.databinding.ItemWorkmatesBinding;
+import com.openclassroom.go4lunch.Model.User;
+import com.openclassroom.go4lunch.databinding.ItemUserBinding;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -17,9 +16,9 @@ import java.util.List;
 public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListViewHolder> {
 
     @NonNull
-    private List<Workmate> mWorkmatesList;
+    private List<User> mWorkmatesList;
 
-    public WorkmatesListAdapter(@NonNull List<Workmate> workmateList) {
+    public WorkmatesListAdapter(@NonNull List<User> workmateList) {
         mWorkmatesList = workmateList;
     }
 
@@ -27,7 +26,7 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListView
     @NotNull
     @Override
     public WorkmatesListViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-        @NonNull ItemWorkmatesBinding binding = ItemWorkmatesBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        @NonNull ItemUserBinding binding = ItemUserBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new WorkmatesListViewHolder(binding);
     }
 

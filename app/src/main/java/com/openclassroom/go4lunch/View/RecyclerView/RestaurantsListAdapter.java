@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.ViewHolder;
+package com.openclassroom.go4lunch.View.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;

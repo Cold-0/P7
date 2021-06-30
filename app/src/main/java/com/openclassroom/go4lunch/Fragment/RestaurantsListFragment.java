@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.openclassroom.go4lunch.Model.Restaurant;
-import com.openclassroom.go4lunch.ViewHolder.RestaurantsListAdapter;
+import com.openclassroom.go4lunch.View.RecyclerView.RestaurantsListAdapter;
 import com.openclassroom.go4lunch.ViewModel.RestaurantListViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentListviewBinding;
 

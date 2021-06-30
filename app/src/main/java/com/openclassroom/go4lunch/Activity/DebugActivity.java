@@ -15,23 +15,23 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassroom.go4lunch.Activity.Abstract.AuthBaseActivity;
 import com.openclassroom.go4lunch.R;
-import com.openclassroom.go4lunch.databinding.ActivityProfileBinding;
+import com.openclassroom.go4lunch.databinding.ActivityDebugBinding;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class ProfileActivity extends AuthBaseActivity {
+public class DebugActivity extends AuthBaseActivity {
 
-    private static final String TAG = ProfileActivity.class.getName();
+    private static final String TAG = DebugActivity.class.getName();
 
-    private ActivityProfileBinding mBinding;
+    private ActivityDebugBinding mBinding;
     private ActivityResultLauncher<Intent> mSignInLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding = ActivityProfileBinding.inflate(getLayoutInflater());
+        mBinding = ActivityDebugBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
         mSignInLauncher = registerForActivityResult(
@@ -124,8 +124,8 @@ public class ProfileActivity extends AuthBaseActivity {
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
                 .setIsSmartLockEnabled(false, true)
-                .setLogo(R.drawable.com_facebook_close)
-                .setTheme(R.style.Theme_Go4Lunch)
+                .setLogo(R.drawable.go4lunch)
+                .setTheme(R.style.AuthTheme)
                 .build();
 
         mSignInLauncher.launch(signInIntent);

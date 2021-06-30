@@ -1,8 +1,14 @@
 package com.openclassroom.go4lunch.Activity.Abstract;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.PersistableBundle;
+
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

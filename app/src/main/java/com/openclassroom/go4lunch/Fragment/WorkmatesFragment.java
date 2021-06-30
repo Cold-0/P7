@@ -10,10 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.openclassroom.go4lunch.Model.Restaurant;
-import com.openclassroom.go4lunch.Model.Workmate;
-import com.openclassroom.go4lunch.ViewHolder.RestaurantsListAdapter;
-import com.openclassroom.go4lunch.ViewHolder.WorkmatesListAdapter;
+import com.openclassroom.go4lunch.Model.User;
+import com.openclassroom.go4lunch.View.RecyclerView.WorkmatesListAdapter;
 import com.openclassroom.go4lunch.ViewModel.WorkmatesViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentWorkmatesBinding;
 
@@ -25,12 +23,12 @@ public class WorkmatesFragment extends Fragment {
     private WorkmatesViewModel mWorkmatesViewModel;
     private FragmentWorkmatesBinding mBinding;
 
-    private final WorkmatesListAdapter mWorkmatesListAdapter = new WorkmatesListAdapter(new ArrayList<Workmate>(
+    private final WorkmatesListAdapter mWorkmatesListAdapter = new WorkmatesListAdapter(new ArrayList<User>(
             Arrays.asList(
-                    new Workmate(),
-                    new Workmate(),
-                    new Workmate(),
-                    new Workmate()
+                    new User(),
+                    new User(),
+                    new User(),
+                    new User()
             )
     ));
 

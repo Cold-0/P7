@@ -22,4 +22,9 @@
     <style name="Theme.Go4Lunch.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Go4Lunch.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="AuthTheme" parent="Theme.Go4Lunch">
+        <item name="android:windowBackground">@drawable/background</item>
+    </style>
 </resources>

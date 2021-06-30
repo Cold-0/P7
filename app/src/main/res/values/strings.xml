@@ -21,7 +21,7 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="debug_menu_action_settings">Login</string>
+    <string name="debug_menu_action_settings">Open Debug Activity</string>
 
     <string name="menu_map_view">Map View</string>
     <string name="menu_list_view">List View</string>
@@ -34,4 +34,7 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_test_bottom">MainActivity</string>
+    <string name="call">Call</string>
+    <string name="like">Like</string>
+    <string name="website">Website</string>
 </resources>

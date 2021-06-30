@@ -1,6 +1,6 @@
 package com.openclassroom.go4lunch.Model;
 
-public class Workmate {
+public class User {
 
     public int getId() {
         return mId;
