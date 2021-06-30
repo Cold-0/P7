@@ -3,30 +3,35 @@
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
     <string name="facebook_application_id" translatable="false">551612552508490</string>
     <string name="facebook_login_protocol_scheme" translatable="false">551612552508490</string>
-    <string name="logout">Logout</string>
-    <string name="login">LogIn</string>
-    <string name="canceled_sign_in">Canceled Sign In</string>
+
     <string name="signed_in">Signed In</string>
     <string name="signed_out">Signed Out</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_in">Sign In</string>
     <string name="sign_in_failed">Sign In Failed</string>
-    <string name="connected_as_user">Connected as %1$s</string>
+    <string name="canceled_sign_in">Canceled Sign In</string>
+    <string name="signed_in_as_user">Signed in as %1$s</string>
     <string name="not_connected">Not connected</string>
     <string name="delete_account">Delete account</string>
-    <string name="sign_out">SignOut</string>
-    <string name="sign_in">Sign In</string>
     <string name="account_have_been_deleted">Account have been deleted</string>
-    <string name="title_activity_main_view">MainViewActivity</string>
+
+    <string name="MainActivity">MainViewActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="debug_menu_action_settings">Login</string>
 
-    <string name="menu_home">Map View</string>
-    <string name="menu_gallery">List View</string>
-    <string name="menu_slideshow">Workmates</string>
+    <string name="menu_map_view">Map View</string>
+    <string name="menu_list_view">List View</string>
+    <string name="menu_workmates">Workmates</string>
     <string name="menu_your_lunch">Your Lunch</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
+    <string name="title_activity_main2">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_test_bottom">MainActivity</string>
 </resources>

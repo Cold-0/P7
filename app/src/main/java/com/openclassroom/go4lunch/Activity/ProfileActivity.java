@@ -139,7 +139,7 @@ public class ProfileActivity extends AuthBaseActivity {
             Snackbar.make(mBinding.getRoot(), R.string.canceled_sign_in, Snackbar.LENGTH_SHORT).show();
         } else if (result.getResultCode() == RESULT_OK) {
             // Successfully signed in
-            Snackbar.make(mBinding.getRoot(), getString(R.string.connected_as_user, Objects.requireNonNull(getCurrentUser()).getDisplayName()), Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(mBinding.getRoot(), getString(R.string.signed_in_as_user, Objects.requireNonNull(getCurrentUser()).getDisplayName()), Snackbar.LENGTH_SHORT).show();
         } else {
             // Sign in failed
             Snackbar.make(mBinding.getRoot(), R.string.sign_in_failed, Snackbar.LENGTH_SHORT).show();
