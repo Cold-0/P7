@@ -52,7 +52,7 @@
 
     <!-- 2 | NavigationView -->
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/left_nav_view"
+        android:id="@+id/leftMenuNav"
         android:layout_width="wrap_content"
         app:itemIconTint="@android:color/white"
         android:background="@color/orange_400"

@@ -13,7 +13,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.bumptech.glide.Glide;
@@ -22,9 +21,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,7 +36,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AuthBaseActivity implements NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks {
@@ -104,7 +100,7 @@ public class MainActivity extends AuthBaseActivity implements NavigationView.OnN
         FirebaseUser user = getCurrentUser();
         if (user != null) {
             mHeaderNavViewBinding.headerUserName.setText(user.getDisplayName());
-            mHeaderNavViewBinding.headerUserMail.setText(user.getEmail());
+            mHeaderNavViewBinding.headerUserEmail.setText(user.getEmail());
 
             if (user.getPhotoUrl() != null) {
                 Glide.with(this)
@@ -191,10 +187,10 @@ public class MainActivity extends AuthBaseActivity implements NavigationView.OnN
     }
 
     private void configureNavigationView() {
-        mHeaderNavViewBinding = HeaderNavViewBinding.bind(mBinding.leftNavView.getHeaderView(0));
+        mHeaderNavViewBinding = HeaderNavViewBinding.bind(mBinding.leftMenuNav.getHeaderView(0));
         //HeaderNavViewBinding.inflate(getLayoutInflater(), );
         //mBinding.activityMainNavView.addHeaderView(mHeaderNavViewBinding.getRoot());
-        mBinding.leftNavView.setNavigationItemSelectedListener(this);
+        mBinding.leftMenuNav.setNavigationItemSelectedListener(this);
     }
 
     @SuppressLint("NonConstantResourceId")

@@ -4,7 +4,6 @@
     <string name="facebook_application_id" translatable="false">551612552508490</string>
     <string name="facebook_login_protocol_scheme" translatable="false">551612552508490</string>
 
-    <string name="signed_in">Signed In</string>
     <string name="signed_out">Signed Out</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_in">Sign In</string>
@@ -15,25 +14,12 @@
     <string name="delete_account">Delete account</string>
     <string name="account_have_been_deleted">Account have been deleted</string>
 
-    <string name="MainActivity">MainViewActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="debug_menu_action_settings">Open Debug Activity</string>
 
     <string name="menu_map_view">Map View</string>
     <string name="menu_list_view">List View</string>
     <string name="menu_workmates">Workmates</string>
-    <string name="menu_your_lunch">Your Lunch</string>
-    <string name="menu_settings">Settings</string>
-    <string name="menu_logout">Logout</string>
-    <string name="title_activity_main2">MainActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="title_activity_test_bottom">MainActivity</string>
     <string name="call">Call</string>
     <string name="like">Like</string>
     <string name="website">Website</string>

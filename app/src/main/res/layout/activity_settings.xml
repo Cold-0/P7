@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.OldMainActivity">
+    tools:context=".Activity.SettingsActivity">
 
     <ImageView
         android:id="@+id/userImageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="64dp"
         android:adjustViewBounds="true"
         android:contentDescription="@null"
         android:padding="16dp"
-        android:layout_margin="64dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"

@@ -40,7 +40,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/headerUserName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -51,7 +50,6 @@
             tools:text="HelloHelloHello" />
 
         <TextView
-            android:id="@+id/headerUserMail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"

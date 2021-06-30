@@ -7,7 +7,7 @@
     tools:context=".Fragment.RestaurantsListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/restaurant_list"
+        android:id="@+id/restaurantList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
