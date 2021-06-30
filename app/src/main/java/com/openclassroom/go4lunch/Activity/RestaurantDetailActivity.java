@@ -20,6 +20,11 @@ public class RestaurantDetailActivity extends AppCompatActivity {
             Arrays.asList(
                     new User(),
                     new User(),
+                    new User(),
+                    new User(),
+                    new User(),
+                    new User(),
+                    new User(),
                     new User()
             )
     ));

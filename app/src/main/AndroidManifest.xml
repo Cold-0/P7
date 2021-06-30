@@ -13,8 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Go4Lunch"
         tools:ignore="AllowBackup">
-        <activity android:name=".Activity.RestaurantDetailActivity"></activity>
-        <!-- ACTIVITIES -->
+        <activity
+            android:name=".Activity.RestaurantDetailActivity"
+            android:theme="@style/Theme.Go4Lunch.NoActionBar" />
         <activity
             android:name=".Activity.MainActivity"
             android:theme="@style/Theme.Go4Lunch.NoActionBar">
@@ -24,7 +25,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.DebugActivity" /> <!-- Google Maps -->
+        <activity android:name=".Activity.SettingsActivity" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

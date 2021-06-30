@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
             app:layout_constraintVertical_bias="0.0"
-            app:menu="@menu/restaurant_detail_menu"
+            app:menu="@menu/menu_restaurant_detail"
             tools:layout_editor_absoluteX="0dp" />
 
         <androidx.recyclerview.widget.RecyclerView

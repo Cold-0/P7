@@ -15,23 +15,23 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassroom.go4lunch.Activity.Abstract.AuthBaseActivity;
 import com.openclassroom.go4lunch.R;
-import com.openclassroom.go4lunch.databinding.ActivityDebugBinding;
+import com.openclassroom.go4lunch.databinding.ActivitySettingsBinding;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class DebugActivity extends AuthBaseActivity {
+public class SettingsActivity extends AuthBaseActivity {
 
-    private static final String TAG = DebugActivity.class.getName();
+    private static final String TAG = SettingsActivity.class.getName();
 
-    private ActivityDebugBinding mBinding;
+    private ActivitySettingsBinding mBinding;
     private ActivityResultLauncher<Intent> mSignInLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding = ActivityDebugBinding.inflate(getLayoutInflater());
+        mBinding = ActivitySettingsBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
         mSignInLauncher = registerForActivityResult(

@@ -17,7 +17,6 @@
         android:layout_marginBottom="8dp"
         android:src="@drawable/ic_menu_manage" />
 
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_delete"
         android:layout_width="48dp"
@@ -29,8 +28,8 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        app:tint="#DE000000"
-        android:src="@drawable/ic_dashboard_black_24dp" />
+        app:srcCompat="@drawable/ic_dashboard_black_24dp"
+        app:tint="#DE000000" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -41,7 +40,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/lbl_task_name"
+            android:id="@+id/headerUserName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -52,7 +51,7 @@
             tools:text="HelloHelloHello" />
 
         <TextView
-            android:id="@+id/lbl_project_name"
+            android:id="@+id/headerUserMail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -60,5 +59,6 @@
             android:lines="1"
             android:textSize="16sp"
             tools:text="Hello" />
+
     </LinearLayout>
 </RelativeLayout>
