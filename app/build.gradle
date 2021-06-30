@@ -3,11 +3,15 @@ plugins {
     id 'com.google.secrets_gradle_plugin' version '0.5'
 }
 
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
     defaultConfig {
+        buildConfigField "String", "MAPS_API_KEY", localProperties['MAPS_API_KEY']
         applicationId "com.openclassroom.go4lunch"
         minSdkVersion 19
         targetSdkVersion 30

@@ -26,6 +26,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassroom.go4lunch.Activity.Abstract.AuthBaseActivity;
+import com.openclassroom.go4lunch.BuildConfig;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ActivityMainBinding;
 import com.openclassroom.go4lunch.databinding.HeaderNavViewBinding;
@@ -65,7 +66,7 @@ public class MainActivity extends AuthBaseActivity implements NavigationView.OnN
 
     private void configurePlaces() {
         // Initialize the SDK
-        Places.initialize(getApplicationContext(), "AIzaSyDKGO85LUqOK1es8zZp7RZuMmQl9Ojwfag");
+        Places.initialize(getApplicationContext(), BuildConfig.MAPS_API_KEY);
     }
 
     @Override
