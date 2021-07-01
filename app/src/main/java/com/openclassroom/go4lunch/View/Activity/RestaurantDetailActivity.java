@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.Activity;
+package com.openclassroom.go4lunch.View.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;

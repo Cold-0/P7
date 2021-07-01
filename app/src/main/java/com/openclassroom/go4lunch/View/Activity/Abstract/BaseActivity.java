@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.Activity.Abstract;
+package com.openclassroom.go4lunch.View.Activity.Abstract;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;

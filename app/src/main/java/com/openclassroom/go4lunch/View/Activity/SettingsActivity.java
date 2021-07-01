@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.Activity;
+package com.openclassroom.go4lunch.View.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
-import com.openclassroom.go4lunch.Activity.Abstract.BaseActivity;
+import com.openclassroom.go4lunch.View.Activity.Abstract.BaseActivity;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ActivitySettingsBinding;
 

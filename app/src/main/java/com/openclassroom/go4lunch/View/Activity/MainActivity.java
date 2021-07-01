@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.Activity;
+package com.openclassroom.go4lunch.View.Activity;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -27,7 +27,7 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
-import com.openclassroom.go4lunch.Activity.Abstract.BaseActivity;
+import com.openclassroom.go4lunch.View.Activity.Abstract.BaseActivity;
 import com.openclassroom.go4lunch.BuildConfig;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ActivityMainBinding;

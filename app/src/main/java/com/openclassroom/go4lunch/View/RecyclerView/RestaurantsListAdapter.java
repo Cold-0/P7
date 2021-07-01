@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassroom.go4lunch.Model.Restaurant;
@@ -12,13 +13,14 @@ import com.openclassroom.go4lunch.databinding.ItemRestaurantBinding;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsListViewHolder> {
 
     @NonNull
-    private List<Restaurant> mRestaurantList;
+    private LiveData<List<Restaurant>> mRestaurantList;
 
-    public RestaurantsListAdapter(@NonNull List<Restaurant> restaurantList) {
+    public RestaurantsListAdapter(@NonNull LiveData<List<Restaurant>> restaurantList) {
         mRestaurantList = restaurantList;
     }
 
@@ -37,7 +39,7 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
 
     @Override
     public int getItemCount() {
-        return mRestaurantList.size();
+        return Objects.requireNonNull(mRestaurantList.getValue()).size();
     }
 
 }

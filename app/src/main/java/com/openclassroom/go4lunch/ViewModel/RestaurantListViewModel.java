@@ -4,16 +4,36 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.openclassroom.go4lunch.Model.Restaurant;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class RestaurantListViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private final MutableLiveData<List<Restaurant>> mRestaurantList;
 
     public RestaurantListViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+        mRestaurantList = new MutableLiveData<>(new ArrayList<Restaurant>(
+                Arrays.asList(
+                        new Restaurant(),
+                        new Restaurant(),
+                        new Restaurant(),
+                        new Restaurant(),
+                        new Restaurant(),
+                        new Restaurant(),
+                        new Restaurant(),
+                        new Restaurant(),
+                        new Restaurant(),
+                        new Restaurant(),
+                        new Restaurant(),
+                        new Restaurant(),
+                        new Restaurant()
+                )));
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<List<Restaurant>> getRestaurantList() {
+        return mRestaurantList;
     }
 }

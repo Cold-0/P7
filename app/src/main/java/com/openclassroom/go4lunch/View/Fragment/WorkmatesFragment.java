@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.Fragment;
+package com.openclassroom.go4lunch.View.Fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
