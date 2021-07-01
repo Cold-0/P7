@@ -2,22 +2,22 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@+id/nav_map_view">
+    app:startDestination="@+id/nav_call">
 
     <fragment
-        android:id="@+id/nav_map_view"
+        android:id="@+id/nav_call"
         android:name="com.openclassroom.go4lunch.Fragment.MapViewFragment"
         android:label="@string/menu_map_view"
         tools:layout="@layout/fragment_mapview" />
 
     <fragment
-        android:id="@+id/nav_list_view"
+        android:id="@+id/nav_like"
         android:name="com.openclassroom.go4lunch.Fragment.RestaurantsListFragment"
         android:label="@string/menu_list_view"
         tools:layout="@layout/fragment_listview" />
 
     <fragment
-        android:id="@+id/nav_workmates"
+        android:id="@+id/nav_website"
         android:name="com.openclassroom.go4lunch.Fragment.WorkmatesFragment"
         android:label="@string/menu_workmates"
         tools:layout="@layout/fragment_workmates" />

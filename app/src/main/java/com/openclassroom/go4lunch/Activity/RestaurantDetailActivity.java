@@ -1,8 +1,11 @@
 package com.openclassroom.go4lunch.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.openclassroom.go4lunch.Model.User;
@@ -35,8 +38,38 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         mBinding = ActivityRestaurantDetailBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
-        mBinding.participantList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mBinding.participantList.setAdapter(mParticipantListAdapter);
+        configureRecyclerView();
+        configureButtons();
+    }
 
+    private void configureButtons() {
+        mBinding.returnButton.setOnClickListener(v -> {
+            finish();
+        });
+
+        mBinding.layoutClickableCall.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse("tel:0123456789"));
+            startActivity(intent);
+        });
+
+        mBinding.layoutClickableLike.setOnClickListener(v -> {
+
+        });
+
+        mBinding.layoutClickableWebsite.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+            startActivity(browserIntent);
+        });
+    }
+
+    private void configureRecyclerView() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
+                linearLayoutManager.getOrientation());
+
+        mBinding.participantList.setLayoutManager(linearLayoutManager);
+        mBinding.participantList.setAdapter(mParticipantListAdapter);
+        mBinding.participantList.addItemDecoration(dividerItemDecoration);
     }
 }

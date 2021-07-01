@@ -13,7 +13,7 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
-import com.openclassroom.go4lunch.Activity.Abstract.AuthBaseActivity;
+import com.openclassroom.go4lunch.Activity.Abstract.BaseActivity;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ActivitySettingsBinding;
 
@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class SettingsActivity extends AuthBaseActivity {
+public class SettingsActivity extends BaseActivity {
 
     private static final String TAG = SettingsActivity.class.getName();
 

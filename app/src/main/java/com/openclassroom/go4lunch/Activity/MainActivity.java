@@ -13,6 +13,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.bumptech.glide.Glide;
@@ -25,11 +27,12 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
-import com.openclassroom.go4lunch.Activity.Abstract.AuthBaseActivity;
+import com.openclassroom.go4lunch.Activity.Abstract.BaseActivity;
 import com.openclassroom.go4lunch.BuildConfig;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ActivityMainBinding;
 import com.openclassroom.go4lunch.databinding.HeaderNavViewBinding;
+
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +42,7 @@ import java.util.Objects;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AuthBaseActivity implements NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks {
 
     private static final String TAG = SettingsActivity.class.getName();
 
@@ -61,7 +64,16 @@ public class MainActivity extends AuthBaseActivity implements NavigationView.OnN
         configureNavigationView();
         configureAuth();
         configurePlaces();
+
         getLocationPermission();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_toolbar_search, menu);
+
+        return true;
     }
 
     private void configurePlaces() {
@@ -163,7 +175,7 @@ public class MainActivity extends AuthBaseActivity implements NavigationView.OnN
     private void configureBottomNavBar() {
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_map_view, R.id.nav_list_view, R.id.nav_workmates)
+                R.id.nav_call, R.id.nav_like, R.id.nav_website)
                 .build();
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);

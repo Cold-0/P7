@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.openclassroom.go4lunch.Model.User;
@@ -40,8 +41,13 @@ public class WorkmatesFragment extends Fragment {
         mBinding = FragmentWorkmatesBinding.inflate(inflater, container, false);
         View root = mBinding.getRoot();
 
-        mBinding.workmatesList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
+                linearLayoutManager.getOrientation());
+
+        mBinding.workmatesList.setLayoutManager(linearLayoutManager);
         mBinding.workmatesList.setAdapter(mWorkmatesListAdapter);
+        mBinding.workmatesList.addItemDecoration(dividerItemDecoration);
 
         return root;
     }
