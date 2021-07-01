@@ -27,9 +27,10 @@ public class RestaurantsListFragment extends Fragment {
         mBinding.restaurantList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         mBinding.restaurantList.setAdapter(listViewAdapter);
 
-
         return mBinding.getRoot();
     }
+
+    
 
     @Override
     public void onDestroyView() {

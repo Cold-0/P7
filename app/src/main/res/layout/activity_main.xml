@@ -42,6 +42,12 @@
             tools:ignore="FragmentTagUsage"
             tools:targetApi="lollipop" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+            android:background="@drawable/shadow"/>
+
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"

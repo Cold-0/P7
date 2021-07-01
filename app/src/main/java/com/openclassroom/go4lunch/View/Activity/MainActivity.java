@@ -95,7 +95,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mSignInLauncher = registerForActivityResult(
                 new FirebaseAuthUIActivityResultContract(),
                 this::onSignInResult
-
         );
 
         CheckIfSignIn();

@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassroom.go4lunch.Model.User;
@@ -16,10 +17,10 @@ import java.util.List;
 public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListViewHolder> {
 
     @NonNull
-    private List<User> mWorkmatesList;
+    private LiveData<List<User>> mUserList;
 
-    public WorkmatesListAdapter(@NonNull List<User> workmateList) {
-        mWorkmatesList = workmateList;
+    public WorkmatesListAdapter(@NonNull LiveData<List<User>> userList) {
+        mUserList = userList;
     }
 
     @NonNull
@@ -37,7 +38,7 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListView
 
     @Override
     public int getItemCount() {
-        return mWorkmatesList.size();
+        return mUserList.getValue().size();
     }
 
 }
