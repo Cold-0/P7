@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.openclassroom.go4lunch.Model.Restaurant;
 import com.openclassroom.go4lunch.Model.User;
 
 import java.util.ArrayList;
@@ -18,19 +17,16 @@ public class WorkmatesViewModel extends ViewModel {
     public WorkmatesViewModel() {
         mUserList = new MutableLiveData<>(new ArrayList<>(
                 Arrays.asList(
-                        new User(),
-                        new User(),
-                        new User(),
-                        new User(),
-                        new User(),
-                        new User(),
-                        new User(),
-                        new User(),
-                        new User(),
-                        new User(),
-                        new User(),
-                        new User(),
-                        new User()
+                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512")
                 )));
     }
 

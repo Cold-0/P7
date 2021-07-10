@@ -1,39 +1,20 @@
 package com.openclassroom.go4lunch.ViewModel;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.openclassroom.go4lunch.Model.Restaurant;
+import com.openclassroom.go4lunch.Model.PlaceDetailsAPI.Result;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class RestaurantListViewModel extends ViewModel {
+    private final MutableLiveData<Result> restaurantOrigin = new MutableLiveData<>();
 
-    private final MutableLiveData<List<Restaurant>> mRestaurantList;
-
-    public RestaurantListViewModel() {
-        mRestaurantList = new MutableLiveData<>(new ArrayList<Restaurant>(
-                Arrays.asList(
-                        new Restaurant(),
-                        new Restaurant(),
-                        new Restaurant(),
-                        new Restaurant(),
-                        new Restaurant(),
-                        new Restaurant(),
-                        new Restaurant(),
-                        new Restaurant(),
-                        new Restaurant(),
-                        new Restaurant(),
-                        new Restaurant(),
-                        new Restaurant(),
-                        new Restaurant()
-                )));
+    public void setRestaurantList(Result restaurantList) {
+        this.restaurantOrigin.setValue(restaurantList);
     }
 
-    public LiveData<List<Restaurant>> getRestaurantList() {
-        return mRestaurantList;
+    public MutableLiveData<Result> getRestaurantList() {
+        return restaurantOrigin;
     }
 }

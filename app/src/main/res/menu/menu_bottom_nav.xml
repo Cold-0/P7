@@ -1,15 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_call"
+            android:id="@+id/nav_map"
             android:icon="@drawable/ic_baseline_map_24"
             android:title="@string/menu_map_view" />
         <item
-            android:id="@+id/nav_like"
+            android:id="@+id/nav_list"
             android:icon="@drawable/ic_baseline_list_24"
             android:title="@string/menu_list_view" />
         <item
-            android:id="@+id/nav_website"
+            android:id="@+id/nav_workmates"
             android:icon="@drawable/ic_baseline_group_24"
             android:title="@string/menu_workmates" />
     </group>

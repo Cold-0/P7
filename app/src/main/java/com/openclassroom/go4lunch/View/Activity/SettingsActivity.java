@@ -5,17 +5,18 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
+import com.openclassroom.go4lunch.BuildConfig;
 import com.openclassroom.go4lunch.View.Activity.Abstract.BaseActivity;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ActivitySettingsBinding;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,9 +71,12 @@ public class SettingsActivity extends BaseActivity {
         } else {
             // Update User Picture
             if (user.getPhotoUrl() != null) {
-                Glide.with(this)
-                        .load(user.getPhotoUrl())
-                        .apply(RequestOptions.circleCropTransform())
+                Picasso.Builder builder = new Picasso.Builder(this);
+                builder.downloader(new OkHttp3Downloader(this));
+                builder.build().load(user.getPhotoUrl())
+                        .placeholder((R.drawable.ic_launcher_background))
+                        .error(R.drawable.ic_launcher_foreground)
+                        .centerCrop()
                         .into(mBinding.userImageView);
             }
 

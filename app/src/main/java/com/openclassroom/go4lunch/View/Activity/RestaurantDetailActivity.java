@@ -21,14 +21,16 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
     private final ParticipantListAdapter mParticipantListAdapter = new ParticipantListAdapter(new ArrayList<User>(
             Arrays.asList(
-                    new User(),
-                    new User(),
-                    new User(),
-                    new User(),
-                    new User(),
-                    new User(),
-                    new User(),
-                    new User()
+                    new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                    new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                    new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                    new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                    new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                    new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                    new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                    new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                    new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
+                    new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512")
             )
     ));
 
