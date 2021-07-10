@@ -40,6 +40,7 @@ import com.openclassroom.go4lunch.Model.AutocompleteAPI.AutocompleteResponse;
 import com.openclassroom.go4lunch.Model.AutocompleteAPI.Prediction;
 import com.openclassroom.go4lunch.Model.PlaceDetailsAPI.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.Repository.Repository;
+import com.openclassroom.go4lunch.Utils.UserUtil;
 import com.openclassroom.go4lunch.View.Activity.Abstract.BaseActivity;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.ViewModel.MapViewModel;
@@ -108,6 +109,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mWorkmatesViewModel = new ViewModelProvider(this).get(WorkmatesViewModel.class);
 
         mRepository = Repository.getRepository();
+
+        UserUtil.getInstance().getAllUsers();
 
         getLocationPermission();
     }
@@ -187,6 +190,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                String searchText = currentSearch[0];
                 return false;
             }
 

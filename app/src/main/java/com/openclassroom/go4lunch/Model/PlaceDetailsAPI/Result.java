@@ -9,6 +9,8 @@ public class Result implements Serializable {
 
     @SerializedName("name")
     private String mName;
+    @SerializedName("formatted_address")
+    private String mFormattedAddress;
     @SerializedName("opening_hours")
     private OpeningHours mOpeningHours;
     @SerializedName("photos")
@@ -106,6 +108,14 @@ public class Result implements Serializable {
 
     public void setReference(String reference) {
         mReference = reference;
+    }
+
+    public String getFormattedAddress() {
+        return mFormattedAddress;
+    }
+
+    public void setFormattedAddress(String formattedAddress) {
+        mFormattedAddress = formattedAddress;
     }
 }
 

@@ -81,7 +81,7 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
                 (int) (distFrom(loc.getLatitude(), loc.getLongitude(), restaurant.getGeometry().getLocation().getLat(), restaurant.getGeometry().getLocation().getLng())) + "m");
         holder.mBinding.ratingBar.setRating((float) restaurant.getRating().doubleValue());
 
-       // holder.mBinding.typeAndAddress.setText(restaurant.getFormattedAddress());
+        holder.mBinding.typeAndAddress.setText(restaurant.getFormattedAddress());
 
         String photo_reference = restaurant.getPhotos().get(0).getPhotoReference();
         if (!photo_reference.equals("")) {
