@@ -75,10 +75,15 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
     public void onBindViewHolder(@NonNull @NotNull RestaurantsListViewHolder holder, int position) {
         Result restaurant = mRestaurantList.getValue().get(position);
         Location loc = getMyLocation();
+
         holder.mBinding.restaurantName.setText(restaurant.getName());
         holder.mBinding.workmatesNumber.setText("(5)");
-        holder.mBinding.distance.setText(
-                (int) (distFrom(loc.getLatitude(), loc.getLongitude(), restaurant.getGeometry().getLocation().getLat(), restaurant.getGeometry().getLocation().getLng())) + "m");
+
+        Location to = new Location("");
+        to.setLatitude(restaurant.getGeometry().getLocation().getLat());
+        to.setLongitude(restaurant.getGeometry().getLocation().getLng());
+
+        holder.mBinding.distance.setText((int) (loc.distanceTo(to)) + "m");
         holder.mBinding.ratingBar.setRating((float) restaurant.getRating().doubleValue());
 
         holder.mBinding.typeAndAddress.setText(restaurant.getFormattedAddress());
@@ -109,7 +114,6 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
                 * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double dist = earthRadius * c;
-        System.out.println(dist);
         return dist;
     }
 

@@ -7,7 +7,7 @@ import com.openclassroom.go4lunch.Model.AutocompleteAPI.Prediction;
 
 public class MapViewModel extends ViewModel {
 
-    private final MutableLiveData<Prediction> selectedPrediction = new MutableLiveData<>();
+    private final MutableLiveData<SearchDataResult> selectedPrediction = new MutableLiveData<>();
 
     public void setSelectedPrediction(Prediction selectedPrediction) {
         this.selectedPrediction.setValue(selectedPrediction);

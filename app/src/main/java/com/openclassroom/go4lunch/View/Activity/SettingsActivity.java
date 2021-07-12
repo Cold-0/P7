@@ -76,7 +76,6 @@ public class SettingsActivity extends BaseActivity {
                 builder.build().load(user.getPhotoUrl())
                         .placeholder((R.drawable.ic_launcher_background))
                         .error(R.drawable.ic_launcher_foreground)
-                        .centerCrop()
                         .into(mBinding.userImageView);
             }
 
