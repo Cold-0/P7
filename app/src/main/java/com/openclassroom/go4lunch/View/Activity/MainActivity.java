@@ -38,13 +38,12 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassroom.go4lunch.Model.AutocompleteAPI.AutocompleteResponse;
 import com.openclassroom.go4lunch.Model.AutocompleteAPI.Prediction;
+import com.openclassroom.go4lunch.Model.DataView.SearchValidationDataView;
 import com.openclassroom.go4lunch.Model.PlaceDetailsAPI.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.Repository.Repository;
-import com.openclassroom.go4lunch.Utils.UserUtil;
 import com.openclassroom.go4lunch.View.Activity.Abstract.BaseActivity;
 import com.openclassroom.go4lunch.R;
-import com.openclassroom.go4lunch.ViewModel.MapViewModel;
-import com.openclassroom.go4lunch.ViewModel.RestaurantListViewModel;
+import com.openclassroom.go4lunch.ViewModel.SearchViewModel;
 import com.openclassroom.go4lunch.ViewModel.WorkmatesViewModel;
 import com.openclassroom.go4lunch.databinding.ActivityMainBinding;
 import com.openclassroom.go4lunch.databinding.HeaderNavViewBinding;
@@ -74,8 +73,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private HeaderNavViewBinding mHeaderNavViewBinding;
     private ActivityResultLauncher<Intent> mSignInLauncher;
 
-    private MapViewModel mMapViewModel;
-    private RestaurantListViewModel mRestaurantListViewModel;
+    private SearchViewModel mMapViewModel;
     private WorkmatesViewModel mWorkmatesViewModel;
 
     private Repository mRepository;
@@ -84,7 +82,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private LocationManager locationManager;
 
-    enum ViewTypes {
+    public enum ViewTypes {
         MAP,
         LIST,
         WORKMATES
@@ -104,13 +102,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         configureNavigationView();
         configureAuth();
 
-        mMapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
-        mRestaurantListViewModel = new ViewModelProvider(this).get(RestaurantListViewModel.class);
+        mMapViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
         mWorkmatesViewModel = new ViewModelProvider(this).get(WorkmatesViewModel.class);
 
         mRepository = Repository.getRepository();
-
-        UserUtil.getInstance().getAllUsers();
 
         getLocationPermission();
     }
@@ -169,14 +164,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 // Clear Focus
                 searchView.clearFocus();
 
-                // If we are in the Map Tab
-                if (currentView == ViewTypes.MAP) {
-                    SuggestionSelectedMap(predictionList.get(position));
-                } else if (currentView == ViewTypes.LIST) {
-                    SuggestionSelectedList(predictionList.get(position));
-                } else if (currentView == ViewTypes.WORKMATES) {
-                    // User Filter User
-                }
+                SearchValidationDataView searchValidationDataView = new SearchValidationDataView();
+                searchValidationDataView.prediction = predictionList.get(position);
+                searchValidationDataView.viewType = currentView;
+
+                mMapViewModel.setSearchValidationDataViewMutable(searchValidationDataView);
+
                 // Clear Suggestion List
                 predictionList.clear();
 
@@ -237,29 +230,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
-    private void SuggestionSelectedMap(Prediction prediction) {
-        mMapViewModel.setSelectedPrediction(prediction);
-    }
-
-    private void SuggestionSelectedList(Prediction prediction) {
-
-        @SuppressLint("DefaultLocale") Call<PlaceDetailsResponse> callDetails = mRepository.getService().getDetails(prediction.getPlaceId());
-        callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
-            @Override
-            public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {
-                if (response.body() != null) {
-                    mRestaurantListViewModel.setRestaurantList(response.body().getResult());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PlaceDetailsResponse> call, Throwable t) {
-
-            }
-        });
-
+    private void SuggestionSelectedMap(SearchValidationDataView prediction) {
 
     }
+
 
     @Override
     protected void onRestart() {

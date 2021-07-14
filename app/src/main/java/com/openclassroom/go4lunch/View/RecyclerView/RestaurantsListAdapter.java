@@ -84,18 +84,21 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
         to.setLongitude(restaurant.getGeometry().getLocation().getLng());
 
         holder.mBinding.distance.setText((int) (loc.distanceTo(to)) + "m");
-        holder.mBinding.ratingBar.setRating((float) restaurant.getRating().doubleValue());
+        if (restaurant.getRating() != null)
+            holder.mBinding.ratingBar.setRating((float) restaurant.getRating().doubleValue());
 
         holder.mBinding.typeAndAddress.setText(restaurant.getFormattedAddress());
 
-        String photo_reference = restaurant.getPhotos().get(0).getPhotoReference();
-        if (!photo_reference.equals("")) {
-            Picasso.Builder builder = new Picasso.Builder(mActivity);
-            builder.downloader(new OkHttp3Downloader(mActivity));
-            builder.build().load("https://maps.googleapis.com/maps/api/place/photo?parameters&key=" + BuildConfig.MAPS_API_KEY + "&photoreference=" + photo_reference + "&maxwidth=512&maxheight=512")
-                    .placeholder((R.drawable.ic_launcher_background))
-                    .error(R.drawable.ic_launcher_foreground)
-                    .into(holder.mBinding.imagePreview);
+        if (restaurant.getPhotos() != null) {
+            String photo_reference = restaurant.getPhotos().get(0).getPhotoReference();
+            if (!photo_reference.equals("")) {
+                Picasso.Builder builder = new Picasso.Builder(mActivity);
+                builder.downloader(new OkHttp3Downloader(mActivity));
+                builder.build().load("https://maps.googleapis.com/maps/api/place/photo?parameters&key=" + BuildConfig.MAPS_API_KEY + "&photoreference=" + photo_reference + "&maxwidth=512&maxheight=512")
+                        .placeholder((R.drawable.ic_launcher_background))
+                        .error(R.drawable.ic_launcher_foreground)
+                        .into(holder.mBinding.imagePreview);
+            }
         }
     }
 
