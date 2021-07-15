@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private HeaderNavViewBinding mHeaderNavViewBinding;
     private ActivityResultLauncher<Intent> mSignInLauncher;
 
-    private SearchViewModel mMapViewModel;
+    private SearchViewModel mSearchViewModel;
 
     private Repository mRepository;
 
@@ -99,7 +99,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         configureNavigationView();
         configureAuth();
 
-        mMapViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
+        mSearchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
         mRepository = Repository.getRepository();
 
@@ -151,7 +151,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionSelect(int position) {
-                Toast.makeText(getApplicationContext(), "onSuggestionSelect", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
@@ -164,7 +163,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 searchValidationDataView.prediction = predictionList.get(position);
                 searchValidationDataView.viewType = currentView;
 
-                mMapViewModel.setSearchValidationDataViewMutable(searchValidationDataView);
+                mSearchViewModel.setSearchValidationDataViewMutable(searchValidationDataView);
 
                 // Clear Suggestion List
                 predictionList.clear();
@@ -179,7 +178,22 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                String searchText = currentSearch[0];
+                // Clear Focus
+                searchView.clearFocus();
+
+                SearchValidationDataView searchValidationDataView = new SearchValidationDataView();
+                searchValidationDataView.prediction = null;
+                searchValidationDataView.viewType = currentView;
+                searchValidationDataView.searchMethod = SearchValidationDataView.SearchMethod.SEARCH_STRING;
+                searchValidationDataView.searchString = currentSearch[0];
+
+                mSearchViewModel.setSearchValidationDataViewMutable(searchValidationDataView);
+
+                // Clear Suggestion List
+                predictionList.clear();
+                // Reset List
+                MatrixCursor cursor = new MatrixCursor(columns);
+                suggestionAdapter.swapCursor(cursor);
                 return false;
             }
 

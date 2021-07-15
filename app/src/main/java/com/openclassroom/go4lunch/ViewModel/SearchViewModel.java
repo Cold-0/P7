@@ -2,7 +2,6 @@ package com.openclassroom.go4lunch.ViewModel;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -12,7 +11,6 @@ import android.location.LocationManager;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -21,7 +19,6 @@ import com.openclassroom.go4lunch.Model.DataView.SearchValidationDataView;
 import com.openclassroom.go4lunch.Model.NearbySearchAPI.NearbySearchResponse;
 import com.openclassroom.go4lunch.Model.NearbySearchAPI.Result;
 import com.openclassroom.go4lunch.Model.PlaceDetailsAPI.PlaceDetailsResponse;
-import com.openclassroom.go4lunch.Repository.Repository;
 import com.openclassroom.go4lunch.Utils.ObservableX;
 import com.openclassroom.go4lunch.ViewModel.Utils.ViewModelX;
 
@@ -41,6 +38,9 @@ public class SearchViewModel extends ViewModelX {
     private final ObservableX mZoomMapObservable = new ObservableX();
     private final ObservableX mAddRestaurantToList = new ObservableX();
 
+
+    private final ObservableX mClearRestaurantList = new ObservableX();
+
     public SearchViewModel(@NonNull @NotNull Application application) {
         super(application);
         mSearchValidationDataViewMutableLiveData.observeForever(this::OnPredictionSelected);
@@ -51,45 +51,50 @@ public class SearchViewModel extends ViewModelX {
     }
 
     // Callback when prediction is selected
-    private void OnPredictionSelected(@NotNull SearchValidationDataView searchValidationDataViewMutable) {
+    private void OnPredictionSelected(@NotNull SearchValidationDataView searchValidationDataView) {
         // Get Details of the selected AutoComplete place (Get Position)
-        Call<PlaceDetailsResponse> callDetails = mRepository.getService().getDetails(searchValidationDataViewMutable.prediction.getPlaceId());
-        callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<PlaceDetailsResponse> call, @NonNull Response<PlaceDetailsResponse> response) {
-                onResponseNearbySearch(searchValidationDataViewMutable, response);
-            }
 
-            @Override
-            public void onFailure(@NotNull Call<PlaceDetailsResponse> call, @NotNull Throwable t) {
+        if (searchValidationDataView.searchMethod == SearchValidationDataView.SearchMethod.PREDICTION) {
+            Call<PlaceDetailsResponse> callDetails = mRepository.getService().getDetails(searchValidationDataView.prediction.getPlaceId());
+            callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<PlaceDetailsResponse> call, @NonNull Response<PlaceDetailsResponse> response) {
+                    onResponseNearbySearch(searchValidationDataView, response);
+                }
 
-            }
-        });
+                @Override
+                public void onFailure(@NotNull Call<PlaceDetailsResponse> call, @NotNull Throwable t) {
+
+                }
+            });
+        } else {
+            onResponseNearbySearch(searchValidationDataView, null);
+        }
     }
 
     private void onResponseNearbySearch(SearchValidationDataView data, Response<PlaceDetailsResponse> response) {
         mClearMapObservable.notifyObservers();
         Location loc = new Location("");
-        if (response.body() != null && data.searchMethod == SearchValidationDataView.SearchMethod.PREDICTION) {
+        if (response != null && data.searchMethod == SearchValidationDataView.SearchMethod.PREDICTION) {
             Double lat = response.body().getResult().getGeometry().getLocation().getLat();
             Double lng = response.body().getResult().getGeometry().getLocation().getLng();
             loc.setLatitude(lat);
             loc.setLongitude(lng);
+            // Add marker of choice position
+            MarkerOptions userIndicator = new MarkerOptions()
+                    .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
+                    .title(response.body().getResult().getName())
+                    .snippet(response.body().getResult().getVicinity());
+            mMarkerMutableLiveData.setValue(userIndicator);
         } else {
             loc = getMyLocation();
         }
-        // Add marker of choice position
-        MarkerOptions userIndicator = new MarkerOptions()
-                .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
-                .title(response.body().getResult().getName())
-                .snippet(response.body().getResult().getVicinity());
 
-        mMarkerMutableLiveData.setValue(userIndicator);
         mZoomMapObservable.notifyObservers(loc);
 
         // Get Nearby Search Respond using the Details as location
         @SuppressLint("DefaultLocale") Call<NearbySearchResponse> callNearbySearch = data.searchMethod == SearchValidationDataView.SearchMethod.PREDICTION ?
-                mRepository.getService().getNearbyByType(10000, String.format("%f,%f", loc.getLatitude(), loc.getLongitude()), "food") :
+                mRepository.getService().getNearbyByType(10000, String.format("%f,%f", loc.getLatitude(), loc.getLongitude()), "restaurant") :
                 mRepository.getService().getNearbyByKeyword(10000, String.format("%f,%f", loc.getLatitude(), loc.getLongitude()), data.searchString);
 
         callNearbySearch.enqueue(new Callback<NearbySearchResponse>() {
@@ -107,6 +112,7 @@ public class SearchViewModel extends ViewModelX {
     // Callback when nearby search from detail position received
     private void OnNearbySearchResponseFromDetailResponse(@NotNull Response<NearbySearchResponse> response) {
         assert response.body() != null;
+        mClearRestaurantList.notifyObservers();
         for (Result result : response.body().getResults()) {
             @SuppressLint("DefaultLocale") Call<PlaceDetailsResponse> callDetails = mRepository.getService().getDetails(result.getPlaceId());
             callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
@@ -160,6 +166,10 @@ public class SearchViewModel extends ViewModelX {
 
     public ObservableX getAddRestaurantToList() {
         return mAddRestaurantToList;
+    }
+
+    public ObservableX getClearRestaurantList() {
+        return mClearRestaurantList;
     }
 
     public Location getMyLocation() {

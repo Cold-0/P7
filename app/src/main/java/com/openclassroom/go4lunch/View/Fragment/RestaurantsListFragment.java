@@ -17,6 +17,8 @@ import com.openclassroom.go4lunch.ViewModel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentListviewBinding;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 public class RestaurantsListFragment extends Fragment {
 
@@ -38,6 +40,10 @@ public class RestaurantsListFragment extends Fragment {
         searchViewModel.getAddRestaurantToList().addObserver((o, arg) -> {
             if (arg instanceof Result)
                 mRestaurantsListAdapter.addToRestaurantList((Result) arg);
+        });
+
+        searchViewModel.getClearRestaurantList().addObserver((o, arg) -> {
+            mRestaurantsListAdapter.clearRestaurantList();
         });
 
         return mBinding.getRoot();
