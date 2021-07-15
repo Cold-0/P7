@@ -40,6 +40,7 @@ import com.openclassroom.go4lunch.Model.AutocompleteAPI.AutocompleteResponse;
 import com.openclassroom.go4lunch.Model.AutocompleteAPI.Prediction;
 import com.openclassroom.go4lunch.Model.DataView.SearchValidationDataView;
 import com.openclassroom.go4lunch.Repository.Repository;
+import com.openclassroom.go4lunch.Utils.CircleCropTransform;
 import com.openclassroom.go4lunch.View.Activity.Abstract.BaseActivity;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.ViewModel.SearchViewModel;
@@ -284,6 +285,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 builder.build().load(user.getPhotoUrl())
                         .placeholder((R.drawable.ic_launcher_background))
                         .error(R.drawable.ic_launcher_foreground)
+                        .transform(new CircleCropTransform())
                         .into(mHeaderNavViewBinding.headerUserAvatar);
             }
         }

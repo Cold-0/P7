@@ -12,6 +12,7 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassroom.go4lunch.BuildConfig;
+import com.openclassroom.go4lunch.Utils.CircleCropTransform;
 import com.openclassroom.go4lunch.View.Activity.Abstract.BaseActivity;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ActivitySettingsBinding;
@@ -76,6 +77,7 @@ public class SettingsActivity extends BaseActivity {
                 builder.build().load(user.getPhotoUrl())
                         .placeholder((R.drawable.ic_launcher_background))
                         .error(R.drawable.ic_launcher_foreground)
+                        .transform(new CircleCropTransform())
                         .into(mBinding.userImageView);
             }
 
