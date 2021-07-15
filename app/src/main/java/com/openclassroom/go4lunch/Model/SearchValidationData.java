@@ -1,10 +1,10 @@
-package com.openclassroom.go4lunch.Model.DataView;
+package com.openclassroom.go4lunch.Model;
 
 import com.openclassroom.go4lunch.Model.AutocompleteAPI.Prediction;
 
-import com.openclassroom.go4lunch.View.Activity.MainActivity.ViewTypes;
+import com.openclassroom.go4lunch.View.Activity.MainActivity.MainViewTypes;
 
-public class SearchValidationDataView {
+public class SearchValidationData {
 
     public enum SearchMethod {
         PREDICTION,
@@ -14,5 +14,5 @@ public class SearchValidationDataView {
     public Prediction prediction = null;
     public String searchString = null;
     public SearchMethod searchMethod = SearchMethod.PREDICTION;
-    public ViewTypes viewType = ViewTypes.LIST;
+    public MainViewTypes viewType = MainViewTypes.LIST;
 }

@@ -1,7 +1,6 @@
 package com.openclassroom.go4lunch.ViewModel;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -15,13 +14,13 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.openclassroom.go4lunch.Model.DataView.SearchValidationDataView;
+import com.openclassroom.go4lunch.Model.SearchValidationData;
 import com.openclassroom.go4lunch.Model.NearbySearchAPI.NearbySearchResponse;
 import com.openclassroom.go4lunch.Model.NearbySearchAPI.Result;
 import com.openclassroom.go4lunch.Model.PlaceDetailsAPI.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.R;
-import com.openclassroom.go4lunch.Utils.ObservableX;
-import com.openclassroom.go4lunch.ViewModel.Abstract.ViewModelX;
+import com.openclassroom.go4lunch.Utils.EX.ObservableEX;
+import com.openclassroom.go4lunch.Utils.EX.ViewModelEX;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,33 +30,33 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SearchViewModel extends ViewModelX {
+public class SearchViewModel extends ViewModelEX {
 
 
-    private final MutableLiveData<SearchValidationDataView> mSearchValidationDataViewMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<SearchValidationData> mSearchValidationDataViewMutableLiveData = new MutableLiveData<>();
 
     private final MutableLiveData<MarkerOptions> mMarkerMutableLiveData = new MutableLiveData<>();
-    private final ObservableX mClearMapObservable = new ObservableX();
-    private final ObservableX mZoomMapObservable = new ObservableX();
-    private final ObservableX mAddRestaurantToList = new ObservableX();
+    private final ObservableEX mClearMapObservable = new ObservableEX();
+    private final ObservableEX mZoomMapObservable = new ObservableEX();
+    private final ObservableEX mAddRestaurantToList = new ObservableEX();
 
 
-    private final ObservableX mClearRestaurantList = new ObservableX();
+    private final ObservableEX mClearRestaurantList = new ObservableEX();
 
     public SearchViewModel(@NonNull @NotNull Application application) {
         super(application);
         mSearchValidationDataViewMutableLiveData.observeForever(this::OnPredictionSelected);
     }
 
-    public void setSearchValidationDataViewMutable(SearchValidationDataView searchValidationDataViewMutable) {
+    public void setSearchValidationDataViewMutable(SearchValidationData searchValidationDataViewMutable) {
         this.mSearchValidationDataViewMutableLiveData.setValue(searchValidationDataViewMutable);
     }
 
     // Callback when prediction is selected
-    private void OnPredictionSelected(@NotNull SearchValidationDataView searchValidationDataView) {
+    private void OnPredictionSelected(@NotNull SearchValidationData searchValidationDataView) {
         // Get Details of the selected AutoComplete place (Get Position)
 
-        if (searchValidationDataView.searchMethod == SearchValidationDataView.SearchMethod.PREDICTION) {
+        if (searchValidationDataView.searchMethod == SearchValidationData.SearchMethod.PREDICTION) {
             Call<PlaceDetailsResponse> callDetails = getRepository().getService().getDetails(searchValidationDataView.prediction.getPlaceId());
             callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
                 @Override
@@ -75,10 +74,10 @@ public class SearchViewModel extends ViewModelX {
         }
     }
 
-    private void onResponseNearbySearch(SearchValidationDataView data, Response<PlaceDetailsResponse> response) {
+    private void onResponseNearbySearch(SearchValidationData data, Response<PlaceDetailsResponse> response) {
         mClearMapObservable.notifyObservers();
         Location loc = new Location("");
-        if (response != null && data.searchMethod == SearchValidationDataView.SearchMethod.PREDICTION) {
+        if (response != null && data.searchMethod == SearchValidationData.SearchMethod.PREDICTION) {
             Double lat = response.body().getResult().getGeometry().getLocation().getLat();
             Double lng = response.body().getResult().getGeometry().getLocation().getLng();
             loc.setLatitude(lat);
@@ -96,7 +95,7 @@ public class SearchViewModel extends ViewModelX {
         mZoomMapObservable.notifyObservers(loc);
 
         // Get Nearby Search Respond using the Details as location
-        Call<NearbySearchResponse> callNearbySearch = data.searchMethod == SearchValidationDataView.SearchMethod.PREDICTION ?
+        Call<NearbySearchResponse> callNearbySearch = data.searchMethod == SearchValidationData.SearchMethod.PREDICTION ?
                 getRepository().getService().getNearbyByType(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant") :
                 getRepository().getService().getNearbyByKeyword(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.searchString);
 
@@ -151,11 +150,11 @@ public class SearchViewModel extends ViewModelX {
         }
     }
 
-    public ObservableX getClearMapObservable() {
+    public ObservableEX getClearMapObservable() {
         return mClearMapObservable;
     }
 
-    public ObservableX getZoomMapObservable() {
+    public ObservableEX getZoomMapObservable() {
         return mZoomMapObservable;
     }
 
@@ -163,15 +162,15 @@ public class SearchViewModel extends ViewModelX {
         return mMarkerMutableLiveData;
     }
 
-    public MutableLiveData<SearchValidationDataView> getSearchValidationDataViewMutableLiveData() {
+    public MutableLiveData<SearchValidationData> getSearchValidationDataViewMutableLiveData() {
         return mSearchValidationDataViewMutableLiveData;
     }
 
-    public ObservableX getAddRestaurantToList() {
+    public ObservableEX getAddRestaurantToList() {
         return mAddRestaurantToList;
     }
 
-    public ObservableX getClearRestaurantList() {
+    public ObservableEX getClearRestaurantList() {
         return mClearRestaurantList;
     }
 

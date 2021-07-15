@@ -15,8 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,21 +24,17 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.openclassroom.go4lunch.R;
-import com.openclassroom.go4lunch.Repository.Repository;
+import com.openclassroom.go4lunch.Utils.EX.FragmentEX;
 import com.openclassroom.go4lunch.ViewModel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentMapviewBinding;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Observable;
-
-public class MapViewFragment extends Fragment implements OnMapReadyCallback {
+public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
 
     private static final String TAG = MapViewFragment.class.toString();
 
-    private SearchViewModel mSearchViewModel;
     private FragmentMapviewBinding mBinding;
     private GoogleMap mGoogleMap;
 
@@ -48,7 +42,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         mBinding = FragmentMapviewBinding.inflate(inflater, container, false);
         mBinding.mapView.onCreate(savedInstanceState);
 
-        mSearchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
+        SearchViewModel searchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
 
         try {
             MapsInitializer.initialize(requireActivity().getApplicationContext());
@@ -58,17 +52,17 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
         mBinding.mapView.getMapAsync(this);
 
-        mSearchViewModel.getClearMapObservable().addObserver((o, arg) -> {
+        searchViewModel.getClearMapObservable().addObserver((o, arg) -> {
             Log.w(TAG, "onCreateView: getClearMapObservable : good ");
             mGoogleMap.clear();
         });
 
-        mSearchViewModel.getZoomMapObservable().addObserver((o, arg) -> {
+        searchViewModel.getZoomMapObservable().addObserver((o, arg) -> {
             if (arg instanceof Location)
                 zoomOnLocation((Location) arg);
         });
 
-        mSearchViewModel.getMarkerMutableLiveData().observe(requireActivity(), markerOptions -> {
+        searchViewModel.getMarkerMutableLiveData().observe(requireActivity(), markerOptions -> {
             if (mGoogleMap != null)
                 mGoogleMap.addMarker(markerOptions);
         });

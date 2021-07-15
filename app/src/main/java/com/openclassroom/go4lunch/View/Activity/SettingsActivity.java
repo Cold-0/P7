@@ -11,9 +11,8 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
-import com.openclassroom.go4lunch.BuildConfig;
-import com.openclassroom.go4lunch.Utils.CircleCropTransform;
-import com.openclassroom.go4lunch.View.Activity.Abstract.BaseActivity;
+import com.openclassroom.go4lunch.Utils.Transform.CircleCropTransform;
+import com.openclassroom.go4lunch.Utils.EX.ActivityEX;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ActivitySettingsBinding;
 import com.squareup.picasso.OkHttp3Downloader;
@@ -23,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class SettingsActivity extends BaseActivity {
+public class SettingsActivity extends ActivityEX {
 
     private static final String TAG = SettingsActivity.class.getName();
 

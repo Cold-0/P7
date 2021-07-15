@@ -38,10 +38,10 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 import com.openclassroom.go4lunch.Model.AutocompleteAPI.AutocompleteResponse;
 import com.openclassroom.go4lunch.Model.AutocompleteAPI.Prediction;
-import com.openclassroom.go4lunch.Model.DataView.SearchValidationDataView;
+import com.openclassroom.go4lunch.Model.SearchValidationData;
 import com.openclassroom.go4lunch.Repository.Repository;
-import com.openclassroom.go4lunch.Utils.CircleCropTransform;
-import com.openclassroom.go4lunch.View.Activity.Abstract.BaseActivity;
+import com.openclassroom.go4lunch.Utils.Transform.CircleCropTransform;
+import com.openclassroom.go4lunch.Utils.EX.ActivityEX;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.ViewModel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.ActivityMainBinding;
@@ -62,32 +62,25 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+public class MainActivity extends ActivityEX implements NavigationView.OnNavigationItemSelectedListener {
 
-@SuppressWarnings({"FieldCanBeLocal", "unused"})
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-
-    private static final String TAG = SettingsActivity.class.getName();
+    private static final String TAG = MainActivity.class.getName();
+    private static final int RC_FINE_LOCATION = 950001;
 
     private ActivityMainBinding mBinding;
     private HeaderNavViewBinding mHeaderNavViewBinding;
-    private ActivityResultLauncher<Intent> mSignInLauncher;
 
     private SearchViewModel mSearchViewModel;
 
-    private Repository mRepository;
+    private ActivityResultLauncher<Intent> mSignInLauncher;
 
-    static final public int RC_FINE_LOCATION = 950001;
-
-    private LocationManager locationManager;
-
-    public enum ViewTypes {
+    public enum MainViewTypes {
         MAP,
         LIST,
         WORKMATES
     }
 
-    ViewTypes currentView;
+    MainViewTypes currentView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +95,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         configureAuth();
 
         mSearchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
-
-        mRepository = Repository.getRepository();
 
         getLocationPermission();
     }
@@ -161,7 +152,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 // Clear Focus
                 searchView.clearFocus();
 
-                SearchValidationDataView searchValidationDataView = new SearchValidationDataView();
+                SearchValidationData searchValidationDataView = new SearchValidationData();
                 searchValidationDataView.prediction = predictionList.get(position);
                 searchValidationDataView.viewType = currentView;
 
@@ -183,10 +174,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 // Clear Focus
                 searchView.clearFocus();
 
-                SearchValidationDataView searchValidationDataView = new SearchValidationDataView();
+                SearchValidationData searchValidationDataView = new SearchValidationData();
                 searchValidationDataView.prediction = null;
                 searchValidationDataView.viewType = currentView;
-                searchValidationDataView.searchMethod = SearchValidationDataView.SearchMethod.SEARCH_STRING;
+                searchValidationDataView.searchMethod = SearchValidationData.SearchMethod.SEARCH_STRING;
                 searchValidationDataView.searchString = currentSearch[0];
 
                 mSearchViewModel.setSearchValidationDataViewMutable(searchValidationDataView);
@@ -242,11 +233,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         return true;
     }
-
-    private void SuggestionSelectedMap(SearchValidationDataView prediction) {
-
-    }
-
 
     @Override
     protected void onRestart() {
@@ -354,11 +340,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             assert destination.getLabel() != null;
             if (destination.getLabel().equals("Map View")) {
-                currentView = ViewTypes.MAP;
+                currentView = MainViewTypes.MAP;
             } else if (destination.getLabel().equals("List View")) {
-                currentView = ViewTypes.LIST;
+                currentView = MainViewTypes.LIST;
             } else if (destination.getLabel().equals("Workmates")) {
-                currentView = ViewTypes.WORKMATES;
+                currentView = MainViewTypes.WORKMATES;
             }
         });
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);

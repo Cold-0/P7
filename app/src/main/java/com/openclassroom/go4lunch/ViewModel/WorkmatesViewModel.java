@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.openclassroom.go4lunch.Model.User;
-import com.openclassroom.go4lunch.ViewModel.Abstract.ViewModelX;
+import com.openclassroom.go4lunch.Utils.EX.ViewModelEX;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class WorkmatesViewModel extends ViewModelX {
+public class WorkmatesViewModel extends ViewModelEX {
 
     private final MutableLiveData<List<User>> mUserList;
 

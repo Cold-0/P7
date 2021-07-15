@@ -10,14 +10,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.openclassroom.go4lunch.Model.PlaceDetailsAPI.Result;
-import com.openclassroom.go4lunch.View.Fragment.Abstract.FragmentX;
+import com.openclassroom.go4lunch.Utils.EX.FragmentEX;
 import com.openclassroom.go4lunch.View.RecyclerView.RestaurantsListAdapter;
 import com.openclassroom.go4lunch.ViewModel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentListviewBinding;
 
 import java.util.ArrayList;
 
-public class RestaurantsListFragment extends FragmentX {
+public class RestaurantsListFragment extends FragmentEX {
 
     private FragmentListviewBinding mBinding;
     private RestaurantsListAdapter mRestaurantsListAdapter;

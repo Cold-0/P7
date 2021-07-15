@@ -1,12 +1,13 @@
-package com.openclassroom.go4lunch.View.Activity.Abstract;
+package com.openclassroom.go4lunch.Utils.EX;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.openclassroom.go4lunch.Repository.Repository;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class ActivityEX extends AppCompatActivity {
 
     // --------------------
     // UTILS
@@ -18,5 +19,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected Boolean isCurrentUserLogged() {
         return (this.getCurrentUser() != null);
+    }
+
+    public Repository getRepository() {
+        return mRepository;
+    }
+
+    private final Repository mRepository;
+
+    public ActivityEX() {
+        mRepository = Repository.getRepository();
     }
 }

@@ -1,7 +1,7 @@
 package com.openclassroom.go4lunch.View.Fragment;
 
 import com.openclassroom.go4lunch.Model.User;
-import com.openclassroom.go4lunch.View.Fragment.Abstract.FragmentX;
+import com.openclassroom.go4lunch.Utils.EX.FragmentEX;
 import com.openclassroom.go4lunch.View.RecyclerView.WorkmatesListAdapter;
 import com.openclassroom.go4lunch.ViewModel.WorkmatesViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentWorkmatesBinding;
@@ -12,8 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,7 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorkmatesFragment extends FragmentX {
+public class WorkmatesFragment extends FragmentEX {
 
     private FragmentWorkmatesBinding mBinding;
 

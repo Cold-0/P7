@@ -1,8 +1,8 @@
-package com.openclassroom.go4lunch.Utils;
+package com.openclassroom.go4lunch.Utils.EX;
 
 import java.util.Observable;
 
-public class ObservableX extends Observable {
+public class ObservableEX extends Observable {
     @Override
     public void notifyObservers() {
         setChanged();
