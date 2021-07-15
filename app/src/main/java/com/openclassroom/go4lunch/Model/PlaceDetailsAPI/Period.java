@@ -28,9 +28,4 @@ public class Period implements Serializable {
     public void setOpen(Open open) {
         mOpen = open;
     }
-    @NonNull
-    @Override
-    public String toString() {
-        return String.format("%s %s", mOpen, mClose);
-    }
 }

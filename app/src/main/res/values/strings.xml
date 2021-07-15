@@ -28,4 +28,5 @@
     <string name="your_lunch">Your Lunch</string>
     <string name="rationale_location_permission">Go4Lunch need your location to find the proper restaurant around you</string>
     <string name="search">Search</string>
+    <string name="location_formating" translatable="false">%f,%f</string>
 </resources>

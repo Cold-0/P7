@@ -54,6 +54,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -205,8 +206,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 if (newText.length() > 3) {
                     Repository repository = Repository.getRepository();
                     Location loc = getLastKnownCoarseLocation();
-                    @SuppressLint("DefaultLocale") Call<AutocompleteResponse> call =
-                            repository.getService().getAutocomplete(newText, 5000, String.format("%f,%f", loc.getLatitude(), loc.getLongitude()), "establishment");
+                    String locString = String.format(Locale.CANADA, getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude());
+                    Call<AutocompleteResponse> call =
+                            repository.getService().getAutocomplete(newText, 5000, locString, "establishment");
                     call.enqueue(new Callback<AutocompleteResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {

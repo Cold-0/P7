@@ -19,10 +19,13 @@ import com.openclassroom.go4lunch.Model.DataView.SearchValidationDataView;
 import com.openclassroom.go4lunch.Model.NearbySearchAPI.NearbySearchResponse;
 import com.openclassroom.go4lunch.Model.NearbySearchAPI.Result;
 import com.openclassroom.go4lunch.Model.PlaceDetailsAPI.PlaceDetailsResponse;
+import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.Utils.ObservableX;
 import com.openclassroom.go4lunch.ViewModel.Abstract.ViewModelX;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -93,9 +96,9 @@ public class SearchViewModel extends ViewModelX {
         mZoomMapObservable.notifyObservers(loc);
 
         // Get Nearby Search Respond using the Details as location
-        @SuppressLint("DefaultLocale") Call<NearbySearchResponse> callNearbySearch = data.searchMethod == SearchValidationDataView.SearchMethod.PREDICTION ?
-                getRepository().getService().getNearbyByType(10000, String.format("%f,%f", loc.getLatitude(), loc.getLongitude()), "restaurant") :
-                getRepository().getService().getNearbyByKeyword(10000, String.format("%f,%f", loc.getLatitude(), loc.getLongitude()), data.searchString);
+        Call<NearbySearchResponse> callNearbySearch = data.searchMethod == SearchValidationDataView.SearchMethod.PREDICTION ?
+                getRepository().getService().getNearbyByType(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant") :
+                getRepository().getService().getNearbyByKeyword(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.searchString);
 
         callNearbySearch.enqueue(new Callback<NearbySearchResponse>() {
             @Override
@@ -114,7 +117,7 @@ public class SearchViewModel extends ViewModelX {
         assert response.body() != null;
         mClearRestaurantList.notifyObservers();
         for (Result result : response.body().getResults()) {
-            @SuppressLint("DefaultLocale") Call<PlaceDetailsResponse> callDetails = getRepository().getService().getDetails(result.getPlaceId());
+            Call<PlaceDetailsResponse> callDetails = getRepository().getService().getDetails(result.getPlaceId());
             callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<PlaceDetailsResponse> call, @NotNull Response<PlaceDetailsResponse> response) {
