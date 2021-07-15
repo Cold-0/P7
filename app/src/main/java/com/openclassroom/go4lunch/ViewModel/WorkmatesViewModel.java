@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.openclassroom.go4lunch.Model.User;
-import com.openclassroom.go4lunch.ViewModel.Utils.ViewModelX;
+import com.openclassroom.go4lunch.ViewModel.Abstract.ViewModelX;
 
 import org.jetbrains.annotations.NotNull;
 

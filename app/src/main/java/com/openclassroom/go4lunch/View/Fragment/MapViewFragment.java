@@ -43,14 +43,12 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     private SearchViewModel mSearchViewModel;
     private FragmentMapviewBinding mBinding;
     private GoogleMap mGoogleMap;
-    Repository mRepository;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentMapviewBinding.inflate(inflater, container, false);
         mBinding.mapView.onCreate(savedInstanceState);
 
         mSearchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
-        mRepository = Repository.getRepository();
 
         try {
             MapsInitializer.initialize(requireActivity().getApplicationContext());

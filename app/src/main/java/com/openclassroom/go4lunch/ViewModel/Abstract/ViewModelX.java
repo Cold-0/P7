@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.ViewModel.Utils;
+package com.openclassroom.go4lunch.ViewModel.Abstract;
 
 import android.app.Application;
 
@@ -9,9 +9,13 @@ import com.openclassroom.go4lunch.Repository.Repository;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ViewModelX extends AndroidViewModel {
+abstract public class ViewModelX extends AndroidViewModel {
 
-    protected final Repository mRepository;
+    public Repository getRepository() {
+        return mRepository;
+    }
+
+    private final Repository mRepository;
 
     public ViewModelX(@NonNull @NotNull Application application) {
         super(application);

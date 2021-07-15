@@ -20,7 +20,7 @@ import com.openclassroom.go4lunch.Model.NearbySearchAPI.NearbySearchResponse;
 import com.openclassroom.go4lunch.Model.NearbySearchAPI.Result;
 import com.openclassroom.go4lunch.Model.PlaceDetailsAPI.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.Utils.ObservableX;
-import com.openclassroom.go4lunch.ViewModel.Utils.ViewModelX;
+import com.openclassroom.go4lunch.ViewModel.Abstract.ViewModelX;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +55,7 @@ public class SearchViewModel extends ViewModelX {
         // Get Details of the selected AutoComplete place (Get Position)
 
         if (searchValidationDataView.searchMethod == SearchValidationDataView.SearchMethod.PREDICTION) {
-            Call<PlaceDetailsResponse> callDetails = mRepository.getService().getDetails(searchValidationDataView.prediction.getPlaceId());
+            Call<PlaceDetailsResponse> callDetails = getRepository().getService().getDetails(searchValidationDataView.prediction.getPlaceId());
             callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<PlaceDetailsResponse> call, @NonNull Response<PlaceDetailsResponse> response) {
@@ -94,8 +94,8 @@ public class SearchViewModel extends ViewModelX {
 
         // Get Nearby Search Respond using the Details as location
         @SuppressLint("DefaultLocale") Call<NearbySearchResponse> callNearbySearch = data.searchMethod == SearchValidationDataView.SearchMethod.PREDICTION ?
-                mRepository.getService().getNearbyByType(10000, String.format("%f,%f", loc.getLatitude(), loc.getLongitude()), "restaurant") :
-                mRepository.getService().getNearbyByKeyword(10000, String.format("%f,%f", loc.getLatitude(), loc.getLongitude()), data.searchString);
+                getRepository().getService().getNearbyByType(10000, String.format("%f,%f", loc.getLatitude(), loc.getLongitude()), "restaurant") :
+                getRepository().getService().getNearbyByKeyword(10000, String.format("%f,%f", loc.getLatitude(), loc.getLongitude()), data.searchString);
 
         callNearbySearch.enqueue(new Callback<NearbySearchResponse>() {
             @Override
@@ -114,7 +114,7 @@ public class SearchViewModel extends ViewModelX {
         assert response.body() != null;
         mClearRestaurantList.notifyObservers();
         for (Result result : response.body().getResults()) {
-            @SuppressLint("DefaultLocale") Call<PlaceDetailsResponse> callDetails = mRepository.getService().getDetails(result.getPlaceId());
+            @SuppressLint("DefaultLocale") Call<PlaceDetailsResponse> callDetails = getRepository().getService().getDetails(result.getPlaceId());
             callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
                 @Override
                 public void onResponse(@NotNull Call<PlaceDetailsResponse> call, @NotNull Response<PlaceDetailsResponse> response) {
