@@ -63,7 +63,7 @@ import retrofit2.Response;
 
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private static final String TAG = SettingsActivity.class.getName();
@@ -432,16 +432,5 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         // Forward results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, @NonNull @NotNull List<String> perms) {
-        LocationManager locationManager;
-
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, @NonNull @NotNull List<String> perms) {
-
     }
 }
