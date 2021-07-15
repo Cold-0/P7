@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".View.Activity.RestaurantDetailActivity">
+    tools:context=".view.activity.RestaurantDetailActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -112,12 +112,15 @@
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     app:srcCompat="@drawable/ic_baseline_local_phone_24"
-                    app:tint="@color/black" />
+                    app:tint="@color/orange_500" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:textColor="@color/orange_500"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
                     android:text="@string/call" />
 
 
@@ -140,12 +143,15 @@
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     app:srcCompat="@drawable/ic_baseline_star_24"
-                    app:tint="@color/black" />
+                    app:tint="@color/orange_500" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:textColor="@color/orange_500"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
                     android:text="@string/like" />
 
 
@@ -167,13 +173,16 @@
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     app:srcCompat="@drawable/ic_baseline_public_24"
-                    app:tint="@color/black" />
+                    app:tint="@color/orange_500" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/website" />
+                    android:text="@string/website"
+                    android:textColor="@color/orange_500"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"/>
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>

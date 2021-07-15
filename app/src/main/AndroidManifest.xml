@@ -17,11 +17,11 @@
         tools:ignore="AllowBackup">
 
         <activity
-            android:name=".View.Activity.RestaurantDetailActivity"
+            android:name=".view.activity.RestaurantDetailActivity"
             android:theme="@style/Theme.Go4Lunch.NoActionBar" />
 
         <activity
-            android:name=".View.Activity.MainActivity"
+            android:name=".view.activity.MainActivity"
             android:theme="@style/Theme.Go4Lunch.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,7 +34,7 @@
                 android:resource="@xml/searchable" />
         </activity>
 
-        <activity android:name=".View.Activity.SettingsActivity" />
+        <activity android:name=".view.activity.SettingsActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
