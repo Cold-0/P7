@@ -39,12 +39,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.openclassroom.go4lunch.Model.AutocompleteAPI.AutocompleteResponse;
 import com.openclassroom.go4lunch.Model.AutocompleteAPI.Prediction;
 import com.openclassroom.go4lunch.Model.DataView.SearchValidationDataView;
-import com.openclassroom.go4lunch.Model.PlaceDetailsAPI.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.Repository.Repository;
 import com.openclassroom.go4lunch.View.Activity.Abstract.BaseActivity;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.ViewModel.SearchViewModel;
-import com.openclassroom.go4lunch.ViewModel.WorkmatesViewModel;
 import com.openclassroom.go4lunch.databinding.ActivityMainBinding;
 import com.openclassroom.go4lunch.databinding.HeaderNavViewBinding;
 import com.squareup.picasso.OkHttp3Downloader;
@@ -74,7 +72,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private ActivityResultLauncher<Intent> mSignInLauncher;
 
     private SearchViewModel mMapViewModel;
-    private WorkmatesViewModel mWorkmatesViewModel;
 
     private Repository mRepository;
 
@@ -103,7 +100,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         configureAuth();
 
         mMapViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
-        mWorkmatesViewModel = new ViewModelProvider(this).get(WorkmatesViewModel.class);
 
         mRepository = Repository.getRepository();
 

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -28,7 +29,8 @@ public class WorkmatesFragment extends Fragment {
         WorkmatesViewModel workmatesListViewModel = new ViewModelProvider(requireActivity()).get(WorkmatesViewModel.class);
         mBinding = FragmentWorkmatesBinding.inflate(inflater, container, false);
 
-        WorkmatesListAdapter listViewAdapter = new WorkmatesListAdapter(workmatesListViewModel.getUserList());
+        WorkmatesListAdapter listViewAdapter = new WorkmatesListAdapter(new LiveData<List<User>>() {
+        });
         mBinding.workmatesList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         mBinding.workmatesList.setAdapter(listViewAdapter);
 
