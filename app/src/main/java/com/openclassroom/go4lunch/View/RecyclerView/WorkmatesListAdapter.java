@@ -13,11 +13,12 @@ import com.openclassroom.go4lunch.databinding.ItemUserBinding;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListViewHolder> {
 
     @NonNull
-    private LiveData<List<User>> mUserList;
+    private final LiveData<List<User>> mUserList;
 
     public WorkmatesListAdapter(@NonNull LiveData<List<User>> userList) {
         mUserList = userList;
@@ -38,7 +39,7 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListView
 
     @Override
     public int getItemCount() {
-        return mUserList.getValue().size();
+        return Objects.requireNonNull(mUserList.getValue()).size();
     }
 
 }
