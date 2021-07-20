@@ -34,29 +34,60 @@ public class SearchViewModel extends ViewModelEX {
 
 
     private final MutableLiveData<SearchValidationData> mSearchValidationDataViewMutableLiveData = new MutableLiveData<>();
-
     private final MutableLiveData<MarkerOptions> mMarkerMutableLiveData = new MutableLiveData<>();
     private final ObservableEX mClearMapObservable = new ObservableEX();
     private final ObservableEX mZoomMapObservable = new ObservableEX();
     private final ObservableEX mAddRestaurantToList = new ObservableEX();
-
-
     private final ObservableEX mClearRestaurantList = new ObservableEX();
 
-    public SearchViewModel(
-            @NonNull @NotNull Application application) {
-        super(application);
-        mSearchValidationDataViewMutableLiveData.observeForever(this::OnPredictionSelected);
+    // ------------------------
+    // Getter
+    // ------------------------
+    public MutableLiveData<SearchValidationData> getSearchValidationDataViewMutableLiveData() {
+        return mSearchValidationDataViewMutableLiveData;
     }
 
+    public MutableLiveData<MarkerOptions> getMarkerMutableLiveData() {
+        return mMarkerMutableLiveData;
+    }
+
+    public ObservableEX getClearMapObservable() {
+        return mClearMapObservable;
+    }
+
+    public ObservableEX getZoomMapObservable() {
+        return mZoomMapObservable;
+    }
+
+    public ObservableEX getAddRestaurantToList() {
+        return mAddRestaurantToList;
+    }
+
+    public ObservableEX getClearRestaurantList() {
+        return mClearRestaurantList;
+    }
+
+    // ------------------------
+    // Setter
+    // ------------------------
     public void setSearchValidationDataViewMutable(SearchValidationData searchValidationDataViewMutable) {
         this.mSearchValidationDataViewMutableLiveData.setValue(searchValidationDataViewMutable);
     }
 
-    // Callback when prediction is selected
-    private void OnPredictionSelected(@NotNull SearchValidationData searchValidationDataView) {
-        // Get Details of the selected AutoComplete place (Get Position)
+    // ------------------------
+    // Constructor
+    // ------------------------
+    public SearchViewModel(
+            @NonNull @NotNull Application application) {
+        super(application);
+        mSearchValidationDataViewMutableLiveData.observeForever(this::OnSearchLaunch);
+    }
 
+    // ------------------------
+    // Callback
+    // ------------------------
+    private void OnSearchLaunch(@NotNull SearchValidationData searchValidationDataView) {
+        // Get Details of the selected AutoComplete place (Get Position)
         if (searchValidationDataView.searchMethod == SearchValidationData.SearchMethod.PREDICTION) {
             Call<PlaceDetailsResponse> callDetails = getRepository().getService().getDetails(searchValidationDataView.prediction.getPlaceId());
             callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
@@ -78,7 +109,7 @@ public class SearchViewModel extends ViewModelEX {
     private void onResponseNearbySearch(SearchValidationData data, Response<PlaceDetailsResponse> response) {
         mClearMapObservable.notifyObservers();
         Location loc = new Location("");
-        if (response != null && data.searchMethod == SearchValidationData.SearchMethod.PREDICTION) {
+        if (response != null && response.body() != null && data.searchMethod == SearchValidationData.SearchMethod.PREDICTION) {
             Double lat = response.body().getResult().getGeometry().getLocation().getLat();
             Double lng = response.body().getResult().getGeometry().getLocation().getLng();
             loc.setLatitude(lat);
@@ -117,62 +148,22 @@ public class SearchViewModel extends ViewModelEX {
         assert response.body() != null;
         mClearRestaurantList.notifyObservers();
         for (Result result : response.body().getResults()) {
-            Call<PlaceDetailsResponse> callDetails = getRepository().getService().getDetails(result.getPlaceId());
-            callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
-                @Override
-                public void onResponse(@NotNull Call<PlaceDetailsResponse> call, @NotNull Response<PlaceDetailsResponse> response) {
-                    OnDetailResponsePerEachNearbySearchResult(response);
-                }
+            if (response.body() != null) {
+                Double lat = result.getGeometry().getLocation().getLat();
+                Double lng = result.getGeometry().getLocation().getLng();
+                LatLng loc = new LatLng(lat, lng);
 
-                @Override
-                public void onFailure(@NotNull Call<PlaceDetailsResponse> call, @NotNull Throwable t) {
+                // Add marker of user's position
+                MarkerOptions userIndicator = new MarkerOptions()
+                        .position(loc)
+                        .title(result.getName())
+                        .snippet(result.getVicinity());
 
-                }
-            });
+                mMarkerMutableLiveData.setValue(userIndicator);
+
+                mAddRestaurantToList.notifyObservers(result);
+            }
         }
-    }
-
-    // Callback for Details of each result of the nearby search
-    private void OnDetailResponsePerEachNearbySearchResult(@NotNull Response<PlaceDetailsResponse> response) {
-        if (response.body() != null) {
-            Double lat = response.body().getResult().getGeometry().getLocation().getLat();
-            Double lng = response.body().getResult().getGeometry().getLocation().getLng();
-            LatLng loc = new LatLng(lat, lng);
-
-            // Add marker of user's position
-            MarkerOptions userIndicator = new MarkerOptions()
-                    .position(loc)
-                    .title(response.body().getResult().getName())
-                    .snippet(response.body().getResult().getVicinity());
-
-            mMarkerMutableLiveData.setValue(userIndicator);
-
-            mAddRestaurantToList.notifyObservers(response.body().getResult());
-        }
-    }
-
-    public ObservableEX getClearMapObservable() {
-        return mClearMapObservable;
-    }
-
-    public ObservableEX getZoomMapObservable() {
-        return mZoomMapObservable;
-    }
-
-    public MutableLiveData<MarkerOptions> getMarkerMutableLiveData() {
-        return mMarkerMutableLiveData;
-    }
-
-    public MutableLiveData<SearchValidationData> getSearchValidationDataViewMutableLiveData() {
-        return mSearchValidationDataViewMutableLiveData;
-    }
-
-    public ObservableEX getAddRestaurantToList() {
-        return mAddRestaurantToList;
-    }
-
-    public ObservableEX getClearRestaurantList() {
-        return mClearRestaurantList;
     }
 
     public Location getMyLocation() {
@@ -186,4 +177,6 @@ public class SearchViewModel extends ViewModelEX {
         }
         return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
     }
+
+
 }
