@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Go4Lunch</string>
+    <string name="app_name" translatable="false">Go4Lunch</string>
 
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). No risk to be on public Git -->
     <string name="facebook_application_id" translatable="false">551612552508490</string>
@@ -18,9 +18,9 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="menu_map_view" translatable="false">Map View</string>
-    <string name="menu_list_view" translatable="false">List View</string>
-    <string name="menu_workmates" translatable="false">Workmates</string>
+    <string name="menu_map_view">Map View</string>
+    <string name="menu_list_view">List View</string>
+    <string name="menu_workmates">Workmates</string>
     <string name="call">Call</string>
     <string name="like">Like</string>
     <string name="website" translatable="false">Website</string>

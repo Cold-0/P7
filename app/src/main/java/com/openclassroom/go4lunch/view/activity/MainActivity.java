@@ -346,11 +346,11 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             assert destination.getLabel() != null;
-            if (destination.getLabel().equals("Map View")) {
+            if (destination.getLabel().equals(getString(R.string.menu_map_view))) {
                 currentView = MainViewTypes.MAP;
-            } else if (destination.getLabel().equals("List View")) {
+            } else if (destination.getLabel().equals(getString(R.string.menu_list_view))) {
                 currentView = MainViewTypes.LIST;
-            } else if (destination.getLabel().equals("Workmates")) {
+            } else if (destination.getLabel().equals(getString(R.string.menu_workmates))) {
                 currentView = MainViewTypes.WORKMATES;
             }
         });

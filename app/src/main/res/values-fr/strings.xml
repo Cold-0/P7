@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Go4Lunch</string>
     <string name="signed_out">Déconnecté</string>
     <string name="sign_out">Deconnexion</string>
     <string name="sign_in">Connexion</string>
@@ -18,4 +17,7 @@
     <string name="your_lunch">Votre repas</string>
     <string name="rationale_location_permission">Go4Lunch a besoin de votre position pour afficher les restaurant autour de vous</string>
     <string name="search">Rechercher</string>
+    <string name="menu_map_view">Vue Carte</string>
+    <string name="menu_list_view">Vue Liste</string>
+    <string name="menu_workmates">Collègues</string>
 </resources>
