@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.utils.ex.ViewModelEX;
@@ -12,7 +13,6 @@ import com.openclassroom.go4lunch.utils.ex.ViewModelEX;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class WorkmatesViewModel extends ViewModelEX {
@@ -21,19 +21,9 @@ public class WorkmatesViewModel extends ViewModelEX {
 
     public WorkmatesViewModel(@NonNull @NotNull Application application) {
         super(application);
-        mUserList = new MutableLiveData<>(new ArrayList<>(
-                Arrays.asList(
-                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
-                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
-                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
-                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
-                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
-                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
-                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
-                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
-                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512"),
-                        new User(1, "Bob", new ArrayList<String>(), "https://i.pravatar.cc/512")
-                )));
+        mUserList = getRepository().getUsersListLiveData();
+        getRepository().updateUserList();
+
     }
 
     public LiveData<List<User>> getUserList() {

@@ -34,9 +34,18 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.autocompleteapi.AutocompleteResponse;
 import com.openclassroom.go4lunch.model.autocompleteapi.Prediction;
 import com.openclassroom.go4lunch.model.SearchValidationData;
@@ -54,8 +63,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -97,13 +108,21 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
 
         mSearchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
-        getLocationPermission();
-
         getRepository().getUsersListLiveData().observe(this, v -> {
             Log.w(TAG, "onCreate: getUsersListLiveData notified");
+
+            for (User user : v) {
+                Log.e(TAG, "UID : " + user.getUid());
+                Log.e(TAG, "Avatar URL : " + user.getAvatarUrl());
+                Log.e(TAG, "Display name : " + user.getDisplayName());
+                Log.e(TAG, "Like list : " + user.getLikeList());
+            }
+
         });
 
         getRepository().updateUserList();
+
+        getLocationPermission();
     }
 
     public Location getLastKnownCoarseLocation() {
@@ -269,6 +288,8 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
     }
 
     private void updateProfile() {
+        UpdateUserDocument();
+
         FirebaseUser user = getCurrentUser();
         if (user != null) {
             mHeaderNavViewBinding.headerUserName.setText(user.getDisplayName());
@@ -324,7 +345,7 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
             SignIn();
             Snackbar.make(mBinding.getRoot(), R.string.canceled_sign_in, Snackbar.LENGTH_SHORT).show();
         } else if (result.getResultCode() == RESULT_OK) {
-            // Successfully signed in
+            // Sign in Success
             Snackbar.make(mBinding.getRoot(), getString(R.string.signed_in_as_user, Objects.requireNonNull(getCurrentUser()).getDisplayName()), Snackbar.LENGTH_SHORT).show();
         } else {
             // Sign in failed
@@ -332,6 +353,45 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
         }
 
         updateProfile();
+    }
+
+    private void UpdateUserDocument() {
+        FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
+        FirebaseUser user = getCurrentUser();
+
+        if (user != null) {
+            DocumentReference docRef = rootRef.collection("users").document(user.getUid());
+            docRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+
+                    Map<String, Object> userToUpdate = new HashMap<>();
+
+                    userToUpdate.put("name", user.getDisplayName());
+                    userToUpdate.put("email", user.getEmail());
+                    userToUpdate.put("avatarUrl", Objects.requireNonNull(user.getPhotoUrl()).toString());
+
+                    if (!Objects.requireNonNull(document).exists()) {
+                        userToUpdate.put("likes", new ArrayList<String>());
+                        userToUpdate.put("eatingAt", "");
+                    } else {
+                        userToUpdate.put("likes", document.get("likes"));
+                        userToUpdate.put("eatingAt", document.get("eatingAt"));
+                    }
+
+                    rootRef.collection("users").document(user.getUid())
+                            .set(userToUpdate)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "User DocumentSnapshot successfully written!");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.w(TAG, "Error writing document", e);
+                            });
+                } else {
+                    Log.d(TAG, "Error getting Document with ", task.getException());
+                }
+            });
+        }
     }
 
     // --------------------
@@ -356,8 +416,6 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
         });
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.bottomNavigation, navController);
-
-
     }
 
     // ---------------------

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassroom.go4lunch.model.User;
@@ -50,7 +51,6 @@ public class Repository {
                         userList.clear();
 
                         for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                            Log.e(TAG, "getUsersListLiveData: " + document.getId());
                             userList.add(new User(1, "Bob", new ArrayList<>(), "https://i.pravatar.cc/300"));
                         }
 
