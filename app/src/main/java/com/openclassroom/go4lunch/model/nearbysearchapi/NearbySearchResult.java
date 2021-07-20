@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Result {
+public class NearbySearchResult {
     @SerializedName("business_status")
     private String mBusinessStatus;
     @SerializedName("geometry")

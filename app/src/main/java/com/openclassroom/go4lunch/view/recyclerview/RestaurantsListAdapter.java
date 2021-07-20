@@ -19,7 +19,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassroom.go4lunch.BuildConfig;
-import com.openclassroom.go4lunch.model.placedetailsapi.Result;
+import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
+import com.openclassroom.go4lunch.model.placedetailsapi.DetailsResult;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ItemRestaurantBinding;
 import com.squareup.picasso.OkHttp3Downloader;
@@ -38,10 +39,10 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
     private final FragmentActivity mActivity;
 
     @NonNull
-    private final LiveData<List<Result>> mRestaurantList;
+    private final LiveData<List<NearbySearchResult>> mRestaurantList;
 
     @NonNull
-    public LiveData<List<Result>> getRestaurantList() {
+    public LiveData<List<NearbySearchResult>> getRestaurantList() {
         return mRestaurantList;
     }
 
@@ -51,13 +52,13 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
         notifyDataSetChanged();
     }
 
-    public void addToRestaurantList(Result restaurant) {
+    public void addToRestaurantList(NearbySearchResult restaurant) {
         Objects.requireNonNull(mRestaurantList.getValue()).add(restaurant);
         notifyItemInserted(mRestaurantList.getValue().size() - 1);
         Log.w(TAG, "addToRestaurantList");
     }
 
-    public RestaurantsListAdapter(@NonNull FragmentActivity activity, @NonNull List<Result> restaurantList) {
+    public RestaurantsListAdapter(@NonNull FragmentActivity activity, @NonNull List<NearbySearchResult> restaurantList) {
         mActivity = activity;
         mRestaurantList = new MutableLiveData<>(restaurantList);
     }
@@ -73,7 +74,7 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull @NotNull RestaurantsListViewHolder holder, int position) {
-        Result restaurant = mRestaurantList.getValue().get(position);
+        NearbySearchResult restaurant = Objects.requireNonNull(mRestaurantList.getValue()).get(position);
         Location loc = getMyLocation();
 
         holder.mBinding.restaurantName.setText(restaurant.getName());
@@ -87,7 +88,7 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
         if (restaurant.getRating() != null)
             holder.mBinding.ratingBar.setRating((float) restaurant.getRating().doubleValue());
 
-        holder.mBinding.typeAndAddress.setText(restaurant.getFormattedAddress());
+        holder.mBinding.typeAndAddress.setText(restaurant.getVicinity());
 
         if (restaurant.getPhotos() != null) {
             String photo_reference = restaurant.getPhotos().get(0).getPhotoReference();
@@ -105,19 +106,6 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
     @Override
     public int getItemCount() {
         return Objects.requireNonNull(mRestaurantList.getValue()).size();
-    }
-
-    public static double distFrom(double lat1, double lng1, double lat2, double lng2) {
-        double earthRadius = 6371;
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLng = Math.toRadians(lng2 - lng1);
-        double sindLat = Math.sin(dLat / 2);
-        double sindLng = Math.sin(dLng / 2);
-        double a = Math.pow(sindLat, 2) + Math.pow(sindLng, 2)
-                * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double dist = earthRadius * c;
-        return dist;
     }
 
     public Location getMyLocation() {

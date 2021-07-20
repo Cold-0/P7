@@ -11,7 +11,7 @@ public class NearbySearchResponse {
     @SerializedName("next_page_token")
     private String mNextPageToken;
     @SerializedName("results")
-    private List<Result> mResultSearches;
+    private List<NearbySearchResult> mResultSearches;
     @SerializedName("status")
     private String mStatus;
 
@@ -23,11 +23,11 @@ public class NearbySearchResponse {
         mHtmlAttributions = htmlAttributions;
     }
 
-    public List<Result> getResults() {
+    public List<NearbySearchResult> getResults() {
         return mResultSearches;
     }
 
-    public void setResults(List<Result> resultSearches) {
+    public void setResults(List<NearbySearchResult> resultSearches) {
         mResultSearches = resultSearches;
     }
 

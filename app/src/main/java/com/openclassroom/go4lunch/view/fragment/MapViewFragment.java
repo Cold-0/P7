@@ -7,11 +7,9 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -25,7 +23,9 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.openclassroom.go4lunch.R;
+import com.openclassroom.go4lunch.model.SearchValidationData;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
+import com.openclassroom.go4lunch.view.activity.MainActivity;
 import com.openclassroom.go4lunch.viewmodel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentMapviewBinding;
 
@@ -38,11 +38,13 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
     private FragmentMapviewBinding mBinding;
     private GoogleMap mGoogleMap;
 
+    private SearchViewModel searchViewModel;
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentMapviewBinding.inflate(inflater, container, false);
         mBinding.mapView.onCreate(savedInstanceState);
 
-        SearchViewModel searchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
+        searchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
 
         try {
             MapsInitializer.initialize(requireActivity().getApplicationContext());
@@ -53,7 +55,6 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
         mBinding.mapView.getMapAsync(this);
 
         searchViewModel.getClearMapObservable().addObserver((o, arg) -> {
-            Log.w(TAG, "onCreateView: getClearMapObservable : good ");
             mGoogleMap.clear();
         });
 
@@ -98,13 +99,17 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
     @Override
     public void onMapReady(@NotNull GoogleMap googleMap) {
         mGoogleMap = googleMap;
-        Toast.makeText(getContext(), "onMapReady", Toast.LENGTH_SHORT).show();
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         mGoogleMap.setMyLocationEnabled(true);
         mGoogleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style));
         zoomOnLocation(getMyLocation());
+
+        SearchValidationData svd = new SearchValidationData();
+        svd.searchMethod = SearchValidationData.SearchMethod.CLOSER;
+        svd.viewType = MainActivity.MainViewTypes.MAP;
+        searchViewModel.setSearchValidationDataViewMutable(svd);
     }
 
     @Override

@@ -9,8 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.openclassroom.go4lunch.model.placedetailsapi.Result;
+import com.openclassroom.go4lunch.model.SearchValidationData;
+import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
+import com.openclassroom.go4lunch.model.placedetailsapi.DetailsResult;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
+import com.openclassroom.go4lunch.view.activity.MainActivity;
 import com.openclassroom.go4lunch.view.recyclerview.RestaurantsListAdapter;
 import com.openclassroom.go4lunch.viewmodel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentListviewBinding;
@@ -32,13 +35,18 @@ public class RestaurantsListFragment extends FragmentEX {
         mBinding.restaurantList.setAdapter(mRestaurantsListAdapter);
 
         searchViewModel.getAddRestaurantToList().addObserver((o, arg) -> {
-            if (arg instanceof Result)
-                mRestaurantsListAdapter.addToRestaurantList((Result) arg);
+            if (arg instanceof NearbySearchResult)
+                mRestaurantsListAdapter.addToRestaurantList((NearbySearchResult) arg);
         });
 
         searchViewModel.getClearRestaurantList().addObserver((o, arg) -> {
             mRestaurantsListAdapter.clearRestaurantList();
         });
+
+        SearchValidationData svd = new SearchValidationData();
+        svd.searchMethod = SearchValidationData.SearchMethod.CLOSER;
+        svd.viewType = MainActivity.MainViewTypes.LIST;
+        searchViewModel.setSearchValidationDataViewMutable(svd);
 
         return mBinding.getRoot();
     }

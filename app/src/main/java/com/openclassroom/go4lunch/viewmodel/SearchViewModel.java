@@ -16,7 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.openclassroom.go4lunch.model.SearchValidationData;
 import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResponse;
-import com.openclassroom.go4lunch.model.nearbysearchapi.Result;
+import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
 import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
@@ -127,10 +127,15 @@ public class SearchViewModel extends ViewModelEX {
         mZoomMapObservable.notifyObservers(loc);
 
         // Get Nearby Search Respond using the Details as location
-        Call<NearbySearchResponse> callNearbySearch = data.searchMethod == SearchValidationData.SearchMethod.PREDICTION ?
-                getRepository().getService().getNearbyByType(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant") :
-                getRepository().getService().getNearbyByKeyword(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.searchString);
+        Call<NearbySearchResponse> callNearbySearch = null;
 
+        if (data.searchMethod == SearchValidationData.SearchMethod.PREDICTION || data.searchMethod == SearchValidationData.SearchMethod.CLOSER) {
+            callNearbySearch = getRepository().getService().getNearbyByType(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant");
+        } else if (data.searchMethod == SearchValidationData.SearchMethod.SEARCH_STRING) {
+            callNearbySearch = getRepository().getService().getNearbyByKeyword(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.searchString);
+        }
+
+        assert callNearbySearch != null;
         callNearbySearch.enqueue(new Callback<NearbySearchResponse>() {
             @Override
             public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
@@ -147,7 +152,7 @@ public class SearchViewModel extends ViewModelEX {
     private void OnNearbySearchResponseFromDetailResponse(@NotNull Response<NearbySearchResponse> response) {
         assert response.body() != null;
         mClearRestaurantList.notifyObservers();
-        for (Result result : response.body().getResults()) {
+        for (NearbySearchResult result : response.body().getResults()) {
             if (response.body() != null) {
                 Double lat = result.getGeometry().getLocation().getLat();
                 Double lng = result.getGeometry().getLocation().getLng();

@@ -8,7 +8,8 @@ public class SearchValidationData {
 
     public enum SearchMethod {
         PREDICTION,
-        SEARCH_STRING
+        SEARCH_STRING,
+        CLOSER
     }
 
     public Prediction prediction = null;
