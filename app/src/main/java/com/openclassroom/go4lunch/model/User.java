@@ -4,23 +4,25 @@ import java.util.List;
 
 public class User {
 
-    private int mUid;
+    private String mUid;
     private String mDisplayName;
     private List<String> mLikeList;
     private String mAvatarUrl;
+    private String mEatingAt;
 
-    public User(int id, String displayName, List<String> likeList, String avatarUrl) {
+    public User(String id, String displayName, List<String> likeList, String avatarUrl, String eatingAt) {
         mUid = id;
         mDisplayName = displayName;
         mLikeList = likeList;
         mAvatarUrl = avatarUrl;
+        mEatingAt = eatingAt;
     }
 
-    public int getUid() {
+    public String getUid() {
         return mUid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(String uid) {
         this.mUid = uid;
     }
 
@@ -46,5 +48,13 @@ public class User {
 
     public void setAvatarUrl(String avatarUrl) {
         mAvatarUrl = avatarUrl;
+    }
+
+    public String getEatingAt() {
+        return mEatingAt;
+    }
+
+    public void setEatingAt(String eatingAt) {
+        mEatingAt = eatingAt;
     }
 }

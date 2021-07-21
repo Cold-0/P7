@@ -20,4 +20,6 @@
     <string name="menu_map_view">Vue Carte</string>
     <string name="menu_list_view">Vue Liste</string>
     <string name="menu_workmates">Collègues</string>
+    <string name="didnt_decided_yet">" n'a pas encore choisis"</string>
+    <string name="is_eating_at">" mange a"</string>
 </resources>

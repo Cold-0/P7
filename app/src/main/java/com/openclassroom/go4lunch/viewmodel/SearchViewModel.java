@@ -183,5 +183,12 @@ public class SearchViewModel extends ViewModelEX {
         return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
     }
 
-
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        mClearMapObservable.deleteObservers();
+        mAddRestaurantToList.deleteObservers();
+        mClearRestaurantList.deleteObservers();
+        mZoomMapObservable.deleteObservers();
+    }
 }

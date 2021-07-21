@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassroom.go4lunch.model.User;
@@ -51,7 +52,19 @@ public class Repository {
                         userList.clear();
 
                         for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                            userList.add(new User(1, "Bob", new ArrayList<>(), "https://i.pravatar.cc/300"));
+                            Object likes = document.get("likes");
+                            List<String> castedLikes = null;
+                            if (likes instanceof List)
+                                castedLikes = (List<String>) likes;
+                            userList.add(
+                                    new User(
+                                            document.getId(),
+                                            (String) document.get("name"),
+                                            castedLikes,
+                                            (String) document.get("avatarUrl"),
+                                            (String) document.get("eatingAt")
+                                    )
+                            );
                         }
 
                         mUserMutableLiveData.setValue(userList);
@@ -60,6 +73,10 @@ public class Repository {
                     }
                 });
 
+    }
+
+    public FirebaseUser getCurrentUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
     }
 
     public MutableLiveData<List<User>> getUsersListLiveData() {

@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.openclassroom.go4lunch.databinding.ItemUserBinding;
 
 class ParticipantListViewHolder extends RecyclerView.ViewHolder {
-    private final ItemUserBinding mBinding;
+    public final ItemUserBinding mBinding;
 
     ParticipantListViewHolder(@NonNull ItemUserBinding binding) {
         super(binding.getRoot());

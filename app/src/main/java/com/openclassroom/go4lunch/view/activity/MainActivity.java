@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.database.MatrixCursor;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -34,13 +35,8 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -56,6 +52,7 @@ import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.viewmodel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.ActivityMainBinding;
 import com.openclassroom.go4lunch.databinding.HeaderNavViewBinding;
+import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -83,8 +80,11 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
     private HeaderNavViewBinding mHeaderNavViewBinding;
 
     private SearchViewModel mSearchViewModel;
+    private UserInfoViewModel mUserInfoViewModel;
 
     private ActivityResultLauncher<Intent> mSignInLauncher;
+
+    private User mCurrentUser;
 
     public enum MainViewTypes {
         MAP,
@@ -100,32 +100,21 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
+        mSearchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
+        mUserInfoViewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);
+        mUserInfoViewModel.getCurrentUser().observe(this, user -> {
+            mCurrentUser = user;
+        });
+
         configureToolBar();
         configureBottomNavBar();
         configureDrawerLayout();
         configureNavigationView();
         configureAuth();
-
-        mSearchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
-
-        getRepository().getUsersListLiveData().observe(this, v -> {
-            Log.w(TAG, "onCreate: getUsersListLiveData notified");
-
-            for (User user : v) {
-                Log.e(TAG, "UID : " + user.getUid());
-                Log.e(TAG, "Avatar URL : " + user.getAvatarUrl());
-                Log.e(TAG, "Display name : " + user.getDisplayName());
-                Log.e(TAG, "Like list : " + user.getLikeList());
-            }
-
-        });
-
-        getRepository().updateUserList();
-
-        getLocationPermission();
+        configureLocationPermission();
     }
 
-    public Location getLastKnownCoarseLocation() {
+    private Location getLastKnownCoarseLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         try {
             // Walk through each enabled location provider and return the first found, last-known location
@@ -260,6 +249,12 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
         return true;
     }
 
+    public void openDetailRestaurant(String placeID) {
+        Intent sendStuff = new Intent(this, RestaurantDetailActivity.class);
+        sendStuff.putExtra("placeID", placeID);
+        startActivity(sendStuff);
+    }
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -305,6 +300,8 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
                         .into(mHeaderNavViewBinding.headerUserAvatar);
             }
         }
+
+        mUserInfoViewModel.updateUserList();
     }
 
     private void SignIn() {
@@ -346,6 +343,7 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
             Snackbar.make(mBinding.getRoot(), R.string.canceled_sign_in, Snackbar.LENGTH_SHORT).show();
         } else if (result.getResultCode() == RESULT_OK) {
             // Sign in Success
+            mUserInfoViewModel.updateUserList();
             Snackbar.make(mBinding.getRoot(), getString(R.string.signed_in_as_user, Objects.requireNonNull(getCurrentUser()).getDisplayName()), Snackbar.LENGTH_SHORT).show();
         } else {
             // Sign in failed
@@ -369,7 +367,13 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
 
                     userToUpdate.put("name", user.getDisplayName());
                     userToUpdate.put("email", user.getEmail());
-                    userToUpdate.put("avatarUrl", Objects.requireNonNull(user.getPhotoUrl()).toString());
+                    Uri photoUrl = user.getPhotoUrl();
+                    String photoUrlString;
+                    if (photoUrl == null)
+                        photoUrlString = "";
+                    else
+                        photoUrlString = photoUrl.toString();
+                    userToUpdate.put("avatarUrl", photoUrlString);
 
                     if (!Objects.requireNonNull(document).exists()) {
                         userToUpdate.put("likes", new ArrayList<String>());
@@ -437,8 +441,6 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
 
     private void configureNavigationView() {
         mHeaderNavViewBinding = HeaderNavViewBinding.bind(mBinding.leftMenuNav.getHeaderView(0));
-        //HeaderNavViewBinding.inflate(getLayoutInflater(), );
-        //mBinding.activityMainNavView.addHeaderView(mHeaderNavViewBinding.getRoot());
         mBinding.leftMenuNav.setNavigationItemSelectedListener(this);
     }
 
@@ -450,8 +452,12 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
 
         switch (id) {
             case R.id.menu_nav_your_lunch:
-                Intent restaurantIntent = new Intent(getApplicationContext(), RestaurantDetailActivity.class);
-                startActivity(restaurantIntent);
+                String eatingAt = mCurrentUser.getEatingAt();
+                if (eatingAt.equals("")) {
+                    Snackbar.make(mBinding.getRoot(), "You haven't chose a restaurant yet", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    openDetailRestaurant(eatingAt);
+                }
                 break;
             case R.id.menu_nav_settings:
                 Intent settingIntent = new Intent(getApplicationContext(), SettingsActivity.class);
@@ -470,7 +476,7 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
         return true;
     }
 
-    private void getLocationPermission() {
+    private void configureLocationPermission() {
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
         if (!EasyPermissions.hasPermissions(this, perms)) {
             // Do not have permissions, request them now

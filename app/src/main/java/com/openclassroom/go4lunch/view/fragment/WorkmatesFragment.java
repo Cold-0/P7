@@ -30,7 +30,7 @@ public class WorkmatesFragment extends FragmentEX {
         WorkmatesViewModel workmatesListViewModel = new ViewModelProvider(requireActivity()).get(WorkmatesViewModel.class);
         mBinding = FragmentWorkmatesBinding.inflate(inflater, container, false);
 
-        WorkmatesListAdapter listViewAdapter = new WorkmatesListAdapter(workmatesListViewModel.getUserList());
+        WorkmatesListAdapter listViewAdapter = new WorkmatesListAdapter(requireActivity(), workmatesListViewModel.getUserList());
         mBinding.workmatesList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         mBinding.workmatesList.setAdapter(listViewAdapter);
 
