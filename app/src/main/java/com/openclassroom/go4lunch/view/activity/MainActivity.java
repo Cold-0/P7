@@ -455,7 +455,7 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
         switch (id) {
             case R.id.menu_nav_your_lunch:
                 String eatingAt = mCurrentUser.getEatingAt();
-                if (eatingAt.equals("")) {
+                if (eatingAt == null || eatingAt.equals("")) {
                     Snackbar.make(mBinding.getRoot(), "You haven't chose a restaurant yet", Snackbar.LENGTH_SHORT).show();
                 } else {
                     openDetailRestaurant(eatingAt);

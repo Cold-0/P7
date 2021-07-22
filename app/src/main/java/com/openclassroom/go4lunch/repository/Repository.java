@@ -13,6 +13,7 @@ import com.openclassroom.go4lunch.model.data.UserListUpdateData;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitInstance;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitService;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
+import com.openclassroom.go4lunch.viewmodel.listener.OnToggledLike;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,44 @@ public class Repository {
     }
 
     private final ObservableEX mOnUpdateUsersList;
+
+    public void toggleLike(String placeID, OnToggledLike toggledLike) {
+        mFirebaseFirestore.collection("users")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        User user = mCurrentUser.getValue();
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            if (document.getId().equals(user.getUid())) {
+                                List<String> likesList = (List<String>) document.get("likes");
+                                boolean wasIn = false;
+                                for (String like : likesList) {
+                                    if (like.equals(placeID)) {
+                                        likesList.remove(like);
+                                        wasIn = true;
+                                        break;
+                                    }
+                                }
+                                if (!wasIn) {
+                                    likesList.add(placeID);
+                                }
+
+                                boolean finalWasIn = wasIn;
+                                mFirebaseFirestore.collection("users")
+                                        .document(user.getUid())
+                                        .update(
+                                                "likes", likesList
+                                        )
+                                        .addOnSuccessListener(aVoid -> {
+                                            toggledLike.onToggledLike(!finalWasIn);
+                                        });
+                            }
+                        }
+                    } else {
+                        Log.w(TAG, "Error getting documents.", task.getException());
+                    }
+                });
+    }
 
     public void updateUserList() {
         mFirebaseFirestore.collection("users")

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.view.recyclerview.ParticipantListAdapter;
 import com.openclassroom.go4lunch.databinding.ActivityRestaurantDetailBinding;
 import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
+import com.openclassroom.go4lunch.viewmodel.listener.OnToggledLike;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -54,6 +56,13 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         Intent startingIntent = getIntent();
         mCurrentPlaceID = startingIntent.getStringExtra("placeID");
 
+        updateAppearance();
+
+        configureRecyclerView();
+        configureButtons();
+    }
+
+    private void updateAppearance() {
         Call<PlaceDetailsResponse> callDetails = getRepository().getRetrofitService().getDetails(mCurrentPlaceID);
         callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
             @Override
@@ -73,6 +82,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
                 }
 
                 mUserInfoViewModel.updateUserList((currentUser, userList) -> {
+                    UpdateLike(currentUser);
+
                     if (currentUser.getEatingAt() != null && !currentUser.getEatingAt().equals("") && currentUser.getEatingAt().equals(mCurrentPlaceID)) {
                         mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
                     } else {
@@ -81,7 +92,10 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
                     mParticipantListAdapter.clearUserList();
                     for (User user : userList) {
-                        if (user.getEatingAt().equals(mCurrentPlaceID) && !user.getUid().equals(Objects.requireNonNull(currentUser).getUid()))
+                        if (
+                                user.getEatingAt().equals(mCurrentPlaceID) &&
+                                        !user.getUid().equals(Objects.requireNonNull(currentUser).getUid())
+                        )
                             mParticipantListAdapter.addUserList(user);
                     }
                 });
@@ -93,8 +107,21 @@ public class RestaurantDetailActivity extends AppCompatActivity {
             }
         });
 
-        configureRecyclerView();
-        configureButtons();
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void UpdateLike(User currentUser) {
+        boolean isLiked = false;
+        for (String like : currentUser.getLikeList()) {
+            if (like.equals(mCurrentPlaceID)) {
+                isLiked = true;
+                break;
+            }
+        }
+        if (isLiked) {
+            mBinding.likeStar.setSupportImageTintList(ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.orange_500)));
+        } else
+            mBinding.likeStar.setSupportImageTintList(ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.lightgrey)));
     }
 
     private void configureButtons() {
@@ -109,7 +136,11 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         });
 
         mBinding.layoutClickableLike.setOnClickListener(v -> {
-            FirebaseFirestore.getInstance().collection("users").document();
+            mUserInfoViewModel.toggleLike(mCurrentPlaceID, result -> {
+                mUserInfoViewModel.updateUserList((currentUser, userList) -> {
+                    UpdateLike(currentUser);
+                });
+            });
         });
 
         mBinding.layoutClickableWebsite.setOnClickListener(v -> {
