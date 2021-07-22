@@ -17,23 +17,23 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseUser;
-import com.openclassroom.go4lunch.model.SearchValidationData;
+import com.openclassroom.go4lunch.model.data.RestaurantInfoData;
+import com.openclassroom.go4lunch.model.data.SearchValidationData;
 import com.openclassroom.go4lunch.model.User;
-import com.openclassroom.go4lunch.model.UserListUpdateState;
+import com.openclassroom.go4lunch.model.data.UserListUpdateData;
 import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResponse;
 import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
 import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
 import com.openclassroom.go4lunch.utils.ex.ViewModelEX;
-import com.openclassroom.go4lunch.viewmodel.Listener.OnUserListUpdateListener;
+import com.openclassroom.go4lunch.viewmodel.listener.OnUserListUpdateListener;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Observable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,7 +65,7 @@ public class SearchViewModel extends ViewModelEX {
     public void updateUserList(OnUserListUpdateListener listener) {
         getRepository().updateUserList();
         getRepository().getOnUpdateUsersList().addObserver((o, arg) -> {
-            UserListUpdateState userListUpdateState = (UserListUpdateState) arg;
+            UserListUpdateData userListUpdateState = (UserListUpdateData) arg;
             listener.onUserListUpdated(userListUpdateState.currentUser, userListUpdateState.userList);
         });
     }
@@ -176,9 +176,9 @@ public class SearchViewModel extends ViewModelEX {
         Call<NearbySearchResponse> callNearbySearch = null;
 
         if (data.searchMethod == SearchValidationData.SearchMethod.PREDICTION || data.searchMethod == SearchValidationData.SearchMethod.CLOSER) {
-            callNearbySearch = getRepository().getRetrofitService().getNearbyByType(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant");
+            callNearbySearch = getRepository().getRetrofitService().getNearbyByType(5000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant");
         } else if (data.searchMethod == SearchValidationData.SearchMethod.SEARCH_STRING) {
-            callNearbySearch = getRepository().getRetrofitService().getNearbyByKeyword(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.searchString);
+            callNearbySearch = getRepository().getRetrofitService().getNearbyByKeyword(5000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.searchString);
         }
 
         assert callNearbySearch != null;
@@ -208,13 +208,13 @@ public class SearchViewModel extends ViewModelEX {
 
                 for (User user : userList) {
                     if (result.getPlaceId().equals(user.getEatingAt())) {
-                        hue = BitmapDescriptorFactory.HUE_BLUE;
+                        hue = BitmapDescriptorFactory.HUE_GREEN;
                         break;
                     }
                 }
 
                 if (result.getPlaceId().equals(currentUser.getEatingAt()))
-                    hue = BitmapDescriptorFactory.HUE_GREEN;
+                    hue = BitmapDescriptorFactory.HUE_AZURE;
 
                 // Add marker of user's position
                 MarkerOptions userIndicator = new MarkerOptions()
@@ -229,7 +229,10 @@ public class SearchViewModel extends ViewModelEX {
                 state.placeID = result.getPlaceId();
                 mAddMapMarker.notifyObservers(state);
 
-                mAddRestaurantToList.notifyObservers(result);
+                RestaurantInfoData restaurantInfoState = new RestaurantInfoData();
+                restaurantInfoState.result = result;
+                restaurantInfoState.userList = userList;
+                mAddRestaurantToList.notifyObservers(restaurantInfoState);
             }
         }
     }

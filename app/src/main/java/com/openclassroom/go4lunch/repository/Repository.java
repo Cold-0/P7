@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassroom.go4lunch.model.User;
-import com.openclassroom.go4lunch.model.UserListUpdateState;
+import com.openclassroom.go4lunch.model.data.UserListUpdateData;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitInstance;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitService;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
@@ -75,7 +75,7 @@ public class Repository {
                         }
 
                         mUserMutableLiveData.setValue(userList);
-                        UserListUpdateState userListUpdateState = new UserListUpdateState();
+                        UserListUpdateData userListUpdateState = new UserListUpdateData();
                         userListUpdateState.currentUser = mCurrentUser.getValue();
                         userListUpdateState.userList = mUserMutableLiveData.getValue();
                         mOnUpdateUsersList.notifyObservers(userListUpdateState);

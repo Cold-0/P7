@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.model;
+package com.openclassroom.go4lunch.model.data;
 
 import com.openclassroom.go4lunch.model.autocompleteapi.Prediction;
 

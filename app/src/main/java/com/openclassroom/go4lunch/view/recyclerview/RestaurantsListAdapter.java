@@ -22,6 +22,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassroom.go4lunch.BuildConfig;
+import com.openclassroom.go4lunch.model.User;
+import com.openclassroom.go4lunch.model.data.RestaurantInfoData;
 import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
 import com.openclassroom.go4lunch.model.placedetailsapi.DetailsResult;
 import com.openclassroom.go4lunch.R;
@@ -43,10 +45,10 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
     private final FragmentActivity mActivity;
 
     @NonNull
-    private final LiveData<List<NearbySearchResult>> mRestaurantList;
+    private final LiveData<List<RestaurantInfoData>> mRestaurantList;
 
     @NonNull
-    public LiveData<List<NearbySearchResult>> getRestaurantList() {
+    public LiveData<List<RestaurantInfoData>> getRestaurantList() {
         return mRestaurantList;
     }
 
@@ -56,13 +58,13 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
         notifyDataSetChanged();
     }
 
-    public void addToRestaurantList(NearbySearchResult restaurant) {
+    public void addToRestaurantList(RestaurantInfoData restaurant) {
         Objects.requireNonNull(mRestaurantList.getValue()).add(restaurant);
         notifyItemInserted(mRestaurantList.getValue().size() - 1);
         Log.w(TAG, "addToRestaurantList");
     }
 
-    public RestaurantsListAdapter(@NonNull FragmentActivity activity, @NonNull List<NearbySearchResult> restaurantList) {
+    public RestaurantsListAdapter(@NonNull FragmentActivity activity, @NonNull List<RestaurantInfoData> restaurantList) {
         mActivity = activity;
         mRestaurantList = new MutableLiveData<>(restaurantList);
     }
@@ -78,11 +80,12 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull @NotNull RestaurantsListViewHolder holder, int position) {
-        NearbySearchResult restaurant = Objects.requireNonNull(mRestaurantList.getValue()).get(position);
+        NearbySearchResult restaurant = Objects.requireNonNull(mRestaurantList.getValue()).get(position).result;
+        List<User> userList = Objects.requireNonNull(mRestaurantList.getValue()).get(position).userList;
+
         Location loc = getMyLocation();
 
         holder.mBinding.restaurantName.setText(restaurant.getName());
-        holder.mBinding.workmatesNumber.setText("(5)");
 
         Location to = new Location("");
         to.setLatitude(restaurant.getGeometry().getLocation().getLat());
@@ -100,14 +103,31 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
             mActivity.startActivity(sendStuff);
         });
 
+        holder.mBinding.workmatesIcon.setVisibility(View.INVISIBLE);
+        holder.mBinding.workmatesNumber.setVisibility(View.INVISIBLE);
+
+        int numberEatingAt = 0;
+
+        for (User user : userList) {
+            if (user.getEatingAt().equals(restaurant.getPlaceId())) {
+                numberEatingAt++;
+            }
+        }
+
+        if (numberEatingAt > 0) {
+            holder.mBinding.workmatesIcon.setVisibility(View.VISIBLE);
+            holder.mBinding.workmatesNumber.setVisibility(View.VISIBLE);
+            holder.mBinding.workmatesNumber.setText("(" + numberEatingAt + ")");
+        }
+
         if (restaurant.getOpeningHours() != null && restaurant.getOpeningHours().getOpenNow()) {
             holder.mBinding.openHours.setText("Currently Open");
+
             holder.mBinding.openHours.setTextColor(mActivity.getResources().getColor(R.color.green));
         } else {
             holder.mBinding.openHours.setText("Currently Closed");
             holder.mBinding.openHours.setTextColor(mActivity.getResources().getColor(R.color.red));
         }
-
 
         if (restaurant.getPhotos() != null) {
             String photo_reference = restaurant.getPhotos().get(0).getPhotoReference();

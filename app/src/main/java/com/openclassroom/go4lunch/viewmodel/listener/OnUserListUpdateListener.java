@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.viewmodel.Listener;
+package com.openclassroom.go4lunch.viewmodel.listener;
 
 import com.openclassroom.go4lunch.model.User;
 

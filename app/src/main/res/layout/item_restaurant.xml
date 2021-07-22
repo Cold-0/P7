@@ -56,7 +56,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="French - 12 rue du Faubourg Poissonière"
-        app:layout_constraintEnd_toStartOf="@+id/appCompatImageView"
+        app:layout_constraintEnd_toStartOf="@+id/workmatesIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/restaurantName" />
 
@@ -92,7 +92,7 @@
         app:layout_constraintTop_toBottomOf="@+id/distance" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/appCompatImageView"
+        android:id="@+id/workmatesIcon"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_marginTop="8dp"

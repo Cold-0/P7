@@ -44,7 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.autocompleteapi.AutocompleteResponse;
 import com.openclassroom.go4lunch.model.autocompleteapi.Prediction;
-import com.openclassroom.go4lunch.model.SearchValidationData;
+import com.openclassroom.go4lunch.model.data.SearchValidationData;
 import com.openclassroom.go4lunch.repository.Repository;
 import com.openclassroom.go4lunch.utils.transform.CircleCropTransform;
 import com.openclassroom.go4lunch.utils.ex.ActivityEX;

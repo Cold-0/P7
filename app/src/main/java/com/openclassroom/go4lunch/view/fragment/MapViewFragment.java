@@ -24,7 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.openclassroom.go4lunch.R;
-import com.openclassroom.go4lunch.model.SearchValidationData;
+import com.openclassroom.go4lunch.model.data.SearchValidationData;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
 import com.openclassroom.go4lunch.view.activity.MainActivity;
 import com.openclassroom.go4lunch.viewmodel.SearchViewModel;

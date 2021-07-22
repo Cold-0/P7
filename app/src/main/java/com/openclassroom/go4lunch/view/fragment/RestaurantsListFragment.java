@@ -9,14 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.openclassroom.go4lunch.model.SearchValidationData;
+import com.openclassroom.go4lunch.model.data.RestaurantInfoData;
+import com.openclassroom.go4lunch.model.data.SearchValidationData;
 import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
-import com.openclassroom.go4lunch.model.placedetailsapi.DetailsResult;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
 import com.openclassroom.go4lunch.view.activity.MainActivity;
 import com.openclassroom.go4lunch.view.recyclerview.RestaurantsListAdapter;
 import com.openclassroom.go4lunch.viewmodel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentListviewBinding;
+import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
 
 import java.util.ArrayList;
 
@@ -24,9 +25,10 @@ public class RestaurantsListFragment extends FragmentEX {
 
     private FragmentListviewBinding mBinding;
     private RestaurantsListAdapter mRestaurantsListAdapter;
+    private UserInfoViewModel mUserInfoViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        mUserInfoViewModel = new ViewModelProvider(requireActivity()).get(UserInfoViewModel.class);
         SearchViewModel searchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
         mBinding = FragmentListviewBinding.inflate(inflater, container, false);
 
@@ -35,8 +37,8 @@ public class RestaurantsListFragment extends FragmentEX {
         mBinding.restaurantList.setAdapter(mRestaurantsListAdapter);
 
         searchViewModel.getAddRestaurantToList().addObserver((o, arg) -> {
-            if (arg instanceof NearbySearchResult)
-                mRestaurantsListAdapter.addToRestaurantList((NearbySearchResult) arg);
+            if (arg instanceof RestaurantInfoData)
+                mRestaurantsListAdapter.addToRestaurantList((RestaurantInfoData) arg);
         });
 
         searchViewModel.getClearRestaurantList().addObserver((o, arg) -> {
