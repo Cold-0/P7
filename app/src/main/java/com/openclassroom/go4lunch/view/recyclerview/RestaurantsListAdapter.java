@@ -93,7 +93,7 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
 
         holder.mBinding.distance.setText((int) (loc.distanceTo(to)) + "m");
         if (restaurant.getRating() != null)
-            holder.mBinding.ratingBar.setRating((float) restaurant.getRating().doubleValue());
+            holder.mBinding.ratingBar.setRating(restaurant.getRating().floatValue() / 5.0f * 3.0f);
 
         holder.mBinding.typeAndAddress.setText(restaurant.getVicinity());
 

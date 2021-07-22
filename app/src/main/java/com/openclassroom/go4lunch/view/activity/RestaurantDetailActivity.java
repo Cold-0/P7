@@ -118,10 +118,6 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void updateLikeButton() {
-
-    }
-
     private void configureRecyclerView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
