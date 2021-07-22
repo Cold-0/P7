@@ -36,6 +36,10 @@ public class UserInfoViewModel extends ViewModelEX {
         getRepository().toggleLike(placeID, toggledLike);
     }
 
+    public void toggleEatingAt(String eatingAt, String eatingAtName, OnToggled toggled) {
+        getRepository().toggleEatingAt(eatingAt, eatingAtName, toggled);
+    }
+
     public void updateUserList(OnUserListUpdateListener listener) {
         getRepository().updateUserList();
         getRepository().getOnUpdateUsersList().addObserver((o, arg) -> {

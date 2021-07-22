@@ -49,6 +49,46 @@ public class Repository {
 
     private final ObservableEX mOnUpdateUsersList;
 
+    public void toggleEatingAt(String placeID, String placeName, OnToggled toggledEatingAt) {
+        mFirebaseFirestore.collection("users")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        User user = mCurrentUser.getValue();
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            if (document.getId().equals(user.getUid())) {
+                                String eatingAt = (String) document.get("eatingAt");
+                                String eatingAtName = (String) document.get("eatingAtName");
+
+                                boolean isIn = false;
+                                if (eatingAt.equals(placeID)) {
+                                    isIn = true;
+                                }
+                                if (isIn) {
+                                    eatingAt = "";
+                                    eatingAtName = "";
+                                } else {
+                                    eatingAt = placeID;
+                                    eatingAtName = placeName;
+                                }
+                                boolean finalWasIn = isIn;
+                                mFirebaseFirestore.collection("users")
+                                        .document(user.getUid())
+                                        .update(
+                                                "eatingAt", eatingAt,
+                                                "eatingAtName", eatingAtName
+                                        )
+                                        .addOnSuccessListener(aVoid -> {
+                                            toggledEatingAt.onToggled(!finalWasIn);
+                                        });
+                            }
+                        }
+                    } else {
+                        Log.w(TAG, "Error getting documents.", task.getException());
+                    }
+                });
+    }
+
     public void toggleLike(String placeID, OnToggled toggledLike) {
         mFirebaseFirestore.collection("users")
                 .get()

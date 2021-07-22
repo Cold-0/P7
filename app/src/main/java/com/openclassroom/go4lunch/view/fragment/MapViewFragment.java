@@ -147,6 +147,10 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
     @Override
     public void onResume() {
         super.onResume();
+        SearchValidationData svd = new SearchValidationData();
+        svd.searchMethod = SearchValidationData.SearchMethod.CLOSER;
+        svd.viewType = MainActivity.MainViewTypes.MAP;
+        mSearchViewModel.setSearchValidationDataViewMutable(svd);
         mBinding.mapView.onResume();
     }
 

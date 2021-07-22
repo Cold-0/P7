@@ -80,13 +80,9 @@ public class RestaurantDetailActivity extends AppCompatActivity {
                 }
 
                 mUserInfoViewModel.updateUserList((currentUser, userList) -> {
-                    UpdateLike(currentUser);
+                    updateLike(currentUser);
 
-                    if (currentUser.getEatingAt() != null && !currentUser.getEatingAt().equals("") && currentUser.getEatingAt().equals(mCurrentPlaceID)) {
-                        mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
-                    } else {
-                        mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.lightgrey)));
-                    }
+                    updateFab(currentUser);
 
                     mParticipantListAdapter.clearUserList();
                     for (User user : userList) {
@@ -107,8 +103,16 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
     }
 
+    private void updateFab(User currentUser) {
+        if (currentUser.getEatingAt() != null && !currentUser.getEatingAt().equals("") && currentUser.getEatingAt().equals(mCurrentPlaceID)) {
+            mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
+        } else {
+            mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.lightgrey)));
+        }
+    }
+
     @SuppressLint("RestrictedApi")
-    private void UpdateLike(User currentUser) {
+    private void updateLike(User currentUser) {
         boolean isLiked = false;
         for (String like : currentUser.getLikeList()) {
             if (like.equals(mCurrentPlaceID)) {
@@ -127,6 +131,14 @@ public class RestaurantDetailActivity extends AppCompatActivity {
             finish();
         });
 
+        mBinding.fabEatingAt.setOnClickListener(v -> {
+            mUserInfoViewModel.toggleEatingAt(mCurrentPlaceID, mDetailsResult.getName(), result -> {
+                mUserInfoViewModel.updateUserList((currentUser, userList) -> {
+                    updateFab(currentUser);
+                });
+            });
+        });
+
         mBinding.layoutClickableCall.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse("tel:" + mDetailsResult.getFormattedPhoneNumber()));
@@ -136,7 +148,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         mBinding.layoutClickableLike.setOnClickListener(v -> {
             mUserInfoViewModel.toggleLike(mCurrentPlaceID, result -> {
                 mUserInfoViewModel.updateUserList((currentUser, userList) -> {
-                    UpdateLike(currentUser);
+                    updateLike(currentUser);
                 });
             });
         });
