@@ -13,7 +13,7 @@ import com.openclassroom.go4lunch.model.data.UserListUpdateData;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitInstance;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitService;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
-import com.openclassroom.go4lunch.viewmodel.listener.OnToggledLike;
+import com.openclassroom.go4lunch.viewmodel.listener.OnToggled;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class Repository {
 
     private final ObservableEX mOnUpdateUsersList;
 
-    public void toggleLike(String placeID, OnToggledLike toggledLike) {
+    public void toggleLike(String placeID, OnToggled toggledLike) {
         mFirebaseFirestore.collection("users")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -77,7 +77,7 @@ public class Repository {
                                                 "likes", likesList
                                         )
                                         .addOnSuccessListener(aVoid -> {
-                                            toggledLike.onToggledLike(!finalWasIn);
+                                            toggledLike.onToggled(!finalWasIn);
                                         });
                             }
                         }

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.firebase.auth.FirebaseUser;
-import com.openclassroom.go4lunch.viewmodel.listener.OnToggledLike;
+import com.openclassroom.go4lunch.viewmodel.listener.OnToggled;
 import com.openclassroom.go4lunch.viewmodel.listener.OnUserListUpdateListener;
 
 public class UserInfoViewModel extends ViewModelEX {
@@ -32,7 +32,7 @@ public class UserInfoViewModel extends ViewModelEX {
         getRepository().updateUserList();
     }
 
-    public void toggleLike(String placeID, OnToggledLike toggledLike) {
+    public void toggleLike(String placeID, OnToggled toggledLike) {
         getRepository().toggleLike(placeID, toggledLike);
     }
 
