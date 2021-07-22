@@ -32,7 +32,7 @@ import retrofit2.Response;
 
 public class SearchViewModel extends ViewModelEX {
 
-    public class MarkerState {
+    public static class MarkerState {
         public MarkerOptions markerOptions;
         public String placeID;
     }

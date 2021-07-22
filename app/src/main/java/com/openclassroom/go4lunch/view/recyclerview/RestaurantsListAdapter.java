@@ -2,13 +2,16 @@ package com.openclassroom.go4lunch.view.recyclerview;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -23,6 +26,7 @@ import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
 import com.openclassroom.go4lunch.model.placedetailsapi.DetailsResult;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ItemRestaurantBinding;
+import com.openclassroom.go4lunch.view.activity.RestaurantDetailActivity;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -89,6 +93,21 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
             holder.mBinding.ratingBar.setRating((float) restaurant.getRating().doubleValue());
 
         holder.mBinding.typeAndAddress.setText(restaurant.getVicinity());
+
+        holder.mBinding.getRoot().setOnClickListener(v -> {
+            Intent sendStuff = new Intent(mActivity, RestaurantDetailActivity.class);
+            sendStuff.putExtra("placeID", restaurant.getPlaceId());
+            mActivity.startActivity(sendStuff);
+        });
+
+        if (restaurant.getOpeningHours() != null && restaurant.getOpeningHours().getOpenNow()) {
+            holder.mBinding.openHours.setText("Currently Open");
+            holder.mBinding.openHours.setTextColor(mActivity.getResources().getColor(R.color.green));
+        } else {
+            holder.mBinding.openHours.setText("Currently Closed");
+            holder.mBinding.openHours.setTextColor(mActivity.getResources().getColor(R.color.red));
+        }
+
 
         if (restaurant.getPhotos() != null) {
             String photo_reference = restaurant.getPhotos().get(0).getPhotoReference();
