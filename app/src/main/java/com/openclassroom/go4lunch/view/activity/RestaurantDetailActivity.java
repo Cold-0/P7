@@ -19,6 +19,7 @@ import com.openclassroom.go4lunch.model.placedetailsapi.DetailsResult;
 import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.view.recyclerview.ParticipantListAdapter;
 import com.openclassroom.go4lunch.databinding.ActivityRestaurantDetailBinding;
+import com.openclassroom.go4lunch.viewmodel.Listener.OnUserListUpdateListener;
 import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
@@ -26,6 +27,7 @@ import com.squareup.picasso.Picasso;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -72,10 +74,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
                     }
                 }
 
-                mUserInfoViewModel.updateUserList(userList -> {
-                    User currentUser = mUserInfoViewModel.getCurrentUser().getValue();
-
-                    if (!currentUser.getEatingAt().equals("") && currentUser.getEatingAt().equals(mCurrentPlaceID)) {
+                mUserInfoViewModel.updateUserList((currentUser, userList) -> {
+                    if (currentUser.getEatingAt() != null && !currentUser.getEatingAt().equals("") && currentUser.getEatingAt().equals(mCurrentPlaceID)) {
                         mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
                     } else {
                         mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.lightgrey)));

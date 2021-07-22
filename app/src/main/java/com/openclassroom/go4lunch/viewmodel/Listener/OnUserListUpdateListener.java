@@ -5,5 +5,5 @@ import com.openclassroom.go4lunch.model.User;
 import java.util.List;
 
 public interface OnUserListUpdateListener {
-    void onUserListUpdated(List<User> userList);
+    void onUserListUpdated(User currentUser, List<User> userList);
 }

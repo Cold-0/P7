@@ -11,20 +11,29 @@ import android.location.LocationManager;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseUser;
 import com.openclassroom.go4lunch.model.SearchValidationData;
+import com.openclassroom.go4lunch.model.User;
+import com.openclassroom.go4lunch.model.UserListUpdateState;
 import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResponse;
 import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
 import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
 import com.openclassroom.go4lunch.utils.ex.ViewModelEX;
+import com.openclassroom.go4lunch.viewmodel.Listener.OnUserListUpdateListener;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Observable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,6 +53,22 @@ public class SearchViewModel extends ViewModelEX {
     private final ObservableEX mAddRestaurantToList = new ObservableEX();
     private final ObservableEX mClearRestaurantList = new ObservableEX();
     private final ObservableEX mAddMapMarker = new ObservableEX();
+
+    MutableLiveData<User> currentUser;
+    MutableLiveData<List<User>> mUserList;
+    Observer<List<User>> mUserListObserver;
+
+    public MutableLiveData<User> getCurrentUser() {
+        return currentUser;
+    }
+
+    public void updateUserList(OnUserListUpdateListener listener) {
+        getRepository().updateUserList();
+        getRepository().getOnUpdateUsersList().addObserver((o, arg) -> {
+            UserListUpdateState userListUpdateState = (UserListUpdateState) arg;
+            listener.onUserListUpdated(userListUpdateState.currentUser, userListUpdateState.userList);
+        });
+    }
 
     // ------------------------
     // Getter
@@ -81,20 +106,33 @@ public class SearchViewModel extends ViewModelEX {
     public SearchViewModel(
             @NonNull @NotNull Application application) {
         super(application);
-        mSearchValidationDataViewMutableLiveData.observeForever(this::OnSearchLaunch);
+
+        mSearchValidationDataViewMutableLiveData.observeForever(searchValidationDataView -> {
+            updateUserList((currentUser, userList) -> OnSearchLaunch(currentUser, userList, searchValidationDataView));
+        });
+
+        getRepository().updateUserList();
+        mUserList = getRepository().getUsersListLiveData();
+        mUserListObserver = users -> {
+            FirebaseUser firebaseUser = getRepository().getCurrentUserFirebase();
+            for (User user : Objects.requireNonNull(getRepository().getUsersListLiveData().getValue())) {
+                if (user.getUid().equals(firebaseUser.getUid()))
+                    currentUser.setValue(user);
+            }
+        };
     }
 
     // ------------------------
     // Callback
     // ------------------------
-    private void OnSearchLaunch(@NotNull SearchValidationData searchValidationDataView) {
+    private void OnSearchLaunch(User currentUser, List<User> userList, @NotNull SearchValidationData searchValidationDataView) {
         // Get Details of the selected AutoComplete place (Get Position)
         if (searchValidationDataView.searchMethod == SearchValidationData.SearchMethod.PREDICTION) {
             Call<PlaceDetailsResponse> callDetails = getRepository().getRetrofitService().getDetails(searchValidationDataView.prediction.getPlaceId());
             callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<PlaceDetailsResponse> call, @NonNull Response<PlaceDetailsResponse> response) {
-                    onResponseNearbySearch(searchValidationDataView, response);
+                    onResponseNearbySearch(currentUser, userList, searchValidationDataView, response);
                 }
 
                 @Override
@@ -103,11 +141,11 @@ public class SearchViewModel extends ViewModelEX {
                 }
             });
         } else {
-            onResponseNearbySearch(searchValidationDataView, null);
+            onResponseNearbySearch(currentUser, userList, searchValidationDataView, null);
         }
     }
 
-    private void onResponseNearbySearch(SearchValidationData data, Response<PlaceDetailsResponse> response) {
+    private void onResponseNearbySearch(User currentUser, List<User> userList, SearchValidationData data, Response<PlaceDetailsResponse> response) {
         mClearMapObservable.notifyObservers();
         Location loc = new Location("");
         if (response != null && response.body() != null && data.searchMethod == SearchValidationData.SearchMethod.PREDICTION) {
@@ -115,6 +153,7 @@ public class SearchViewModel extends ViewModelEX {
             Double lng = response.body().getResult().getGeometry().getLocation().getLng();
             loc.setLatitude(lat);
             loc.setLongitude(lng);
+
             // Add marker of choice position
             MarkerOptions userIndicator = new MarkerOptions()
                     .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
@@ -146,7 +185,7 @@ public class SearchViewModel extends ViewModelEX {
         callNearbySearch.enqueue(new Callback<NearbySearchResponse>() {
             @Override
             public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
-                OnNearbySearchResponseFromDetailResponse(response);
+                OnNearbySearchResponseFromDetailResponse(currentUser, userList, response);
             }
 
             @Override
@@ -156,7 +195,7 @@ public class SearchViewModel extends ViewModelEX {
     }
 
     // Callback when nearby search from detail position received
-    private void OnNearbySearchResponseFromDetailResponse(@NotNull Response<NearbySearchResponse> response) {
+    private void OnNearbySearchResponseFromDetailResponse(User currentUser, List<User> userList, @NotNull Response<NearbySearchResponse> response) {
         assert response.body() != null;
         mClearRestaurantList.notifyObservers();
         for (NearbySearchResult result : response.body().getResults()) {
@@ -165,9 +204,22 @@ public class SearchViewModel extends ViewModelEX {
                 Double lng = result.getGeometry().getLocation().getLng();
                 LatLng loc = new LatLng(lat, lng);
 
+                float hue = BitmapDescriptorFactory.HUE_RED;
+
+                for (User user : userList) {
+                    if (result.getPlaceId().equals(user.getEatingAt())) {
+                        hue = BitmapDescriptorFactory.HUE_BLUE;
+                        break;
+                    }
+                }
+
+                if (result.getPlaceId().equals(currentUser.getEatingAt()))
+                    hue = BitmapDescriptorFactory.HUE_GREEN;
+
                 // Add marker of user's position
                 MarkerOptions userIndicator = new MarkerOptions()
                         .position(loc)
+                        .icon(BitmapDescriptorFactory.defaultMarker(hue))
                         .title(result.getName())
                         .snippet(result.getVicinity());
 
