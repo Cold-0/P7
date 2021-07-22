@@ -20,6 +20,7 @@ import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.view.recyclerview.ParticipantListAdapter;
 import com.openclassroom.go4lunch.databinding.ActivityRestaurantDetailBinding;
 import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
+import com.openclassroom.go4lunch.viewmodel.listener.OnDetailResponse;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -54,53 +55,39 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         Intent startingIntent = getIntent();
         mCurrentPlaceID = startingIntent.getStringExtra("placeID");
 
-        updateAppearance();
 
         configureRecyclerView();
         configureButtons();
+
+        updateAppearance();
     }
 
     private void updateAppearance() {
-        Call<PlaceDetailsResponse> callDetails = getRepository().getRetrofitService().getDetails(mCurrentPlaceID);
-        callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<PlaceDetailsResponse> call, @NonNull Response<PlaceDetailsResponse> response) {
-                mDetailsResult = Objects.requireNonNull(response.body()).getResult();
-                mBinding.restaurantNameDetail.setText(mDetailsResult.getName());
-                mBinding.restaurantAddressDetail.setText(mDetailsResult.getFormattedAddress());
-
-                if (mDetailsResult.getPhotos() != null) {
-                    String photo_reference = mDetailsResult.getPhotos().get(0).getPhotoReference();
-                    if (!photo_reference.equals("")) {
-                        Picasso.Builder builder = new Picasso.Builder(RestaurantDetailActivity.this);
-                        builder.downloader(new OkHttp3Downloader(RestaurantDetailActivity.this));
-                        builder.build().load("https://maps.googleapis.com/maps/api/place/photo?parameters&key=" + BuildConfig.MAPS_API_KEY + "&photoreference=" + photo_reference + "&maxwidth=512&maxheight=512")
-                                .into(mBinding.restaurantPhotoDetail);
-                    }
+        mUserInfoViewModel.getDetails(mCurrentPlaceID, detailsResult -> {
+            mDetailsResult = Objects.requireNonNull(detailsResult);
+            mBinding.restaurantNameDetail.setText(mDetailsResult.getName());
+            mBinding.restaurantAddressDetail.setText(mDetailsResult.getFormattedAddress());
+            if (mDetailsResult.getPhotos() != null) {
+                String photo_reference = mDetailsResult.getPhotos().get(0).getPhotoReference();
+                if (!photo_reference.equals("")) {
+                    Picasso.Builder builder = new Picasso.Builder(RestaurantDetailActivity.this);
+                    builder.downloader(new OkHttp3Downloader(RestaurantDetailActivity.this));
+                    builder.build().load("https://maps.googleapis.com/maps/api/place/photo?parameters&key=" + BuildConfig.MAPS_API_KEY + "&photoreference=" + photo_reference + "&maxwidth=512&maxheight=512")
+                            .into(mBinding.restaurantPhotoDetail);
                 }
-
-                mUserInfoViewModel.updateUserList((currentUser, userList) -> {
-                    updateLike(currentUser);
-
-                    updateFab(currentUser);
-
-                    mParticipantListAdapter.clearUserList();
-                    for (User user : userList) {
-                        if (
-                                user.getEatingAt().equals(mCurrentPlaceID) &&
-                                        !user.getUid().equals(Objects.requireNonNull(currentUser).getUid())
-                        )
-                            mParticipantListAdapter.addUserList(user);
-                    }
-                });
             }
 
-            @Override
-            public void onFailure(@NotNull Call<PlaceDetailsResponse> call, @NotNull Throwable t) {
+            mUserInfoViewModel.updateUserList((currentUser, userList) -> {
+                updateLike(currentUser);
+                updateFab(currentUser);
 
-            }
+                mParticipantListAdapter.clearUserList();
+                for (User user : userList) {
+                    if (user.getEatingAt().equals(mCurrentPlaceID) && !user.getUid().equals(Objects.requireNonNull(currentUser).getUid()))
+                        mParticipantListAdapter.addUserList(user);
+                }
+            });
         });
-
     }
 
     private void updateFab(User currentUser) {

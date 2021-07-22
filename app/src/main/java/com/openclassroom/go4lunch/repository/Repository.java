@@ -10,14 +10,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.data.UserListUpdateData;
+import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitInstance;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitService;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
+import com.openclassroom.go4lunch.viewmodel.listener.OnDetailResponse;
 import com.openclassroom.go4lunch.viewmodel.listener.OnToggled;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Repository {
 
@@ -195,5 +201,20 @@ public class Repository {
         mUserMutableLiveData = new MutableLiveData<>();
         mUserMutableLiveData.setValue(new ArrayList<>());
         mCurrentUser = new MutableLiveData<>();
+    }
+
+    public void getDetails(String placeID, OnDetailResponse onDetailResponse) {
+        Call<PlaceDetailsResponse> callDetails = getRepository().getRetrofitService().getDetails(placeID);
+        callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
+            @Override
+            public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {
+                onDetailResponse.onDetailsResponse(response.body().getResult());
+            }
+
+            @Override
+            public void onFailure(Call<PlaceDetailsResponse> call, Throwable t) {
+            
+            }
+        });
     }
 }

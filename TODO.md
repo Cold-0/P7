@@ -9,14 +9,17 @@
 [V] 6 - Améliorer ViewModel
 [V] 7 - Remove Details après nearby search
 [V] 8 - Afficher directement list
+[V] 9 - Firestore pour les utilisateur et restaurant (Liste des user, liste des restaurant compteur participant, restaurant liké, liste particpant par restant (dans le restaurant))
+[V] 10 - Indent -> RestaurantDetail
+[V] 11 - Afficher couleur differente collegue sur la map, Afficher couleur different liked map
 
 # -------------------------------
 # TODO
 # -------------------------------
-[ ] 9 - Firestore pour les utilisateur et restaurant (Liste des user, liste des restaurant compteur participant, restaurant liké, liste particpant par restant (dans le restaurant))
-[ ] 10 - Indent -> RestaurantDetail
-[ ] 11 - Afficher couleur differente collegue sur la map, Afficher couleur different liked map
-[ ] 12 - Notification
+
+[ ] Etoile jaune pour Like
+[ ] 12 - Notification (WorkManager ou 
+AlarmManager)  -> a 12h liste de tous les participant a mon restaurant choisis et nom restaurant et addresse
 [ ] 13 - Test Unitaire (Test ViewModel)
 
 # -------------------------------
