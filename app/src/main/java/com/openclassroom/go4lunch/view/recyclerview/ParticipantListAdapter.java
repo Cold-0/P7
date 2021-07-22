@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantListViewHolder> {
+public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantListAdapter.ParticipantListViewHolder> {
 
     @NonNull
     private List<User> mParticipantList;
@@ -64,7 +64,7 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
             holder.mBinding.userInfo.setTypeface(null, Typeface.ITALIC);
             holder.mBinding.userInfo.setTextColor(mActivity.getResources().getColor(R.color.lightgrey));
         } else {
-            holder.mBinding.userInfo.setText(user.getDisplayName() + mActivity.getString(R.string.is_eating_at));
+            holder.mBinding.userInfo.setText(user.getDisplayName() + mActivity.getString(R.string.is_eating_at) + user.getEatingAt());
             holder.mBinding.userInfo.setTypeface(null, Typeface.NORMAL);
             holder.mBinding.userInfo.setTextColor(mActivity.getResources().getColor(R.color.black));
         }
@@ -82,6 +82,20 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
     @Override
     public int getItemCount() {
         return mParticipantList.size();
+    }
+
+
+    static class ParticipantListViewHolder extends RecyclerView.ViewHolder {
+        public final ItemUserBinding mBinding;
+
+        ParticipantListViewHolder(@NonNull ItemUserBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
+        }
+
+        void bind() {
+
+        }
     }
 
 }

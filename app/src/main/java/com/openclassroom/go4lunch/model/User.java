@@ -9,13 +9,15 @@ public class User {
     private List<String> mLikeList;
     private String mAvatarUrl;
     private String mEatingAt;
+    private String mEatingAtName;
 
-    public User(String id, String displayName, List<String> likeList, String avatarUrl, String eatingAt) {
+    public User(String id, String displayName, List<String> likeList, String avatarUrl, String eatingAt, String eatingAtName) {
         mUid = id;
         mDisplayName = displayName;
         mLikeList = likeList;
         mAvatarUrl = avatarUrl;
         mEatingAt = eatingAt;
+        mEatingAtName = eatingAtName;
     }
 
     public String getUid() {
@@ -56,5 +58,13 @@ public class User {
 
     public void setEatingAt(String eatingAt) {
         mEatingAt = eatingAt;
+    }
+
+    public String getEatingAtName() {
+        return mEatingAtName;
+    }
+
+    public void setEatingAtName(String eatingAtName) {
+        mEatingAtName = eatingAtName;
     }
 }

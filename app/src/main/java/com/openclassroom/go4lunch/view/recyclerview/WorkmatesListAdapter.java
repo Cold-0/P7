@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListViewHolder> {
+public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdapter.WorkmatesListViewHolder> {
 
     @NonNull
     private final LiveData<List<User>> mUserList;
@@ -53,7 +53,7 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListView
             holder.mBinding.userInfo.setTypeface(null, Typeface.ITALIC);
             holder.mBinding.userInfo.setTextColor(mActivity.getResources().getColor(R.color.lightgrey));
         } else {
-            holder.mBinding.userInfo.setText(user.getDisplayName() + mActivity.getString(R.string.is_eating_at));
+            holder.mBinding.userInfo.setText(user.getDisplayName() + mActivity.getString(R.string.is_eating_at) + user.getEatingAt());
             holder.mBinding.userInfo.setTypeface(null, Typeface.NORMAL);
             holder.mBinding.userInfo.setTextColor(mActivity.getResources().getColor(R.color.black));
         }
@@ -71,6 +71,19 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListView
     @Override
     public int getItemCount() {
         return Objects.requireNonNull(mUserList.getValue()).size();
+    }
+
+    static class WorkmatesListViewHolder extends RecyclerView.ViewHolder {
+        public final ItemUserBinding mBinding;
+
+        WorkmatesListViewHolder(@NonNull ItemUserBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
+        }
+
+        void bind() {
+
+        }
     }
 
 }

@@ -62,7 +62,8 @@ public class Repository {
                                             (String) document.get("name"),
                                             castedLikes,
                                             (String) document.get("avatarUrl"),
-                                            (String) document.get("eatingAt")
+                                            (String) document.get("eatingAt"),
+                                            (String) document.get("eatingAtName")
                                     )
                             );
                         }

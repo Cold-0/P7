@@ -32,7 +32,6 @@ import retrofit2.Response;
 
 public class SearchViewModel extends ViewModelEX {
 
-
     private final MutableLiveData<SearchValidationData> mSearchValidationDataViewMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<MarkerOptions> mMarkerMutableLiveData = new MutableLiveData<>();
     private final ObservableEX mClearMapObservable = new ObservableEX();

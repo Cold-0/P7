@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsListViewHolder> {
+public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsListAdapter.RestaurantsListViewHolder> {
 
     private static final String TAG = RestaurantsListAdapter.class.toString();
 
@@ -118,5 +118,18 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
             return loc;
         }
         return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+    }
+
+    static class RestaurantsListViewHolder extends RecyclerView.ViewHolder {
+        public final ItemRestaurantBinding mBinding;
+
+        RestaurantsListViewHolder(@NonNull ItemRestaurantBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
+        }
+
+        void bind() {
+
+        }
     }
 }
