@@ -24,6 +24,7 @@
             tools:srcCompat="@tools:sample/avatars" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabEatingAt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="245dp"

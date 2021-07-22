@@ -21,7 +21,6 @@ public class WorkmatesViewModel extends ViewModelEX {
         super(application);
         mUserList = getRepository().getUsersListLiveData();
         getRepository().updateUserList();
-
     }
 
     public LiveData<List<User>> getUserList() {

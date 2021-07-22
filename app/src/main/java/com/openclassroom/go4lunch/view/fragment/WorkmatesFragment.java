@@ -3,6 +3,7 @@ package com.openclassroom.go4lunch.view.fragment;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
 import com.openclassroom.go4lunch.view.recyclerview.WorkmatesListAdapter;
+import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
 import com.openclassroom.go4lunch.viewmodel.WorkmatesViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentWorkmatesBinding;
 
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class WorkmatesFragment extends FragmentEX {
 
@@ -28,17 +30,21 @@ public class WorkmatesFragment extends FragmentEX {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         WorkmatesViewModel workmatesListViewModel = new ViewModelProvider(requireActivity()).get(WorkmatesViewModel.class);
+        UserInfoViewModel userInfoViewModel = new ViewModelProvider(requireActivity()).get(UserInfoViewModel.class);
         mBinding = FragmentWorkmatesBinding.inflate(inflater, container, false);
 
-        WorkmatesListAdapter listViewAdapter = new WorkmatesListAdapter(requireActivity(), workmatesListViewModel.getUserList());
+        WorkmatesListAdapter listViewAdapter = new WorkmatesListAdapter(requireActivity(), new ArrayList<>(Objects.requireNonNull(workmatesListViewModel.getUserList().getValue())));
         mBinding.workmatesList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         mBinding.workmatesList.setAdapter(listViewAdapter);
 
-        final Observer<List<User>> nameObserver = v -> {
-            listViewAdapter.notifyDataSetChanged();
-        };
-
-        workmatesListViewModel.getUserList().observe(getViewLifecycleOwner(), nameObserver);
+        workmatesListViewModel.getUserList().observe(getViewLifecycleOwner(), users -> {
+            listViewAdapter.clearUserList();
+            for (User user : users) {
+                if (!user.getUid().equals(Objects.requireNonNull(userInfoViewModel.getCurrentUser().getValue()).getUid())) {
+                    listViewAdapter.addUserList(user);
+                }
+            }
+        });
 
         return mBinding.getRoot();
     }

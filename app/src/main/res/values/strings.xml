@@ -31,4 +31,5 @@
     <string name="location_formating" translatable="false">%f,%f</string>
     <string name="didnt_decided_yet">" hasn't decided yet"</string>
     <string name="is_eating_at">" is eating at "</string>
+    <string name="is_joining">" is joining "</string>
 </resources>

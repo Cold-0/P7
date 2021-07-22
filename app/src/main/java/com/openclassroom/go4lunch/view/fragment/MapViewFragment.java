@@ -22,6 +22,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.model.SearchValidationData;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
@@ -31,20 +32,26 @@ import com.openclassroom.go4lunch.databinding.FragmentMapviewBinding;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private static final String TAG = MapViewFragment.class.toString();
 
     private FragmentMapviewBinding mBinding;
     private GoogleMap mGoogleMap;
 
-    private SearchViewModel searchViewModel;
+    private SearchViewModel mSearchViewModel;
+
+    private Map<Marker, String> mMarkerStringHashMap = new HashMap<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentMapviewBinding.inflate(inflater, container, false);
         mBinding.mapView.onCreate(savedInstanceState);
 
-        searchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
+        mSearchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
 
         try {
             MapsInitializer.initialize(requireActivity().getApplicationContext());
@@ -54,18 +61,21 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
 
         mBinding.mapView.getMapAsync(this);
 
-        searchViewModel.getClearMapObservable().addObserver((o, arg) -> {
+        mSearchViewModel.getClearMapObservable().addObserver((o, arg) -> {
             mGoogleMap.clear();
+            mMarkerStringHashMap.clear();
         });
 
-        searchViewModel.getZoomMapObservable().addObserver((o, arg) -> {
+        mSearchViewModel.getZoomMapObservable().addObserver((o, arg) -> {
             if (arg instanceof Location)
                 zoomOnLocation((Location) arg);
         });
 
-        searchViewModel.getMarkerMutableLiveData().observe(requireActivity(), markerOptions -> {
-            if (mGoogleMap != null)
-                mGoogleMap.addMarker(markerOptions);
+        mSearchViewModel.getAddMapMarker().addObserver((o, arg) -> {
+            SearchViewModel.MarkerState state = (arg instanceof SearchViewModel.MarkerState ? (SearchViewModel.MarkerState) arg : null);
+            if (mGoogleMap != null) {
+                mMarkerStringHashMap.put(mGoogleMap.addMarker(Objects.requireNonNull(state).markerOptions), state.placeID);
+            }
         });
 
         return mBinding.getRoot();
@@ -109,7 +119,11 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
         SearchValidationData svd = new SearchValidationData();
         svd.searchMethod = SearchValidationData.SearchMethod.CLOSER;
         svd.viewType = MainActivity.MainViewTypes.MAP;
-        searchViewModel.setSearchValidationDataViewMutable(svd);
+        mSearchViewModel.setSearchValidationDataViewMutable(svd);
+
+        googleMap.setOnInfoWindowClickListener(marker -> {
+            openDetailRestaurant(requireActivity(), mMarkerStringHashMap.get(marker));
+        });
     }
 
     @Override
@@ -140,5 +154,11 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
     public void onStop() {
         super.onStop();
         mBinding.mapView.onStop();
+    }
+
+    @Override
+    public boolean onMarkerClick(@NotNull final Marker marker) {
+
+        return true;
     }
 }

@@ -23,7 +23,7 @@ public class Repository {
     // ----------------
     static Repository repository;
 
-    private static String TAG = Repository.class.toString();
+    private static final String TAG = Repository.class.toString();
 
     public static Repository getRepository() {
         if (repository == null)
@@ -34,12 +34,12 @@ public class Repository {
     // ----------------
     // Instance
     // ----------------
-    RetrofitService service;
+    RetrofitService mRetrofitService;
     MutableLiveData<List<User>> mUserMutableLiveData;
     private final FirebaseFirestore mFirebaseFirestore;
 
-    public RetrofitService getService() {
-        return service;
+    public RetrofitService getRetrofitService() {
+        return mRetrofitService;
     }
 
     public void updateUserList() {
@@ -53,9 +53,9 @@ public class Repository {
 
                         for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                             Object likes = document.get("likes");
-                            List<String> castedLikes = null;
-                            if (likes instanceof List)
-                                castedLikes = (List<String>) likes;
+                            List<String> castedLikes = (List<String>) likes;
+
+                            String id = document.getId();
                             userList.add(
                                     new User(
                                             document.getId(),
@@ -76,7 +76,7 @@ public class Repository {
 
     }
 
-    public FirebaseUser getCurrentUser() {
+    public FirebaseUser getCurrentUserFirebase() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
@@ -86,7 +86,7 @@ public class Repository {
 
 
     Repository() {
-        service = RetrofitInstance.getRetrofitInstance().create(RetrofitService.class);
+        mRetrofitService = RetrofitInstance.getRetrofitInstance().create(RetrofitService.class);
         mUserMutableLiveData = new MutableLiveData<>();
         mUserMutableLiveData.setValue(new ArrayList<>());
         mFirebaseFirestore = FirebaseFirestore.getInstance();

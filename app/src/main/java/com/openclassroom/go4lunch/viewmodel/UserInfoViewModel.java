@@ -44,7 +44,7 @@ public class UserInfoViewModel extends ViewModelEX {
         mUserList = getRepository().getUsersListLiveData();
 
         mUserListObserver = users -> {
-            FirebaseUser firebaseUser = getRepository().getCurrentUser();
+            FirebaseUser firebaseUser = getRepository().getCurrentUserFirebase();
             for (User user : Objects.requireNonNull(getRepository().getUsersListLiveData().getValue())) {
                 if (user.getUid().equals(firebaseUser.getUid()))
                     currentUser.setValue(user);

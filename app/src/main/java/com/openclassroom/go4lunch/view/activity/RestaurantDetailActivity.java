@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.openclassroom.go4lunch.BuildConfig;
+import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.placedetailsapi.DetailsResult;
 import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
@@ -52,7 +54,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         Intent startingIntent = getIntent();
         mCurrentPlaceID = startingIntent.getStringExtra("placeID");
 
-        Call<PlaceDetailsResponse> callDetails = getRepository().getService().getDetails(mCurrentPlaceID);
+        Call<PlaceDetailsResponse> callDetails = getRepository().getRetrofitService().getDetails(mCurrentPlaceID);
         callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
             @Override
             public void onResponse(@NonNull Call<PlaceDetailsResponse> call, @NonNull Response<PlaceDetailsResponse> response) {
@@ -71,9 +73,17 @@ public class RestaurantDetailActivity extends AppCompatActivity {
                 }
 
                 mUserInfoViewModel.updateUserList(userList -> {
+                    User currentUser = mUserInfoViewModel.getCurrentUser().getValue();
+
+                    if (!currentUser.getEatingAt().equals("") && currentUser.getEatingAt().equals(mCurrentPlaceID)) {
+                        mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
+                    } else {
+                        mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.lightgrey)));
+                    }
+
                     mParticipantListAdapter.clearUserList();
                     for (User user : userList) {
-                        if (user.getEatingAt().equals(mCurrentPlaceID))
+                        if (user.getEatingAt().equals(mCurrentPlaceID) && !user.getUid().equals(Objects.requireNonNull(currentUser).getUid()))
                             mParticipantListAdapter.addUserList(user);
                     }
                 });

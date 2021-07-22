@@ -32,22 +32,24 @@ import retrofit2.Response;
 
 public class SearchViewModel extends ViewModelEX {
 
+    public class MarkerState {
+        public MarkerOptions markerOptions;
+        public String placeID;
+    }
+
     private final MutableLiveData<SearchValidationData> mSearchValidationDataViewMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<MarkerOptions> mMarkerMutableLiveData = new MutableLiveData<>();
+
     private final ObservableEX mClearMapObservable = new ObservableEX();
     private final ObservableEX mZoomMapObservable = new ObservableEX();
     private final ObservableEX mAddRestaurantToList = new ObservableEX();
     private final ObservableEX mClearRestaurantList = new ObservableEX();
+    private final ObservableEX mAddMapMarker = new ObservableEX();
 
     // ------------------------
     // Getter
     // ------------------------
     public MutableLiveData<SearchValidationData> getSearchValidationDataViewMutableLiveData() {
         return mSearchValidationDataViewMutableLiveData;
-    }
-
-    public MutableLiveData<MarkerOptions> getMarkerMutableLiveData() {
-        return mMarkerMutableLiveData;
     }
 
     public ObservableEX getClearMapObservable() {
@@ -88,7 +90,7 @@ public class SearchViewModel extends ViewModelEX {
     private void OnSearchLaunch(@NotNull SearchValidationData searchValidationDataView) {
         // Get Details of the selected AutoComplete place (Get Position)
         if (searchValidationDataView.searchMethod == SearchValidationData.SearchMethod.PREDICTION) {
-            Call<PlaceDetailsResponse> callDetails = getRepository().getService().getDetails(searchValidationDataView.prediction.getPlaceId());
+            Call<PlaceDetailsResponse> callDetails = getRepository().getRetrofitService().getDetails(searchValidationDataView.prediction.getPlaceId());
             callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<PlaceDetailsResponse> call, @NonNull Response<PlaceDetailsResponse> response) {
@@ -118,7 +120,13 @@ public class SearchViewModel extends ViewModelEX {
                     .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
                     .title(response.body().getResult().getName())
                     .snippet(response.body().getResult().getVicinity());
-            mMarkerMutableLiveData.setValue(userIndicator);
+
+
+            MarkerState state = new MarkerState();
+            state.markerOptions = userIndicator;
+            state.placeID = response.body().getResult().getPlaceId();
+            mAddMapMarker.notifyObservers(state);
+
         } else {
             loc = getMyLocation();
         }
@@ -129,9 +137,9 @@ public class SearchViewModel extends ViewModelEX {
         Call<NearbySearchResponse> callNearbySearch = null;
 
         if (data.searchMethod == SearchValidationData.SearchMethod.PREDICTION || data.searchMethod == SearchValidationData.SearchMethod.CLOSER) {
-            callNearbySearch = getRepository().getService().getNearbyByType(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant");
+            callNearbySearch = getRepository().getRetrofitService().getNearbyByType(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant");
         } else if (data.searchMethod == SearchValidationData.SearchMethod.SEARCH_STRING) {
-            callNearbySearch = getRepository().getService().getNearbyByKeyword(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.searchString);
+            callNearbySearch = getRepository().getRetrofitService().getNearbyByKeyword(10000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.searchString);
         }
 
         assert callNearbySearch != null;
@@ -163,7 +171,11 @@ public class SearchViewModel extends ViewModelEX {
                         .title(result.getName())
                         .snippet(result.getVicinity());
 
-                mMarkerMutableLiveData.setValue(userIndicator);
+
+                MarkerState state = new MarkerState();
+                state.markerOptions = userIndicator;
+                state.placeID = result.getPlaceId();
+                mAddMapMarker.notifyObservers(state);
 
                 mAddRestaurantToList.notifyObservers(result);
             }
@@ -189,5 +201,9 @@ public class SearchViewModel extends ViewModelEX {
         mAddRestaurantToList.deleteObservers();
         mClearRestaurantList.deleteObservers();
         mZoomMapObservable.deleteObservers();
+    }
+
+    public ObservableEX getAddMapMarker() {
+        return mAddMapMarker;
     }
 }

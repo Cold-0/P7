@@ -64,7 +64,7 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
             holder.mBinding.userInfo.setTypeface(null, Typeface.ITALIC);
             holder.mBinding.userInfo.setTextColor(mActivity.getResources().getColor(R.color.lightgrey));
         } else {
-            holder.mBinding.userInfo.setText(user.getDisplayName() + mActivity.getString(R.string.is_eating_at) + user.getEatingAt());
+            holder.mBinding.userInfo.setText(user.getDisplayName() + mActivity.getString(R.string.is_joining));
             holder.mBinding.userInfo.setTypeface(null, Typeface.NORMAL);
             holder.mBinding.userInfo.setTextColor(mActivity.getResources().getColor(R.color.black));
         }
@@ -76,6 +76,8 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
                     .error(R.drawable.ic_launcher_foreground)
                     .transform(new CircleCropTransform())
                     .into(holder.mBinding.userAvatar);
+        } else {
+            holder.mBinding.userAvatar.setImageResource(R.drawable.ic_baseline_account_circle_24);
         }
     }
 

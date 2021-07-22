@@ -22,4 +22,5 @@
     <string name="menu_workmates">Collègues</string>
     <string name="didnt_decided_yet">" n'a pas encore choisis"</string>
     <string name="is_eating_at">" mange a "</string>
+    <string name="is_joining">" a rejoins"</string>
 </resources>

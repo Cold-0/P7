@@ -214,7 +214,7 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
                     Location loc = getLastKnownCoarseLocation();
                     String locString = String.format(Locale.CANADA, getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude());
                     Call<AutocompleteResponse> call =
-                            repository.getService().getAutocomplete(newText, 5000, locString, "establishment");
+                            repository.getRetrofitService().getAutocomplete(newText, 5000, locString, "establishment");
                     call.enqueue(new Callback<AutocompleteResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {
@@ -283,7 +283,7 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
     }
 
     private void updateProfile() {
-        UpdateUserDocument();
+        updateUserDocument();
 
         FirebaseUser user = getCurrentUser();
         if (user != null) {
@@ -353,7 +353,7 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
         updateProfile();
     }
 
-    private void UpdateUserDocument() {
+    private void updateUserDocument() {
         FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
         FirebaseUser user = getCurrentUser();
 
@@ -378,9 +378,11 @@ public class MainActivity extends ActivityEX implements NavigationView.OnNavigat
                     if (!Objects.requireNonNull(document).exists()) {
                         userToUpdate.put("likes", new ArrayList<String>());
                         userToUpdate.put("eatingAt", "");
+                        userToUpdate.put("eatingAtName", "");
                     } else {
                         userToUpdate.put("likes", document.get("likes"));
                         userToUpdate.put("eatingAt", document.get("eatingAt"));
+                        userToUpdate.put("eatingAtName", document.get("eatingAtName"));
                     }
 
                     rootRef.collection("users").document(user.getUid())
