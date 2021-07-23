@@ -37,6 +37,7 @@ public class WorkmatesFragment extends FragmentEX {
         mBinding.workmatesList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         mBinding.workmatesList.setAdapter(listViewAdapter);
 
+        // Observe user list and reload the Adapter with new data.
         workmatesListViewModel.getUserList().observe(getViewLifecycleOwner(), users -> {
             listViewAdapter.clearUserList();
             for (User user : users) {

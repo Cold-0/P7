@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
@@ -15,6 +16,7 @@ import com.openclassroom.go4lunch.utils.transform.CircleCropTransform;
 import com.openclassroom.go4lunch.utils.ex.ActivityEX;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ActivitySettingsBinding;
+import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -27,6 +29,7 @@ public class SettingsActivity extends ActivityEX {
     private static final String TAG = SettingsActivity.class.getName();
 
     private ActivitySettingsBinding mBinding;
+    private UserInfoViewModel mUserInfoViewModel;
     private ActivityResultLauncher<Intent> mSignInLauncher;
 
     @Override
@@ -35,6 +38,8 @@ public class SettingsActivity extends ActivityEX {
         mBinding = ActivitySettingsBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
+        mUserInfoViewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);
+
         mSignInLauncher = registerForActivityResult(
                 new FirebaseAuthUIActivityResultContract(),
                 this::onSignInResult
@@ -42,7 +47,7 @@ public class SettingsActivity extends ActivityEX {
 
         setButtonsCallback();
 
-        if (isCurrentUserLogged()) {
+        if (mUserInfoViewModel.isCurrentUserLogged()) {
             updateProfile();
         } else {
             SignIn();
@@ -56,7 +61,7 @@ public class SettingsActivity extends ActivityEX {
     }
 
     private void updateProfile() {
-        FirebaseUser user = getCurrentUser();
+        FirebaseUser user = mUserInfoViewModel.getCurrentFirebaseUser();
 
         // Update Profile
         if (user == null) {
@@ -68,6 +73,7 @@ public class SettingsActivity extends ActivityEX {
 
             // Update User Email
             mBinding.userEmail.setText("");
+
         } else {
             // Update User Picture
             if (user.getPhotoUrl() != null) {
@@ -78,6 +84,8 @@ public class SettingsActivity extends ActivityEX {
                         .error(R.drawable.ic_launcher_foreground)
                         .transform(new CircleCropTransform())
                         .into(mBinding.userImageView);
+            } else {
+                mBinding.userImageView.setImageResource(R.drawable.ic_baseline_account_circle_24);
             }
 
             // Update User Name
@@ -143,7 +151,7 @@ public class SettingsActivity extends ActivityEX {
             Snackbar.make(mBinding.getRoot(), R.string.canceled_sign_in, Snackbar.LENGTH_SHORT).show();
         } else if (result.getResultCode() == RESULT_OK) {
             // Successfully signed in
-            Snackbar.make(mBinding.getRoot(), getString(R.string.signed_in_as_user, Objects.requireNonNull(getCurrentUser()).getDisplayName()), Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(mBinding.getRoot(), getString(R.string.signed_in_as_user, Objects.requireNonNull(mUserInfoViewModel.getCurrentFirebaseUser()).getDisplayName()), Snackbar.LENGTH_SHORT).show();
         } else {
             // Sign in failed
             Snackbar.make(mBinding.getRoot(), R.string.sign_in_failed, Snackbar.LENGTH_SHORT).show();

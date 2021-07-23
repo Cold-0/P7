@@ -27,6 +27,7 @@ import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
 import com.openclassroom.go4lunch.utils.ex.ViewModelEX;
+import com.openclassroom.go4lunch.viewmodel.listener.OnAutoCompleteResponse;
 import com.openclassroom.go4lunch.viewmodel.listener.OnUserListUpdateListener;
 
 import org.jetbrains.annotations.NotNull;
@@ -114,7 +115,7 @@ public class SearchViewModel extends ViewModelEX {
         getRepository().updateUserList();
         mUserList = getRepository().getUsersListLiveData();
         mUserListObserver = users -> {
-            FirebaseUser firebaseUser = getRepository().getCurrentUserFirebase();
+            FirebaseUser firebaseUser = getRepository().getCurrentFirebaseUser();
             for (User user : Objects.requireNonNull(getRepository().getUsersListLiveData().getValue())) {
                 if (user.getUid().equals(firebaseUser.getUid()))
                     currentUser.setValue(user);
@@ -260,5 +261,9 @@ public class SearchViewModel extends ViewModelEX {
 
     public ObservableEX getAddMapMarker() {
         return mAddMapMarker;
+    }
+
+    public void getAutocomplete(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
+        getRepository().getAutocomplete(text, localisation, type, onAutoCompleteResponse);
     }
 }

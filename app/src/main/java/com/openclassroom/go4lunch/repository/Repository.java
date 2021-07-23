@@ -1,7 +1,12 @@
 package com.openclassroom.go4lunch.repository;
 
+import android.app.Activity;
+import android.database.MatrixCursor;
 import android.util.Log;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -9,11 +14,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassroom.go4lunch.model.User;
+import com.openclassroom.go4lunch.model.autocompleteapi.AutocompleteResponse;
+import com.openclassroom.go4lunch.model.autocompleteapi.Prediction;
 import com.openclassroom.go4lunch.model.data.UserListUpdateData;
 import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitInstance;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitService;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
+import com.openclassroom.go4lunch.viewmodel.listener.OnAutoCompleteResponse;
 import com.openclassroom.go4lunch.viewmodel.listener.OnDetailResponse;
 import com.openclassroom.go4lunch.viewmodel.listener.OnToggled;
 
@@ -48,6 +56,10 @@ public class Repository {
 
     private final MutableLiveData<List<User>> mUserMutableLiveData;
     private final MutableLiveData<User> mCurrentUser;
+
+    public Boolean isCurrentUserLogged() {
+        return (this.getCurrentUser() != null);
+    }
 
     public ObservableEX getOnUpdateUsersList() {
         return mOnUpdateUsersList;
@@ -154,7 +166,7 @@ public class Repository {
                                     (String) document.get("eatingAtName")
                             );
                             userList.add(newUser);
-                            if (newUserUID.equals(getCurrentUserFirebase().getUid())) {
+                            if (newUserUID.equals(getCurrentFirebaseUser().getUid())) {
                                 mCurrentUser.setValue(newUser);
                             }
                         }
@@ -171,6 +183,22 @@ public class Repository {
                 });
     }
 
+    public void getAutocomplete(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
+        Call<AutocompleteResponse> call = repository.getRetrofitService().getAutocomplete(text, 5000, localisation, type);
+        call.enqueue(new Callback<AutocompleteResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {
+               onAutoCompleteResponse.onResponse(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AutocompleteResponse> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+
+
     // ---------------
     // Getter
     // ---------------
@@ -178,7 +206,7 @@ public class Repository {
         return mRetrofitService;
     }
 
-    public FirebaseUser getCurrentUserFirebase() {
+    public FirebaseUser getCurrentFirebaseUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
@@ -213,7 +241,7 @@ public class Repository {
 
             @Override
             public void onFailure(Call<PlaceDetailsResponse> call, Throwable t) {
-            
+
             }
         });
     }

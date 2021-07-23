@@ -55,10 +55,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         Intent startingIntent = getIntent();
         mCurrentPlaceID = startingIntent.getStringExtra("placeID");
 
-
         configureRecyclerView();
         configureButtons();
-
         updateAppearance();
     }
 

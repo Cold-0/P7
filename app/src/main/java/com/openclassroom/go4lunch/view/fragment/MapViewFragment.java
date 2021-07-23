@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.model.data.SearchValidationData;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
+import com.openclassroom.go4lunch.view.ViewTypeTabEnum;
 import com.openclassroom.go4lunch.view.activity.MainActivity;
 import com.openclassroom.go4lunch.viewmodel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentMapviewBinding;
@@ -42,10 +43,8 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
 
     private FragmentMapviewBinding mBinding;
     private GoogleMap mGoogleMap;
-
     private SearchViewModel mSearchViewModel;
-
-    private Map<Marker, String> mMarkerStringHashMap = new HashMap<>();
+    private final Map<Marker, String> mMarkerStringHashMap = new HashMap<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentMapviewBinding.inflate(inflater, container, false);
@@ -109,7 +108,10 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
     @Override
     public void onMapReady(@NotNull GoogleMap googleMap) {
         mGoogleMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) {
             return;
         }
         mGoogleMap.setMyLocationEnabled(true);
@@ -118,7 +120,7 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
 
         SearchValidationData svd = new SearchValidationData();
         svd.searchMethod = SearchValidationData.SearchMethod.CLOSER;
-        svd.viewType = MainActivity.MainViewTypes.MAP;
+        svd.viewType = ViewTypeTabEnum.MAP;
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
 
         googleMap.setOnInfoWindowClickListener(marker -> {
@@ -149,7 +151,7 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
         super.onResume();
         SearchValidationData svd = new SearchValidationData();
         svd.searchMethod = SearchValidationData.SearchMethod.CLOSER;
-        svd.viewType = MainActivity.MainViewTypes.MAP;
+        svd.viewType = ViewTypeTabEnum.MAP;
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
         mBinding.mapView.onResume();
     }

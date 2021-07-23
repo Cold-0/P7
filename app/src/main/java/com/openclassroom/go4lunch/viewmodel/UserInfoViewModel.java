@@ -3,6 +3,7 @@ package com.openclassroom.go4lunch.viewmodel;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
@@ -23,6 +24,15 @@ public class UserInfoViewModel extends ViewModelEX {
     MutableLiveData<User> currentUser = new MutableLiveData<>();
     MutableLiveData<List<User>> mUserList;
     Observer<List<User>> mUserListObserver;
+
+    @Nullable
+    public FirebaseUser getCurrentFirebaseUser() {
+        return getRepository().getCurrentFirebaseUser();
+    }
+
+    public Boolean isCurrentUserLogged() {
+        return getRepository().isCurrentUserLogged();
+    }
 
     public MutableLiveData<User> getCurrentUser() {
         return currentUser;
@@ -56,7 +66,7 @@ public class UserInfoViewModel extends ViewModelEX {
         mUserList = getRepository().getUsersListLiveData();
 
         mUserListObserver = users -> {
-            FirebaseUser firebaseUser = getRepository().getCurrentUserFirebase();
+            FirebaseUser firebaseUser = getRepository().getCurrentFirebaseUser();
             for (User user : Objects.requireNonNull(getRepository().getUsersListLiveData().getValue())) {
                 if (user.getUid().equals(firebaseUser.getUid()))
                     currentUser.setValue(user);
