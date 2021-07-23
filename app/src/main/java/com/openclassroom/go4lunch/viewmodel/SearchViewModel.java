@@ -1,15 +1,9 @@
 package com.openclassroom.go4lunch.viewmodel;
 
-import android.Manifest;
 import android.app.Application;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
@@ -28,8 +22,8 @@ import com.openclassroom.go4lunch.model.api.placedetails.DetailsResult;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
 import com.openclassroom.go4lunch.utils.ex.ViewModelEX;
-import com.openclassroom.go4lunch.viewmodel.listener.OnAutoCompleteResponse;
-import com.openclassroom.go4lunch.viewmodel.listener.OnUserListUpdateListener;
+import com.openclassroom.go4lunch.listener.OnAutoCompleteResponse;
+import com.openclassroom.go4lunch.listener.OnUserListUpdateListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -61,6 +55,18 @@ public class SearchViewModel extends ViewModelEX {
             UserListUpdateMessage userListUpdateState = (UserListUpdateMessage) arg;
             listener.onUserListUpdated(userListUpdateState.currentUser, userListUpdateState.userList);
         });
+    }
+
+    // ------------------------
+    // Override
+    // ------------------------
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        mClearMapObservable.deleteObservers();
+        mAddRestaurantToList.deleteObservers();
+        mClearRestaurantList.deleteObservers();
+        mZoomMapObservable.deleteObservers();
     }
 
     // ------------------------
@@ -100,7 +106,7 @@ public class SearchViewModel extends ViewModelEX {
         super(application);
 
         mSearchValidationDataViewMutableLiveData.observeForever(searchValidationDataView -> {
-            updateUserList((currentUser, userList) -> OnSearchLaunch(currentUser, userList, searchValidationDataView));
+            updateUserList((currentUser, userList) -> onSearchValidate(currentUser, userList, searchValidationDataView));
         });
 
         getRepository().updateUserList();
@@ -117,18 +123,18 @@ public class SearchViewModel extends ViewModelEX {
     // ------------------------
     // Callback
     // ------------------------
-    private void OnSearchLaunch(User currentUser, List<User> userList, @NotNull SearchValidateMessage searchValidationDataView) {
+    private void onSearchValidate(User currentUser, List<User> userList, @NotNull SearchValidateMessage searchValidationDataView) {
         // Get Details of the selected AutoComplete place (Get Position)
         if (searchValidationDataView.searchMethod == SearchValidateMessage.SearchMethod.PREDICTION) {
-            getRepository().getDetailResponse(searchValidationDataView.prediction.getPlaceId(), detailsResult -> {
-                onResponseNearbySearch(currentUser, userList, searchValidationDataView, detailsResult);
+            getDetailResponse(searchValidationDataView.prediction.getPlaceId(), detailsResult -> {
+                doNearbySearch(currentUser, userList, searchValidationDataView, detailsResult);
             });
         } else {
-            onResponseNearbySearch(currentUser, userList, searchValidationDataView, null);
+            doNearbySearch(currentUser, userList, searchValidationDataView, null);
         }
     }
 
-    private void onResponseNearbySearch(User currentUser, List<User> userList, SearchValidateMessage data, DetailsResult response) {
+    private void doNearbySearch(User currentUser, List<User> userList, SearchValidateMessage data, DetailsResult response) {
         mClearMapObservable.notifyObservers();
         Location loc = new Location("");
         if (response != null && data.searchMethod == SearchValidateMessage.SearchMethod.PREDICTION) {
@@ -168,7 +174,7 @@ public class SearchViewModel extends ViewModelEX {
         callNearbySearch.enqueue(new Callback<NearbySearchResponse>() {
             @Override
             public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
-                OnNearbySearchResponseFromDetailResponse(currentUser, userList, response);
+                doDetailFill(currentUser, userList, response);
             }
 
             @Override
@@ -177,8 +183,7 @@ public class SearchViewModel extends ViewModelEX {
         });
     }
 
-    // Callback when nearby search from detail position received
-    private void OnNearbySearchResponseFromDetailResponse(User currentUser, List<User> userList, @NotNull Response<NearbySearchResponse> response) {
+    private void doDetailFill(User currentUser, List<User> userList, @NotNull Response<NearbySearchResponse> response) {
         assert response.body() != null;
         mClearRestaurantList.notifyObservers();
         for (NearbySearchResult result : response.body().getResults()) {
@@ -217,31 +222,5 @@ public class SearchViewModel extends ViewModelEX {
                 mAddRestaurantToList.notifyObservers(restaurantInfoState);
             }
         }
-    }
-
-    public Location getMyLocation() {
-        LocationManager locationManager = (LocationManager) requireApplication().getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        if (ActivityCompat.checkSelfPermission(requireApplication(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireApplication(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Location loc = new Location("");
-            loc.setLatitude(0.0);
-            loc.setLongitude(0.0);
-            return loc;
-        }
-        return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        mClearMapObservable.deleteObservers();
-        mAddRestaurantToList.deleteObservers();
-        mClearRestaurantList.deleteObservers();
-        mZoomMapObservable.deleteObservers();
-    }
-
-
-    public void getAutocompleteResponse(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
-        getRepository().getAutocompleteResponse(text, localisation, type, onAutoCompleteResponse);
     }
 }

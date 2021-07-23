@@ -16,9 +16,9 @@ import com.openclassroom.go4lunch.model.api.placedetails.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitInstance;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitService;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
-import com.openclassroom.go4lunch.viewmodel.listener.OnAutoCompleteResponse;
-import com.openclassroom.go4lunch.viewmodel.listener.OnDetailResponse;
-import com.openclassroom.go4lunch.viewmodel.listener.OnToggled;
+import com.openclassroom.go4lunch.listener.OnAutoCompleteResponse;
+import com.openclassroom.go4lunch.listener.OnDetailResponse;
+import com.openclassroom.go4lunch.listener.OnToggled;
 
 import java.util.ArrayList;
 import java.util.List;

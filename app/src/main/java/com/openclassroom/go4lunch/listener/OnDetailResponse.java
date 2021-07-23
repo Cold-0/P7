@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.viewmodel.listener;
+package com.openclassroom.go4lunch.listener;
 
 import com.openclassroom.go4lunch.model.api.placedetails.DetailsResult;
 

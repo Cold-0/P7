@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.firebase.auth.FirebaseUser;
-import com.openclassroom.go4lunch.viewmodel.listener.OnToggled;
-import com.openclassroom.go4lunch.viewmodel.listener.OnUserListUpdateListener;
+import com.openclassroom.go4lunch.listener.OnToggled;
+import com.openclassroom.go4lunch.listener.OnUserListUpdateListener;
 
 public class UserInfoViewModel extends ViewModelEX {
     MutableLiveData<User> currentUser = new MutableLiveData<>();
@@ -48,14 +48,6 @@ public class UserInfoViewModel extends ViewModelEX {
 
     public void toggleEatingAt(String eatingAt, String eatingAtName, OnToggled toggled) {
         getRepository().toggleEatingAt(eatingAt, eatingAtName, toggled);
-    }
-
-    public void updateUserList(OnUserListUpdateListener listener) {
-        getRepository().updateUserList();
-        getRepository().getOnUpdateUsersList().addObserver((o, arg) -> {
-            UserListUpdateMessage userListUpdateState = (UserListUpdateMessage) arg;
-            listener.onUserListUpdated(userListUpdateState.currentUser, userListUpdateState.userList);
-        });
     }
 
     public UserInfoViewModel(@NonNull @NotNull Application application) {

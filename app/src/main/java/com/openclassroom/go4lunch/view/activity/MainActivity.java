@@ -279,7 +279,7 @@ public class MainActivity extends ActivityEX {
 
                 // Do search only when reached at least 3 characters
                 if (newText.length() > 3) {
-                    Location loc = getLastKnownCoarseLocation();
+                    Location loc = getLastKnowLocation();
 
                     // Get string of the current Location, using the Locale.CANADA to be sure to get the 0.50,-10.5 format and not the , instead of . like in French
                     String locString = String.format(Locale.CANADA, getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude());
