@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.openclassroom.go4lunch.BuildConfig;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.message.RestaurantAddMessage;
-import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
+import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResult;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ItemRestaurantBinding;
 import com.openclassroom.go4lunch.view.activity.RestaurantDetailActivity;

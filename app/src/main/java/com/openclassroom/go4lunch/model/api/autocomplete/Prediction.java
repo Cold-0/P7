@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.model.autocompleteapi;
+package com.openclassroom.go4lunch.model.api.autocomplete;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -1,6 +1,6 @@
 package com.openclassroom.go4lunch.message;
 
-import com.openclassroom.go4lunch.model.autocompleteapi.Prediction;
+import com.openclassroom.go4lunch.model.api.autocomplete.Prediction;
 
 import com.openclassroom.go4lunch.view.ViewTypeTabEnum;
 

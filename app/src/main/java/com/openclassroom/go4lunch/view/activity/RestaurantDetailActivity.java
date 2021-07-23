@@ -14,7 +14,7 @@ import android.os.Bundle;
 import com.openclassroom.go4lunch.BuildConfig;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.model.User;
-import com.openclassroom.go4lunch.model.placedetailsapi.DetailsResult;
+import com.openclassroom.go4lunch.model.api.placedetails.DetailsResult;
 import com.openclassroom.go4lunch.view.recyclerview.ParticipantListAdapter;
 import com.openclassroom.go4lunch.databinding.ActivityRestaurantDetailBinding;
 import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;

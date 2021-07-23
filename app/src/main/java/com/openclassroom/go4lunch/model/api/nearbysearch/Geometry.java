@@ -1,10 +1,8 @@
-package com.openclassroom.go4lunch.model.placedetailsapi;
+package com.openclassroom.go4lunch.model.api.nearbysearch;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
-public class Geometry implements Serializable {
+public class Geometry {
 
     @SerializedName("location")
     private Location mLocation;
@@ -17,14 +15,6 @@ public class Geometry implements Serializable {
 
     public void setLocation(Location location) {
         mLocation = location;
-    }
-
-    public Viewport getViewport() {
-        return mViewport;
-    }
-
-    public void setViewport(Viewport viewport) {
-        mViewport = viewport;
     }
 
 }

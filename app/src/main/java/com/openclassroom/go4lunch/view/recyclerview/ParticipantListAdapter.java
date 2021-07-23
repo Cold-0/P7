@@ -2,7 +2,6 @@ package com.openclassroom.go4lunch.view.recyclerview;
 
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.databinding.ItemUserBinding;
-import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
 import com.openclassroom.go4lunch.utils.transform.CircleCropTransform;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;

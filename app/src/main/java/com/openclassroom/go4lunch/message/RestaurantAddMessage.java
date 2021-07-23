@@ -1,7 +1,7 @@
 package com.openclassroom.go4lunch.message;
 
 import com.openclassroom.go4lunch.model.User;
-import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
+import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResult;
 
 import java.util.List;
 

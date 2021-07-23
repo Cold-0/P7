@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.model.placedetailsapi;
+package com.openclassroom.go4lunch.model.api.placedetails;
 
 import com.google.gson.annotations.SerializedName;
 

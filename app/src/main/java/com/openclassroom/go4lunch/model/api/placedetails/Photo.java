@@ -1,10 +1,11 @@
-package com.openclassroom.go4lunch.model.nearbysearchapi;
+package com.openclassroom.go4lunch.model.api.placedetails;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Photo {
+public class Photo implements Serializable {
 
     @SerializedName("height")
     private Long mHeight;

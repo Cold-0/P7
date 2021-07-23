@@ -1,4 +1,4 @@
-package com.openclassroom.go4lunch.model.nearbysearchapi;
+package com.openclassroom.go4lunch.model.api.nearbysearch;
 
 import java.util.List;
 
