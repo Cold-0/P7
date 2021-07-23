@@ -8,25 +8,24 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.openclassroom.go4lunch.view.activity.RestaurantDetailActivity;
 
 public abstract class ActivityEX extends AppCompatActivity {
-
-    // --------------------
-    // UTILS
-    // --------------------
+    // ----------------------------
+    // Intent
+    // ----------------------------
     protected void openDetailRestaurant(String placeID) {
         Intent sendStuff = new Intent(this, RestaurantDetailActivity.class);
         sendStuff.putExtra("placeID", placeID);
         startActivity(sendStuff);
     }
 
+    // ----------------------------
+    // Getter
+    // ----------------------------
     protected Location getLastKnowLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         try {
@@ -55,9 +54,5 @@ public abstract class ActivityEX extends AppCompatActivity {
             return loc;
         }
         return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-    }
-
-    public ActivityEX() {
-
     }
 }

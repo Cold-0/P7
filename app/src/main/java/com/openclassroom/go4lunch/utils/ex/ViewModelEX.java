@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.openclassroom.go4lunch.message.UserListUpdateMessage;
 import com.openclassroom.go4lunch.repository.Repository;
 import com.openclassroom.go4lunch.listener.OnDetailResponse;
 import com.openclassroom.go4lunch.listener.OnAutoCompleteResponse;
@@ -21,12 +20,21 @@ import com.openclassroom.go4lunch.listener.OnUserListUpdateListener;
 import org.jetbrains.annotations.NotNull;
 
 abstract public class ViewModelEX extends AndroidViewModel {
+    // --------------------
+    // Static
+    // --------------------
     static private final Repository mRepository = Repository.getRepository();
 
+    // --------------------
+    // Constructor
+    // --------------------
     public ViewModelEX(@NonNull @NotNull Application application) {
         super(application);
     }
 
+    // --------------------
+    // Getter
+    // --------------------
     protected Repository getRepository() {
         return mRepository;
     }
@@ -43,20 +51,19 @@ abstract public class ViewModelEX extends AndroidViewModel {
         return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
     }
 
-    public void getDetailResponse(String placeID, OnDetailResponse onDetailResponse) {
-        mRepository.getDetailResponse(placeID, onDetailResponse);
+    // --------------------
+    // Caller
+    // --------------------
+    public void callDetail(String placeID, OnDetailResponse onDetailResponse) {
+        mRepository.callDetail(placeID, onDetailResponse);
     }
 
-    public void getAutocompleteResponse(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
-        mRepository.getAutocompleteResponse(text, localisation, type, onAutoCompleteResponse);
+    public void callAutocomplete(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
+        mRepository.callAutocomplete(text, localisation, type, onAutoCompleteResponse);
     }
 
-    public void getUserListResponse(OnUserListUpdateListener listener) {
-        mRepository.updateUserList();
-        mRepository.getOnUpdateUsersList().addObserver((o, arg) -> {
-            UserListUpdateMessage userListUpdateState = (UserListUpdateMessage) arg;
-            listener.onUserListUpdated(userListUpdateState.currentUser, userListUpdateState.userList);
-        });
+    public void callUserList(OnUserListUpdateListener listener) {
+        mRepository.callUserList(listener);
     }
 
 }

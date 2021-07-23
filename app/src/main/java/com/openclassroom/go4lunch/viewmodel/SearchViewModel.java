@@ -15,7 +15,6 @@ import com.openclassroom.go4lunch.message.MarkerAddMessage;
 import com.openclassroom.go4lunch.message.RestaurantAddMessage;
 import com.openclassroom.go4lunch.message.SearchValidateMessage;
 import com.openclassroom.go4lunch.model.User;
-import com.openclassroom.go4lunch.message.UserListUpdateMessage;
 import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResponse;
 import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResult;
 import com.openclassroom.go4lunch.model.api.placedetails.DetailsResult;
@@ -36,6 +35,9 @@ import retrofit2.Response;
 
 public class SearchViewModel extends ViewModelEX {
 
+    // ------------------------
+    // Constructor
+    // ------------------------
     private final MutableLiveData<SearchValidateMessage> mSearchValidationDataViewMutableLiveData = new MutableLiveData<>();
 
     private final ObservableEX mClearMapObservable = new ObservableEX();
@@ -44,17 +46,32 @@ public class SearchViewModel extends ViewModelEX {
     private final ObservableEX mClearRestaurantList = new ObservableEX();
     private final ObservableEX mAddMapMarker = new ObservableEX();
 
-    MutableLiveData<User> currentUser;
+    MutableLiveData<User> mCurrentUser;
     MutableLiveData<List<User>> mUserList;
     Observer<List<User>> mUserListObserver;
 
-    public void getUserListResponse(OnUserListUpdateListener listener) {
-        getRepository().updateUserList();
-        getRepository().getOnUpdateUsersList().addObserver((o, arg) -> {
-            UserListUpdateMessage userListUpdateState = (UserListUpdateMessage) arg;
-            listener.onUserListUpdated(userListUpdateState.currentUser, userListUpdateState.userList);
+    // ------------------------
+    // Constructor
+    // ------------------------
+    public SearchViewModel(@NonNull @NotNull Application application) {
+        super(application);
+
+        mSearchValidationDataViewMutableLiveData.observeForever(searchValidationDataView -> {
+            callUserList((currentUser, userList) -> onSearchValidate(currentUser, userList, searchValidationDataView));
         });
+
+        getRepository().updateUserList();
+        mUserList = getRepository().getUsersListLiveData();
+
+        mUserListObserver = users -> {
+            FirebaseUser firebaseUser = getRepository().getCurrentFirebaseUser();
+            for (User user : Objects.requireNonNull(getRepository().getUsersListLiveData().getValue())) {
+                if (user.getUid().equals(firebaseUser.getUid()))
+                    mCurrentUser.setValue(user);
+            }
+        };
     }
+
 
     // ------------------------
     // Override
@@ -99,33 +116,12 @@ public class SearchViewModel extends ViewModelEX {
     }
 
     // ------------------------
-    // Constructor
-    // ------------------------
-    public SearchViewModel(@NonNull @NotNull Application application) {
-        super(application);
-
-        mSearchValidationDataViewMutableLiveData.observeForever(searchValidationDataView -> {
-            getUserListResponse((currentUser, userList) -> onSearchValidate(currentUser, userList, searchValidationDataView));
-        });
-
-        getRepository().updateUserList();
-        mUserList = getRepository().getUsersListLiveData();
-        mUserListObserver = users -> {
-            FirebaseUser firebaseUser = getRepository().getCurrentFirebaseUser();
-            for (User user : Objects.requireNonNull(getRepository().getUsersListLiveData().getValue())) {
-                if (user.getUid().equals(firebaseUser.getUid()))
-                    currentUser.setValue(user);
-            }
-        };
-    }
-
-    // ------------------------
-    // Callback
+    // SearchValidate
     // ------------------------
     private void onSearchValidate(User currentUser, List<User> userList, @NotNull SearchValidateMessage searchValidationDataView) {
         // Get Details of the selected AutoComplete place (Get Position)
         if (searchValidationDataView.searchMethod == SearchValidateMessage.SearchMethod.PREDICTION) {
-            getDetailResponse(searchValidationDataView.prediction.getPlaceId(), detailsResult -> {
+            callDetail(searchValidationDataView.prediction.getPlaceId(), detailsResult -> {
                 doNearbySearch(currentUser, userList, searchValidationDataView, detailsResult);
             });
         } else {
@@ -221,5 +217,12 @@ public class SearchViewModel extends ViewModelEX {
                 mAddRestaurantToList.notifyObservers(restaurantInfoState);
             }
         }
+    }
+
+    // ------------------------
+    // Call
+    // ------------------------
+    public void callUserList(OnUserListUpdateListener listener) {
+        getRepository().callUserList(listener);
     }
 }

@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.openclassroom.go4lunch.listener.OnUserListUpdateListener;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.api.autocomplete.AutocompleteResponse;
 import com.openclassroom.go4lunch.message.UserListUpdateMessage;
@@ -64,10 +65,6 @@ public class Repository {
         mCurrentUser = new MutableLiveData<>();
     }
 
-    public Boolean isCurrentUserLogged() {
-        return (this.getCurrentUser() != null);
-    }
-
     // ---------------
     // Getter
     // ---------------
@@ -90,7 +87,7 @@ public class Repository {
         return mRetrofitService;
     }
 
-    public void getAutocompleteResponse(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
+    public void callAutocomplete(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
         Call<AutocompleteResponse> call = repository.getRetrofitService().getAutocomplete(text, 5000, localisation, type);
         call.enqueue(new Callback<AutocompleteResponse>() {
             @Override
@@ -105,7 +102,7 @@ public class Repository {
         });
     }
 
-    public void getDetailResponse(String placeID, OnDetailResponse onDetailResponse) {
+    public void callDetail(String placeID, OnDetailResponse onDetailResponse) {
         Call<PlaceDetailsResponse> callDetails = repository.getRetrofitService().getDetails(placeID);
         callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
             @Override
@@ -241,5 +238,17 @@ public class Repository {
                         Log.w(TAG, "Error getting documents.", task.getException());
                     }
                 });
+    }
+
+    public void callUserList(OnUserListUpdateListener listener) {
+        updateUserList();
+        getOnUpdateUsersList().addObserver((o, arg) -> {
+            UserListUpdateMessage userListUpdateState = (UserListUpdateMessage) arg;
+            listener.onUserListUpdated(userListUpdateState.currentUser, userListUpdateState.userList);
+        });
+    }
+
+    public Boolean isCurrentUserLogged() {
+        return (this.getCurrentUser() != null);
     }
 }

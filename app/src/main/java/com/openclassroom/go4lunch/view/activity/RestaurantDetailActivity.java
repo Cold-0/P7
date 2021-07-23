@@ -50,7 +50,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     }
 
     private void updateAppearance() {
-        mUserInfoViewModel.getDetailResponse(mCurrentPlaceID, detailsResult -> {
+        mUserInfoViewModel.callDetail(mCurrentPlaceID, detailsResult -> {
             mDetailsResult = Objects.requireNonNull(detailsResult);
             mBinding.restaurantNameDetail.setText(mDetailsResult.getName());
             mBinding.restaurantAddressDetail.setText(mDetailsResult.getFormattedAddress());
@@ -64,7 +64,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
                 }
             }
 
-            mUserInfoViewModel.getUserListResponse((currentUser, userList) -> {
+            mUserInfoViewModel.callUserList((currentUser, userList) -> {
                 updateLike(currentUser);
                 updateFab(currentUser);
 
@@ -106,8 +106,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         });
 
         mBinding.fabEatingAt.setOnClickListener(v -> {
-            mUserInfoViewModel.toggleEatingAt(mCurrentPlaceID, mDetailsResult.getName(), result -> {
-                mUserInfoViewModel.getUserListResponse((currentUser, userList) -> {
+            mUserInfoViewModel.callToggleEatingAt(mCurrentPlaceID, mDetailsResult.getName(), result -> {
+                mUserInfoViewModel.callUserList((currentUser, userList) -> {
                     updateFab(currentUser);
                 });
             });
@@ -120,8 +120,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         });
 
         mBinding.layoutClickableLike.setOnClickListener(v -> {
-            mUserInfoViewModel.toggleLike(mCurrentPlaceID, result -> {
-                mUserInfoViewModel.getUserListResponse((currentUser, userList) -> {
+            mUserInfoViewModel.callToggleLike(mCurrentPlaceID, result -> {
+                mUserInfoViewModel.callUserList((currentUser, userList) -> {
                     updateLike(currentUser);
                 });
             });

@@ -15,14 +15,23 @@ import java.util.List;
 
 public class WorkmatesViewModel extends ViewModelEX {
 
+    // ----------------------------
+    // Properties
+    // ----------------------------
     private final MutableLiveData<List<User>> mUserList;
 
+    // ----------------------------
+    // Constructor
+    // ----------------------------
     public WorkmatesViewModel(@NonNull @NotNull Application application) {
         super(application);
         mUserList = getRepository().getUsersListLiveData();
         getRepository().updateUserList();
     }
 
+    // ----------------------------
+    // Getter
+    // ----------------------------
     public LiveData<List<User>> getUserList() {
         return mUserList;
     }
