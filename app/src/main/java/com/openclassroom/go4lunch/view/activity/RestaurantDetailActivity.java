@@ -1,6 +1,5 @@
 package com.openclassroom.go4lunch.view.activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -16,24 +15,14 @@ import com.openclassroom.go4lunch.BuildConfig;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.placedetailsapi.DetailsResult;
-import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.view.recyclerview.ParticipantListAdapter;
 import com.openclassroom.go4lunch.databinding.ActivityRestaurantDetailBinding;
 import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
-import com.openclassroom.go4lunch.viewmodel.listener.OnDetailResponse;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Objects;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static com.openclassroom.go4lunch.repository.Repository.getRepository;
 
 public class RestaurantDetailActivity extends AppCompatActivity {
 
@@ -61,7 +50,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     }
 
     private void updateAppearance() {
-        mUserInfoViewModel.getDetails(mCurrentPlaceID, detailsResult -> {
+        mUserInfoViewModel.getDetailResponse(mCurrentPlaceID, detailsResult -> {
             mDetailsResult = Objects.requireNonNull(detailsResult);
             mBinding.restaurantNameDetail.setText(mDetailsResult.getName());
             mBinding.restaurantAddressDetail.setText(mDetailsResult.getFormattedAddress());

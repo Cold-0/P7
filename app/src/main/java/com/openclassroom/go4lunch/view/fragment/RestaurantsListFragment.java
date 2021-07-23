@@ -9,8 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.openclassroom.go4lunch.model.data.RestaurantInfoData;
-import com.openclassroom.go4lunch.model.data.SearchValidationData;
+import com.openclassroom.go4lunch.message.RestaurantAddMessage;
+import com.openclassroom.go4lunch.message.SearchValidateMessage;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
 import com.openclassroom.go4lunch.view.ViewTypeTabEnum;
 import com.openclassroom.go4lunch.view.recyclerview.RestaurantsListAdapter;
@@ -36,16 +36,16 @@ public class RestaurantsListFragment extends FragmentEX {
         mBinding.restaurantList.setAdapter(mRestaurantsListAdapter);
 
         searchViewModel.getAddRestaurantToList().addObserver((o, arg) -> {
-            if (arg instanceof RestaurantInfoData)
-                mRestaurantsListAdapter.addToRestaurantList((RestaurantInfoData) arg);
+            if (arg instanceof RestaurantAddMessage)
+                mRestaurantsListAdapter.addToRestaurantList((RestaurantAddMessage) arg);
         });
 
         searchViewModel.getClearRestaurantList().addObserver((o, arg) -> {
             mRestaurantsListAdapter.clearRestaurantList();
         });
 
-        SearchValidationData svd = new SearchValidationData();
-        svd.searchMethod = SearchValidationData.SearchMethod.CLOSER;
+        SearchValidateMessage svd = new SearchValidateMessage();
+        svd.searchMethod = SearchValidateMessage.SearchMethod.CLOSER;
         svd.viewType = ViewTypeTabEnum.LIST;
         searchViewModel.setSearchValidationDataViewMutable(svd);
 

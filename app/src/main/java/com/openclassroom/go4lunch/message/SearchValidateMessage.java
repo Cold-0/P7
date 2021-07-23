@@ -1,10 +1,10 @@
-package com.openclassroom.go4lunch.model.data;
+package com.openclassroom.go4lunch.message;
 
 import com.openclassroom.go4lunch.model.autocompleteapi.Prediction;
 
 import com.openclassroom.go4lunch.view.ViewTypeTabEnum;
 
-public class SearchValidationData {
+public class SearchValidateMessage {
 
     public enum SearchMethod {
         PREDICTION,

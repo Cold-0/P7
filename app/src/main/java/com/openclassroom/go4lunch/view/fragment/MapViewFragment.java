@@ -24,10 +24,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.openclassroom.go4lunch.R;
-import com.openclassroom.go4lunch.model.data.SearchValidationData;
+import com.openclassroom.go4lunch.message.SearchValidateMessage;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
 import com.openclassroom.go4lunch.view.ViewTypeTabEnum;
-import com.openclassroom.go4lunch.view.activity.MainActivity;
+import com.openclassroom.go4lunch.message.MarkerAddMessage;
 import com.openclassroom.go4lunch.viewmodel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentMapviewBinding;
 
@@ -71,7 +71,7 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
         });
 
         mSearchViewModel.getAddMapMarker().addObserver((o, arg) -> {
-            SearchViewModel.MarkerState state = (arg instanceof SearchViewModel.MarkerState ? (SearchViewModel.MarkerState) arg : null);
+            MarkerAddMessage state = (arg instanceof MarkerAddMessage ? (MarkerAddMessage) arg : null);
             if (mGoogleMap != null) {
                 mMarkerStringHashMap.put(mGoogleMap.addMarker(Objects.requireNonNull(state).markerOptions), state.placeID);
             }
@@ -118,8 +118,8 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
         mGoogleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style));
         zoomOnLocation(getMyLocation());
 
-        SearchValidationData svd = new SearchValidationData();
-        svd.searchMethod = SearchValidationData.SearchMethod.CLOSER;
+        SearchValidateMessage svd = new SearchValidateMessage();
+        svd.searchMethod = SearchValidateMessage.SearchMethod.CLOSER;
         svd.viewType = ViewTypeTabEnum.MAP;
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
 
@@ -149,8 +149,8 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
     @Override
     public void onResume() {
         super.onResume();
-        SearchValidationData svd = new SearchValidationData();
-        svd.searchMethod = SearchValidationData.SearchMethod.CLOSER;
+        SearchValidateMessage svd = new SearchValidateMessage();
+        svd.searchMethod = SearchValidateMessage.SearchMethod.CLOSER;
         svd.viewType = ViewTypeTabEnum.MAP;
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
         mBinding.mapView.onResume();

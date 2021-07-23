@@ -1,12 +1,8 @@
 package com.openclassroom.go4lunch.repository;
 
-import android.app.Activity;
-import android.database.MatrixCursor;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,8 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.autocompleteapi.AutocompleteResponse;
-import com.openclassroom.go4lunch.model.autocompleteapi.Prediction;
-import com.openclassroom.go4lunch.model.data.UserListUpdateData;
+import com.openclassroom.go4lunch.message.UserListUpdateMessage;
 import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitInstance;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitService;
@@ -49,23 +44,88 @@ public class Repository {
     }
 
     // ----------------
-    // Instance
+    // Instance Properties
     // ----------------
     private final RetrofitService mRetrofitService;
     private final FirebaseFirestore mFirebaseFirestore;
-
     private final MutableLiveData<List<User>> mUserMutableLiveData;
     private final MutableLiveData<User> mCurrentUser;
+    private final ObservableEX mOnUpdateUsersList;
+
+    // ---------------
+    // Constructor
+    // ---------------
+    Repository() {
+        mRetrofitService = RetrofitInstance.getRetrofitInstance().create(RetrofitService.class);
+        mFirebaseFirestore = FirebaseFirestore.getInstance();
+        mOnUpdateUsersList = new ObservableEX();
+        mUserMutableLiveData = new MutableLiveData<>();
+        mUserMutableLiveData.setValue(new ArrayList<>());
+        mCurrentUser = new MutableLiveData<>();
+    }
 
     public Boolean isCurrentUserLogged() {
         return (this.getCurrentUser() != null);
     }
 
+    // ---------------
+    // Getter
+    // ---------------
     public ObservableEX getOnUpdateUsersList() {
         return mOnUpdateUsersList;
     }
 
-    private final ObservableEX mOnUpdateUsersList;
+    public MutableLiveData<List<User>> getUsersListLiveData() {
+        return mUserMutableLiveData;
+    }
+
+    public MutableLiveData<User> getCurrentUser() {
+        return mCurrentUser;
+    }
+
+    // --------------
+    // Retrofit Call
+    // --------------
+    public RetrofitService getRetrofitService() {
+        return mRetrofitService;
+    }
+
+    public void getAutocompleteResponse(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
+        Call<AutocompleteResponse> call = repository.getRetrofitService().getAutocomplete(text, 5000, localisation, type);
+        call.enqueue(new Callback<AutocompleteResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {
+                onAutoCompleteResponse.onResponse(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AutocompleteResponse> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+
+    public void getDetailResponse(String placeID, OnDetailResponse onDetailResponse) {
+        Call<PlaceDetailsResponse> callDetails = getRepository().getRetrofitService().getDetails(placeID);
+        callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
+            @Override
+            public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {
+                onDetailResponse.onDetailsResponse(response.body().getResult());
+            }
+
+            @Override
+            public void onFailure(Call<PlaceDetailsResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    // ---------------
+    // Firebase
+    // ---------------
+    public FirebaseUser getCurrentFirebaseUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
 
     public void toggleEatingAt(String placeID, String placeName, OnToggled toggledEatingAt) {
         mFirebaseFirestore.collection("users")
@@ -172,7 +232,7 @@ public class Repository {
                         }
 
                         mUserMutableLiveData.setValue(userList);
-                        UserListUpdateData userListUpdateState = new UserListUpdateData();
+                        UserListUpdateMessage userListUpdateState = new UserListUpdateMessage();
                         userListUpdateState.currentUser = mCurrentUser.getValue();
                         userListUpdateState.userList = mUserMutableLiveData.getValue();
                         mOnUpdateUsersList.notifyObservers(userListUpdateState);
@@ -181,68 +241,5 @@ public class Repository {
                         Log.w(TAG, "Error getting documents.", task.getException());
                     }
                 });
-    }
-
-    public void getAutocomplete(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
-        Call<AutocompleteResponse> call = repository.getRetrofitService().getAutocomplete(text, 5000, localisation, type);
-        call.enqueue(new Callback<AutocompleteResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {
-               onAutoCompleteResponse.onResponse(response.body());
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<AutocompleteResponse> call, @NonNull Throwable t) {
-
-            }
-        });
-    }
-
-
-    // ---------------
-    // Getter
-    // ---------------
-    public RetrofitService getRetrofitService() {
-        return mRetrofitService;
-    }
-
-    public FirebaseUser getCurrentFirebaseUser() {
-        return FirebaseAuth.getInstance().getCurrentUser();
-    }
-
-    public MutableLiveData<List<User>> getUsersListLiveData() {
-        return mUserMutableLiveData;
-    }
-
-    public MutableLiveData<User> getCurrentUser() {
-        return mCurrentUser;
-    }
-
-    // ---------------
-    // Constructor
-    // ---------------
-    Repository() {
-        mRetrofitService = RetrofitInstance.getRetrofitInstance().create(RetrofitService.class);
-        mFirebaseFirestore = FirebaseFirestore.getInstance();
-
-        mOnUpdateUsersList = new ObservableEX();
-        mUserMutableLiveData = new MutableLiveData<>();
-        mUserMutableLiveData.setValue(new ArrayList<>());
-        mCurrentUser = new MutableLiveData<>();
-    }
-
-    public void getDetails(String placeID, OnDetailResponse onDetailResponse) {
-        Call<PlaceDetailsResponse> callDetails = getRepository().getRetrofitService().getDetails(placeID);
-        callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
-            @Override
-            public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {
-                onDetailResponse.onDetailsResponse(response.body().getResult());
-            }
-
-            @Override
-            public void onFailure(Call<PlaceDetailsResponse> call, Throwable t) {
-
-            }
-        });
     }
 }

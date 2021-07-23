@@ -36,7 +36,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.autocompleteapi.Prediction;
-import com.openclassroom.go4lunch.model.data.SearchValidationData;
+import com.openclassroom.go4lunch.message.SearchValidateMessage;
 import com.openclassroom.go4lunch.utils.transform.CircleCropTransform;
 import com.openclassroom.go4lunch.utils.ex.ActivityEX;
 import com.openclassroom.go4lunch.R;
@@ -78,6 +78,9 @@ public class MainActivity extends ActivityEX {
     private User mCurrentUser;
     private ViewTypeTabEnum mCurrentView;
 
+    // --------------------
+    // Activity Override
+    // --------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -228,7 +231,7 @@ public class MainActivity extends ActivityEX {
                 searchView.clearFocus();
 
                 // Create the Data containing the search to send to needed Fragment.
-                SearchValidationData searchValidationDataView = new SearchValidationData();
+                SearchValidateMessage searchValidationDataView = new SearchValidateMessage();
                 searchValidationDataView.prediction = predictionList.get(position);
                 searchValidationDataView.viewType = mCurrentView;
 
@@ -252,10 +255,10 @@ public class MainActivity extends ActivityEX {
                 // Clear Focus
                 searchView.clearFocus();
 
-                SearchValidationData searchValidationDataView = new SearchValidationData();
+                SearchValidateMessage searchValidationDataView = new SearchValidateMessage();
                 searchValidationDataView.prediction = null;
                 searchValidationDataView.viewType = mCurrentView;
-                searchValidationDataView.searchMethod = SearchValidationData.SearchMethod.SEARCH_STRING;
+                searchValidationDataView.searchMethod = SearchValidateMessage.SearchMethod.SEARCH_STRING;
                 searchValidationDataView.searchString = currentSearch[0];
 
                 mSearchViewModel.setSearchValidationDataViewMutable(searchValidationDataView);
@@ -281,7 +284,7 @@ public class MainActivity extends ActivityEX {
                     // Get string of the current Location, using the Locale.CANADA to be sure to get the 0.50,-10.5 format and not the , instead of . like in French
                     String locString = String.format(Locale.CANADA, getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude());
 
-                    mSearchViewModel.getAutocomplete(newText, locString, "establishment", autocompleteResponse -> {
+                    mSearchViewModel.getAutocompleteResponse(newText, locString, "establishment", autocompleteResponse -> {
                         if (autocompleteResponse != null) {
                             predictionList.clear();
 

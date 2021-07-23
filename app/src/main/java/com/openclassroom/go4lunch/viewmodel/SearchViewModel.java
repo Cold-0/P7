@@ -17,13 +17,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseUser;
-import com.openclassroom.go4lunch.model.data.RestaurantInfoData;
-import com.openclassroom.go4lunch.model.data.SearchValidationData;
+import com.openclassroom.go4lunch.message.MarkerAddMessage;
+import com.openclassroom.go4lunch.message.RestaurantAddMessage;
+import com.openclassroom.go4lunch.message.SearchValidateMessage;
 import com.openclassroom.go4lunch.model.User;
-import com.openclassroom.go4lunch.model.data.UserListUpdateData;
+import com.openclassroom.go4lunch.message.UserListUpdateMessage;
 import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResponse;
 import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
-import com.openclassroom.go4lunch.model.placedetailsapi.PlaceDetailsResponse;
+import com.openclassroom.go4lunch.model.placedetailsapi.DetailsResult;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
 import com.openclassroom.go4lunch.utils.ex.ViewModelEX;
@@ -42,12 +43,7 @@ import retrofit2.Response;
 
 public class SearchViewModel extends ViewModelEX {
 
-    public static class MarkerState {
-        public MarkerOptions markerOptions;
-        public String placeID;
-    }
-
-    private final MutableLiveData<SearchValidationData> mSearchValidationDataViewMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<SearchValidateMessage> mSearchValidationDataViewMutableLiveData = new MutableLiveData<>();
 
     private final ObservableEX mClearMapObservable = new ObservableEX();
     private final ObservableEX mZoomMapObservable = new ObservableEX();
@@ -59,14 +55,10 @@ public class SearchViewModel extends ViewModelEX {
     MutableLiveData<List<User>> mUserList;
     Observer<List<User>> mUserListObserver;
 
-    public MutableLiveData<User> getCurrentUser() {
-        return currentUser;
-    }
-
     public void updateUserList(OnUserListUpdateListener listener) {
         getRepository().updateUserList();
         getRepository().getOnUpdateUsersList().addObserver((o, arg) -> {
-            UserListUpdateData userListUpdateState = (UserListUpdateData) arg;
+            UserListUpdateMessage userListUpdateState = (UserListUpdateMessage) arg;
             listener.onUserListUpdated(userListUpdateState.currentUser, userListUpdateState.userList);
         });
     }
@@ -74,10 +66,6 @@ public class SearchViewModel extends ViewModelEX {
     // ------------------------
     // Getter
     // ------------------------
-    public MutableLiveData<SearchValidationData> getSearchValidationDataViewMutableLiveData() {
-        return mSearchValidationDataViewMutableLiveData;
-    }
-
     public ObservableEX getClearMapObservable() {
         return mClearMapObservable;
     }
@@ -94,18 +82,21 @@ public class SearchViewModel extends ViewModelEX {
         return mClearRestaurantList;
     }
 
+    public ObservableEX getAddMapMarker() {
+        return mAddMapMarker;
+    }
+
     // ------------------------
     // Setter
     // ------------------------
-    public void setSearchValidationDataViewMutable(SearchValidationData searchValidationDataViewMutable) {
+    public void setSearchValidationDataViewMutable(SearchValidateMessage searchValidationDataViewMutable) {
         this.mSearchValidationDataViewMutableLiveData.setValue(searchValidationDataViewMutable);
     }
 
     // ------------------------
     // Constructor
     // ------------------------
-    public SearchViewModel(
-            @NonNull @NotNull Application application) {
+    public SearchViewModel(@NonNull @NotNull Application application) {
         super(application);
 
         mSearchValidationDataViewMutableLiveData.observeForever(searchValidationDataView -> {
@@ -126,45 +117,36 @@ public class SearchViewModel extends ViewModelEX {
     // ------------------------
     // Callback
     // ------------------------
-    private void OnSearchLaunch(User currentUser, List<User> userList, @NotNull SearchValidationData searchValidationDataView) {
+    private void OnSearchLaunch(User currentUser, List<User> userList, @NotNull SearchValidateMessage searchValidationDataView) {
         // Get Details of the selected AutoComplete place (Get Position)
-        if (searchValidationDataView.searchMethod == SearchValidationData.SearchMethod.PREDICTION) {
-            Call<PlaceDetailsResponse> callDetails = getRepository().getRetrofitService().getDetails(searchValidationDataView.prediction.getPlaceId());
-            callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<PlaceDetailsResponse> call, @NonNull Response<PlaceDetailsResponse> response) {
-                    onResponseNearbySearch(currentUser, userList, searchValidationDataView, response);
-                }
-
-                @Override
-                public void onFailure(@NotNull Call<PlaceDetailsResponse> call, @NotNull Throwable t) {
-
-                }
+        if (searchValidationDataView.searchMethod == SearchValidateMessage.SearchMethod.PREDICTION) {
+            getRepository().getDetailResponse(searchValidationDataView.prediction.getPlaceId(), detailsResult -> {
+                onResponseNearbySearch(currentUser, userList, searchValidationDataView, detailsResult);
             });
         } else {
             onResponseNearbySearch(currentUser, userList, searchValidationDataView, null);
         }
     }
 
-    private void onResponseNearbySearch(User currentUser, List<User> userList, SearchValidationData data, Response<PlaceDetailsResponse> response) {
+    private void onResponseNearbySearch(User currentUser, List<User> userList, SearchValidateMessage data, DetailsResult response) {
         mClearMapObservable.notifyObservers();
         Location loc = new Location("");
-        if (response != null && response.body() != null && data.searchMethod == SearchValidationData.SearchMethod.PREDICTION) {
-            Double lat = response.body().getResult().getGeometry().getLocation().getLat();
-            Double lng = response.body().getResult().getGeometry().getLocation().getLng();
+        if (response != null && data.searchMethod == SearchValidateMessage.SearchMethod.PREDICTION) {
+            Double lat = response.getGeometry().getLocation().getLat();
+            Double lng = response.getGeometry().getLocation().getLng();
             loc.setLatitude(lat);
             loc.setLongitude(lng);
 
             // Add marker of choice position
             MarkerOptions userIndicator = new MarkerOptions()
                     .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
-                    .title(response.body().getResult().getName())
-                    .snippet(response.body().getResult().getVicinity());
+                    .title(response.getName())
+                    .snippet(response.getVicinity());
 
 
-            MarkerState state = new MarkerState();
+            MarkerAddMessage state = new MarkerAddMessage();
             state.markerOptions = userIndicator;
-            state.placeID = response.body().getResult().getPlaceId();
+            state.placeID = response.getPlaceId();
             mAddMapMarker.notifyObservers(state);
 
         } else {
@@ -176,9 +158,9 @@ public class SearchViewModel extends ViewModelEX {
         // Get Nearby Search Respond using the Details as location
         Call<NearbySearchResponse> callNearbySearch = null;
 
-        if (data.searchMethod == SearchValidationData.SearchMethod.PREDICTION || data.searchMethod == SearchValidationData.SearchMethod.CLOSER) {
+        if (data.searchMethod == SearchValidateMessage.SearchMethod.PREDICTION || data.searchMethod == SearchValidateMessage.SearchMethod.CLOSER) {
             callNearbySearch = getRepository().getRetrofitService().getNearbyByType(5000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant");
-        } else if (data.searchMethod == SearchValidationData.SearchMethod.SEARCH_STRING) {
+        } else if (data.searchMethod == SearchValidateMessage.SearchMethod.SEARCH_STRING) {
             callNearbySearch = getRepository().getRetrofitService().getNearbyByKeyword(5000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.searchString);
         }
 
@@ -224,13 +206,12 @@ public class SearchViewModel extends ViewModelEX {
                         .title(result.getName())
                         .snippet(result.getVicinity());
 
-
-                MarkerState state = new MarkerState();
+                MarkerAddMessage state = new MarkerAddMessage();
                 state.markerOptions = userIndicator;
                 state.placeID = result.getPlaceId();
                 mAddMapMarker.notifyObservers(state);
 
-                RestaurantInfoData restaurantInfoState = new RestaurantInfoData();
+                RestaurantAddMessage restaurantInfoState = new RestaurantAddMessage();
                 restaurantInfoState.result = result;
                 restaurantInfoState.userList = userList;
                 mAddRestaurantToList.notifyObservers(restaurantInfoState);
@@ -259,11 +240,8 @@ public class SearchViewModel extends ViewModelEX {
         mZoomMapObservable.deleteObservers();
     }
 
-    public ObservableEX getAddMapMarker() {
-        return mAddMapMarker;
-    }
 
-    public void getAutocomplete(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
-        getRepository().getAutocomplete(text, localisation, type, onAutoCompleteResponse);
+    public void getAutocompleteResponse(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
+        getRepository().getAutocompleteResponse(text, localisation, type, onAutoCompleteResponse);
     }
 }

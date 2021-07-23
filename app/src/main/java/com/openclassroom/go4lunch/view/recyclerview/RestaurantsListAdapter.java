@@ -2,7 +2,6 @@ package com.openclassroom.go4lunch.view.recyclerview;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,9 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassroom.go4lunch.BuildConfig;
 import com.openclassroom.go4lunch.model.User;
-import com.openclassroom.go4lunch.model.data.RestaurantInfoData;
+import com.openclassroom.go4lunch.message.RestaurantAddMessage;
 import com.openclassroom.go4lunch.model.nearbysearchapi.NearbySearchResult;
-import com.openclassroom.go4lunch.model.placedetailsapi.DetailsResult;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.databinding.ItemRestaurantBinding;
 import com.openclassroom.go4lunch.view.activity.RestaurantDetailActivity;
@@ -45,10 +43,10 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
     private final FragmentActivity mActivity;
 
     @NonNull
-    private final LiveData<List<RestaurantInfoData>> mRestaurantList;
+    private final LiveData<List<RestaurantAddMessage>> mRestaurantList;
 
     @NonNull
-    public LiveData<List<RestaurantInfoData>> getRestaurantList() {
+    public LiveData<List<RestaurantAddMessage>> getRestaurantList() {
         return mRestaurantList;
     }
 
@@ -58,13 +56,13 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
         notifyDataSetChanged();
     }
 
-    public void addToRestaurantList(RestaurantInfoData restaurant) {
+    public void addToRestaurantList(RestaurantAddMessage restaurant) {
         Objects.requireNonNull(mRestaurantList.getValue()).add(restaurant);
         notifyItemInserted(mRestaurantList.getValue().size() - 1);
         Log.w(TAG, "addToRestaurantList");
     }
 
-    public RestaurantsListAdapter(@NonNull FragmentActivity activity, @NonNull List<RestaurantInfoData> restaurantList) {
+    public RestaurantsListAdapter(@NonNull FragmentActivity activity, @NonNull List<RestaurantAddMessage> restaurantList) {
         mActivity = activity;
         mRestaurantList = new MutableLiveData<>(restaurantList);
     }

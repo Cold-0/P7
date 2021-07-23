@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.openclassroom.go4lunch.model.User;
-import com.openclassroom.go4lunch.model.data.UserListUpdateData;
+import com.openclassroom.go4lunch.message.UserListUpdateMessage;
 import com.openclassroom.go4lunch.utils.ex.ViewModelEX;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,7 @@ public class UserInfoViewModel extends ViewModelEX {
     public void updateUserList(OnUserListUpdateListener listener) {
         getRepository().updateUserList();
         getRepository().getOnUpdateUsersList().addObserver((o, arg) -> {
-            UserListUpdateData userListUpdateState = (UserListUpdateData) arg;
+            UserListUpdateMessage userListUpdateState = (UserListUpdateMessage) arg;
             listener.onUserListUpdated(userListUpdateState.currentUser, userListUpdateState.userList);
         });
     }
