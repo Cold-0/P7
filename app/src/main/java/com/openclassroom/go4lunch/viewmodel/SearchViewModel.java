@@ -22,7 +22,6 @@ import com.openclassroom.go4lunch.model.api.placedetails.DetailsResult;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
 import com.openclassroom.go4lunch.utils.ex.ViewModelEX;
-import com.openclassroom.go4lunch.listener.OnAutoCompleteResponse;
 import com.openclassroom.go4lunch.listener.OnUserListUpdateListener;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +48,7 @@ public class SearchViewModel extends ViewModelEX {
     MutableLiveData<List<User>> mUserList;
     Observer<List<User>> mUserListObserver;
 
-    public void updateUserList(OnUserListUpdateListener listener) {
+    public void getUserListResponse(OnUserListUpdateListener listener) {
         getRepository().updateUserList();
         getRepository().getOnUpdateUsersList().addObserver((o, arg) -> {
             UserListUpdateMessage userListUpdateState = (UserListUpdateMessage) arg;
@@ -106,7 +105,7 @@ public class SearchViewModel extends ViewModelEX {
         super(application);
 
         mSearchValidationDataViewMutableLiveData.observeForever(searchValidationDataView -> {
-            updateUserList((currentUser, userList) -> onSearchValidate(currentUser, userList, searchValidationDataView));
+            getUserListResponse((currentUser, userList) -> onSearchValidate(currentUser, userList, searchValidationDataView));
         });
 
         getRepository().updateUserList();

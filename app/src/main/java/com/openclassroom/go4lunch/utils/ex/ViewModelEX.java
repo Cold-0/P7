@@ -12,25 +12,23 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.openclassroom.go4lunch.listener.OnAutoCompleteResponse;
-import com.openclassroom.go4lunch.listener.OnUserListUpdateListener;
 import com.openclassroom.go4lunch.message.UserListUpdateMessage;
 import com.openclassroom.go4lunch.repository.Repository;
 import com.openclassroom.go4lunch.listener.OnDetailResponse;
+import com.openclassroom.go4lunch.listener.OnAutoCompleteResponse;
+import com.openclassroom.go4lunch.listener.OnUserListUpdateListener;
 
 import org.jetbrains.annotations.NotNull;
 
 abstract public class ViewModelEX extends AndroidViewModel {
-
-    public Repository getRepository() {
-        return mRepository;
-    }
-
-    private final Repository mRepository;
+    static private final Repository mRepository = Repository.getRepository();
 
     public ViewModelEX(@NonNull @NotNull Application application) {
         super(application);
-        mRepository = Repository.getRepository();
+    }
+
+    protected Repository getRepository() {
+        return mRepository;
     }
 
     public Location getMyLocation() {
@@ -46,20 +44,19 @@ abstract public class ViewModelEX extends AndroidViewModel {
     }
 
     public void getDetailResponse(String placeID, OnDetailResponse onDetailResponse) {
-        getRepository().getDetailResponse(placeID, onDetailResponse);
+        mRepository.getDetailResponse(placeID, onDetailResponse);
     }
 
     public void getAutocompleteResponse(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
-        getRepository().getAutocompleteResponse(text, localisation, type, onAutoCompleteResponse);
+        mRepository.getAutocompleteResponse(text, localisation, type, onAutoCompleteResponse);
     }
 
-    public void updateUserList(OnUserListUpdateListener listener) {
-        getRepository().updateUserList();
-        getRepository().getOnUpdateUsersList().addObserver((o, arg) -> {
+    public void getUserListResponse(OnUserListUpdateListener listener) {
+        mRepository.updateUserList();
+        mRepository.getOnUpdateUsersList().addObserver((o, arg) -> {
             UserListUpdateMessage userListUpdateState = (UserListUpdateMessage) arg;
             listener.onUserListUpdated(userListUpdateState.currentUser, userListUpdateState.userList);
         });
     }
-
 
 }

@@ -64,7 +64,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
                 }
             }
 
-            mUserInfoViewModel.updateUserList((currentUser, userList) -> {
+            mUserInfoViewModel.getUserListResponse((currentUser, userList) -> {
                 updateLike(currentUser);
                 updateFab(currentUser);
 
@@ -107,7 +107,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
         mBinding.fabEatingAt.setOnClickListener(v -> {
             mUserInfoViewModel.toggleEatingAt(mCurrentPlaceID, mDetailsResult.getName(), result -> {
-                mUserInfoViewModel.updateUserList((currentUser, userList) -> {
+                mUserInfoViewModel.getUserListResponse((currentUser, userList) -> {
                     updateFab(currentUser);
                 });
             });
@@ -121,7 +121,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
         mBinding.layoutClickableLike.setOnClickListener(v -> {
             mUserInfoViewModel.toggleLike(mCurrentPlaceID, result -> {
-                mUserInfoViewModel.updateUserList((currentUser, userList) -> {
+                mUserInfoViewModel.getUserListResponse((currentUser, userList) -> {
                     updateLike(currentUser);
                 });
             });

@@ -106,7 +106,7 @@ public class Repository {
     }
 
     public void getDetailResponse(String placeID, OnDetailResponse onDetailResponse) {
-        Call<PlaceDetailsResponse> callDetails = getRepository().getRetrofitService().getDetails(placeID);
+        Call<PlaceDetailsResponse> callDetails = repository.getRetrofitService().getDetails(placeID);
         callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
             @Override
             public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {
