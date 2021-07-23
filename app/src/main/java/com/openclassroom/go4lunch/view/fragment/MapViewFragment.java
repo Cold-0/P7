@@ -74,7 +74,7 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
         mSearchViewModel.getAddMapMarker().addObserver((o, arg) -> {
             MarkerAddMessage state = (arg instanceof MarkerAddMessage ? (MarkerAddMessage) arg : null);
             if (mGoogleMap != null) {
-                mMarkerStringHashMap.put(mGoogleMap.addMarker(Objects.requireNonNull(state).markerOptions), state.placeID);
+                mMarkerStringHashMap.put(mGoogleMap.addMarker(Objects.requireNonNull(state).getMarkerOptions()), state.getPlaceID());
             }
         });
 

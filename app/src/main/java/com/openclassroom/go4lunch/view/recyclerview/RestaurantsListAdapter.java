@@ -78,8 +78,8 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull @NotNull RestaurantsListViewHolder holder, int position) {
-        NearbySearchResult restaurant = Objects.requireNonNull(mRestaurantList.getValue()).get(position).result;
-        List<User> userList = Objects.requireNonNull(mRestaurantList.getValue()).get(position).userList;
+        NearbySearchResult restaurant = Objects.requireNonNull(mRestaurantList.getValue()).get(position).getResult();
+        List<User> userList = Objects.requireNonNull(mRestaurantList.getValue()).get(position).getUserList();
 
         Location loc = getMyLocation();
 

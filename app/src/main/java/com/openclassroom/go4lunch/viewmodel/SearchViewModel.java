@@ -57,9 +57,10 @@ public class SearchViewModel extends ViewModelEX {
     public SearchViewModel(@NonNull @NotNull Application application) {
         super(application);
 
-        mSearchValidationDataViewMutableLiveData.observeForever(searchValidationDataView -> {
-            callUserList((currentUser, userList) -> onSearchValidate(currentUser, userList, searchValidationDataView));
-        });
+        mSearchValidationDataViewMutableLiveData.observeForever(
+                searchValidationDataView ->
+                        callUserList((currentUser, userList) ->
+                                onSearchValidate(currentUser, userList, searchValidationDataView)));
 
         getRepository().updateUserList();
         mUserList = getRepository().getUsersListLiveData();
@@ -122,9 +123,8 @@ public class SearchViewModel extends ViewModelEX {
     private void onSearchValidate(User currentUser, List<User> userList, @NotNull SearchValidateMessage searchValidationDataView) {
         // Get Details of the selected AutoComplete place (Get Position)
         if (searchValidationDataView.searchMethod == SearchType.PREDICTION) {
-            callDetail(searchValidationDataView.prediction.getPlaceId(), detailsResult -> {
-                doNearbySearch(currentUser, userList, searchValidationDataView, detailsResult);
-            });
+            callDetail(searchValidationDataView.prediction.getPlaceId(), detailsResult ->
+                    doNearbySearch(currentUser, userList, searchValidationDataView, detailsResult));
         } else {
             doNearbySearch(currentUser, userList, searchValidationDataView, null);
         }
@@ -147,8 +147,8 @@ public class SearchViewModel extends ViewModelEX {
 
 
             MarkerAddMessage state = new MarkerAddMessage();
-            state.markerOptions = userIndicator;
-            state.placeID = response.getPlaceId();
+            state.markeroptions(userIndicator);
+            state.placeid(response.getPlaceId());
             mAddMapMarker.notifyObservers(state);
 
         } else {
@@ -182,39 +182,47 @@ public class SearchViewModel extends ViewModelEX {
     private void doDetailFill(User currentUser, List<User> userList, @NotNull Response<NearbySearchResponse> response) {
         assert response.body() != null;
         mClearRestaurantList.notifyObservers();
-        for (NearbySearchResult result : response.body().getResults()) {
+        for (NearbySearchResult nearbysearchresult : response.body().getResults()) {
             if (response.body() != null) {
-                Double lat = result.getGeometry().getLocation().getLat();
-                Double lng = result.getGeometry().getLocation().getLng();
+                // Build LatLng instance
+                Double lat = nearbysearchresult.getGeometry().getLocation().getLat();
+                Double lng = nearbysearchresult.getGeometry().getLocation().getLng();
                 LatLng loc = new LatLng(lat, lng);
 
+                // Default Red
                 float hue = BitmapDescriptorFactory.HUE_RED;
 
+                // If anyone EatAt then make it Green
                 for (User user : userList) {
-                    if (result.getPlaceId().equals(user.getEatingAt())) {
+                    if (nearbysearchresult.getPlaceId().equals(user.getEatingAt())) {
                         hue = BitmapDescriptorFactory.HUE_GREEN;
                         break;
                     }
                 }
 
-                if (result.getPlaceId().equals(currentUser.getEatingAt()))
+                // If you EatAt then make it Blue
+                if (nearbysearchresult.getPlaceId().equals(currentUser.getEatingAt()))
                     hue = BitmapDescriptorFactory.HUE_AZURE;
 
-                // Add marker of user's position
+                // Build MarkerOptions
                 MarkerOptions userIndicator = new MarkerOptions()
                         .position(loc)
                         .icon(BitmapDescriptorFactory.defaultMarker(hue))
-                        .title(result.getName())
-                        .snippet(result.getVicinity());
+                        .title(nearbysearchresult.getName())
+                        .snippet(nearbysearchresult.getVicinity());
 
-                MarkerAddMessage state = new MarkerAddMessage();
-                state.markerOptions = userIndicator;
-                state.placeID = result.getPlaceId();
+                // Build MarkerAddMessage
+                MarkerAddMessage state = new MarkerAddMessage()
+                        .markeroptions(userIndicator)
+                        .placeid(nearbysearchresult.getPlaceId());
+
+                // Build RestaurantAddMessage
+                RestaurantAddMessage restaurantInfoState = new RestaurantAddMessage()
+                        .nearbysearchresult(nearbysearchresult)
+                        .userlist(userList);
+
+                // Notify observer and send Messages
                 mAddMapMarker.notifyObservers(state);
-
-                RestaurantAddMessage restaurantInfoState = new RestaurantAddMessage();
-                restaurantInfoState.result = result;
-                restaurantInfoState.userList = userList;
                 mAddRestaurantToList.notifyObservers(restaurantInfoState);
             }
         }
