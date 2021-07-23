@@ -233,9 +233,9 @@ public class MainActivity extends ActivityEX {
                 searchView.clearFocus();
 
                 // Create the Data containing the search to send to needed Fragment.
-                SearchValidateMessage searchValidationDataView = new SearchValidateMessage();
-                searchValidationDataView.prediction = predictionList.get(position);
-                searchValidationDataView.viewType = mCurrentView;
+                SearchValidateMessage searchValidationDataView = new SearchValidateMessage()
+                        .prediction(predictionList.get(position))
+                        .viewtype(mCurrentView);
 
                 // Send in the ViewModel the current Search Data
                 mSearchViewModel.setSearchValidationDataViewMutable(searchValidationDataView);
@@ -257,11 +257,11 @@ public class MainActivity extends ActivityEX {
                 // Clear Focus
                 searchView.clearFocus();
 
-                SearchValidateMessage searchValidationDataView = new SearchValidateMessage();
-                searchValidationDataView.prediction = null;
-                searchValidationDataView.viewType = mCurrentView;
-                searchValidationDataView.searchMethod = SearchType.SEARCH_STRING;
-                searchValidationDataView.searchString = currentSearch[0];
+                SearchValidateMessage searchValidationDataView = new SearchValidateMessage()
+                        .prediction(null)
+                        .viewtype(mCurrentView)
+                        .searchmethod(SearchType.SEARCH_STRING)
+                        .searchstring(currentSearch[0]);
 
                 mSearchViewModel.setSearchValidationDataViewMutable(searchValidationDataView);
 

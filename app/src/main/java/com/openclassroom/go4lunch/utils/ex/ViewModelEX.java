@@ -13,9 +13,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.AndroidViewModel;
 
 import com.openclassroom.go4lunch.repository.Repository;
-import com.openclassroom.go4lunch.listener.OnDetailResponse;
-import com.openclassroom.go4lunch.listener.OnAutoCompleteResponse;
-import com.openclassroom.go4lunch.listener.OnUserListUpdateListener;
+import com.openclassroom.go4lunch.listener.OnDetailListener;
+import com.openclassroom.go4lunch.listener.OnAutoCompleteListener;
+import com.openclassroom.go4lunch.listener.OnUserListListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -54,15 +54,15 @@ abstract public class ViewModelEX extends AndroidViewModel {
     // --------------------
     // Caller
     // --------------------
-    public void callDetail(String placeID, OnDetailResponse onDetailResponse) {
+    public void callDetail(String placeID, OnDetailListener onDetailResponse) {
         mRepository.callDetail(placeID, onDetailResponse);
     }
 
-    public void callAutocomplete(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
+    public void callAutocomplete(String text, String localisation, String type, OnAutoCompleteListener onAutoCompleteResponse) {
         mRepository.callAutocomplete(text, localisation, type, onAutoCompleteResponse);
     }
 
-    public void callUserList(OnUserListUpdateListener listener) {
+    public void callUserList(OnUserListListener listener) {
         mRepository.callUserList(listener);
     }
 

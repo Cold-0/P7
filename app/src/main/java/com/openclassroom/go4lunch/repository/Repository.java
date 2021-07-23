@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.openclassroom.go4lunch.listener.OnUserListUpdateListener;
+import com.openclassroom.go4lunch.listener.OnUserListListener;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.api.autocomplete.AutocompleteResponse;
 import com.openclassroom.go4lunch.message.UserListUpdateMessage;
@@ -17,9 +17,9 @@ import com.openclassroom.go4lunch.model.api.placedetails.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitInstance;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitService;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
-import com.openclassroom.go4lunch.listener.OnAutoCompleteResponse;
-import com.openclassroom.go4lunch.listener.OnDetailResponse;
-import com.openclassroom.go4lunch.listener.OnToggled;
+import com.openclassroom.go4lunch.listener.OnAutoCompleteListener;
+import com.openclassroom.go4lunch.listener.OnDetailListener;
+import com.openclassroom.go4lunch.listener.OnToggledListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +87,7 @@ public class Repository {
         return mRetrofitService;
     }
 
-    public void callAutocomplete(String text, String localisation, String type, OnAutoCompleteResponse onAutoCompleteResponse) {
+    public void callAutocomplete(String text, String localisation, String type, OnAutoCompleteListener onAutoCompleteResponse) {
         Call<AutocompleteResponse> call = repository.getRetrofitService().getAutocomplete(text, 5000, localisation, type);
         call.enqueue(new Callback<AutocompleteResponse>() {
             @Override
@@ -102,12 +102,12 @@ public class Repository {
         });
     }
 
-    public void callDetail(String placeID, OnDetailResponse onDetailResponse) {
+    public void callDetail(String placeID, OnDetailListener onDetailResponse) {
         Call<PlaceDetailsResponse> callDetails = repository.getRetrofitService().getDetails(placeID);
         callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
             @Override
             public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {
-                onDetailResponse.onDetailsResponse(response.body().getResult());
+                onDetailResponse.onResponse(response.body().getResult());
             }
 
             @Override
@@ -124,7 +124,7 @@ public class Repository {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    public void toggleEatingAt(String placeID, String placeName, OnToggled toggledEatingAt) {
+    public void toggleEatingAt(String placeID, String placeName, OnToggledListener toggledEatingAt) {
         mFirebaseFirestore.collection("users")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -164,7 +164,7 @@ public class Repository {
                 });
     }
 
-    public void toggleLike(String placeID, OnToggled toggledLike) {
+    public void toggleLike(String placeID, OnToggledListener toggledLike) {
         mFirebaseFirestore.collection("users")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -240,11 +240,11 @@ public class Repository {
                 });
     }
 
-    public void callUserList(OnUserListUpdateListener listener) {
+    public void callUserList(OnUserListListener listener) {
         updateUserList();
         getOnUpdateUsersList().addObserver((o, arg) -> {
             UserListUpdateMessage userListUpdateState = (UserListUpdateMessage) arg;
-            listener.onUserListUpdated(userListUpdateState.currentUser, userListUpdateState.userList);
+            listener.onResponse(userListUpdateState.currentUser, userListUpdateState.userList);
         });
     }
 

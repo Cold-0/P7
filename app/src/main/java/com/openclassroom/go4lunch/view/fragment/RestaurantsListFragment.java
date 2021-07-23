@@ -23,12 +23,16 @@ import java.util.ArrayList;
 
 public class RestaurantsListFragment extends FragmentEX {
 
+    // ------------------------
+    // Properties
+    // ------------------------
     private FragmentListviewBinding mBinding;
     private RestaurantsListAdapter mRestaurantsListAdapter;
-    private UserInfoViewModel mUserInfoViewModel;
 
+    // ------------------------
+    // " Constructor "
+    // ------------------------
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mUserInfoViewModel = new ViewModelProvider(requireActivity()).get(UserInfoViewModel.class);
         SearchViewModel searchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
         mBinding = FragmentListviewBinding.inflate(inflater, container, false);
 
@@ -45,14 +49,18 @@ public class RestaurantsListFragment extends FragmentEX {
             mRestaurantsListAdapter.clearRestaurantList();
         });
 
-        SearchValidateMessage svd = new SearchValidateMessage();
-        svd.searchMethod = SearchType.CLOSER;
-        svd.viewType = FragmentViewType.LIST;
+        SearchValidateMessage svd = new SearchValidateMessage()
+                .searchmethod(SearchType.CLOSER)
+                .viewtype(FragmentViewType.LIST);
+
         searchViewModel.setSearchValidationDataViewMutable(svd);
 
         return mBinding.getRoot();
     }
 
+    // ------------------------
+    // Override
+    // ------------------------
     @Override
     public void onDestroyView() {
         super.onDestroyView();

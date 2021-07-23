@@ -13,20 +13,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class WorkmatesFragment extends FragmentEX {
-
+    // ------------------------
+    // Properties
+    // ------------------------
     private FragmentWorkmatesBinding mBinding;
 
+    // ------------------------
+    // " Constructor "
+    // ------------------------
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         WorkmatesViewModel workmatesListViewModel = new ViewModelProvider(requireActivity()).get(WorkmatesViewModel.class);
@@ -50,6 +52,9 @@ public class WorkmatesFragment extends FragmentEX {
         return mBinding.getRoot();
     }
 
+    // ------------------------
+    // Override
+    // ------------------------
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -1,11 +1,8 @@
 package com.openclassroom.go4lunch.view.fragment;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,26 +35,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
 
+    // ------------------------
+    // Static Properties
+    // ------------------------
     private static final String TAG = MapViewFragment.class.toString();
 
+    // ------------------------
+    // Properties
+    // ------------------------
     private FragmentMapviewBinding mBinding;
     private GoogleMap mGoogleMap;
     private SearchViewModel mSearchViewModel;
     private final Map<Marker, String> mMarkerStringHashMap = new HashMap<>();
 
+    // ------------------------
+    // " Constructor "
+    // ------------------------
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentMapviewBinding.inflate(inflater, container, false);
         mBinding.mapView.onCreate(savedInstanceState);
 
         mSearchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
 
-        try {
-            MapsInitializer.initialize(requireActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        MapsInitializer.initialize(requireActivity().getApplicationContext());
 
         mBinding.mapView.getMapAsync(this);
 
@@ -81,52 +83,45 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
         return mBinding.getRoot();
     }
 
-    public void zoomOnLocation(Location location) {
-        if (location != null) {
-            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(location.getLatitude(), location.getLongitude()), 13));
+    // ------------------------
+    // Override
+    // ------------------------
+    @Override
+    public void onMapReady(@NotNull GoogleMap googleMap) {
+        // Save Google Map
+        mGoogleMap = googleMap;
+        // Set info
+        mGoogleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style));
 
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(location.getLatitude(), location.getLongitude())) // Sets the center of the map to location user
-                    .zoom(13)                   // Sets the zoom
-                    .build();                   // Creates a CameraPosition from the builder
-            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        // Fix Warning
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
-    }
 
-    public Location getMyLocation() {
-        LocationManager locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Location loc = new Location("");
-            loc.setLatitude(0.0);
-            loc.setLongitude(0.0);
-            return loc;
-        }
-        return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        mGoogleMap.setMyLocationEnabled(true);
+
+        zoomOnLocation(getMyLocation());
+
+        // Perform an Automated empty search
+        SearchValidateMessage svd = new SearchValidateMessage()
+                .searchmethod(SearchType.CLOSER)
+                .viewtype(FragmentViewType.MAP);
+        mSearchViewModel.setSearchValidationDataViewMutable(svd);
+
+        // Open Restaurant detail when click on info in marker
+        googleMap.setOnInfoWindowClickListener(marker ->
+                openDetailRestaurant(requireActivity(), mMarkerStringHashMap.get(marker)));
     }
 
     @Override
-    public void onMapReady(@NotNull GoogleMap googleMap) {
-        mGoogleMap = googleMap;
-
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return;
-        }
-        mGoogleMap.setMyLocationEnabled(true);
-        mGoogleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style));
-        zoomOnLocation(getMyLocation());
-
-        SearchValidateMessage svd = new SearchValidateMessage();
-        svd.searchMethod = SearchType.CLOSER;
-        svd.viewType = FragmentViewType.MAP;
+    public void onResume() {
+        super.onResume();
+        SearchValidateMessage svd = new SearchValidateMessage()
+                .searchmethod(SearchType.CLOSER)
+                .viewtype(FragmentViewType.MAP);
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
-
-        googleMap.setOnInfoWindowClickListener(marker -> {
-            openDetailRestaurant(requireActivity(), mMarkerStringHashMap.get(marker));
-        });
+        mBinding.mapView.onResume();
     }
 
     @Override
@@ -148,24 +143,24 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        SearchValidateMessage svd = new SearchValidateMessage();
-        svd.searchMethod = SearchType.CLOSER;
-        svd.viewType = FragmentViewType.MAP;
-        mSearchViewModel.setSearchValidationDataViewMutable(svd);
-        mBinding.mapView.onResume();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         mBinding.mapView.onStop();
     }
 
-    @Override
-    public boolean onMarkerClick(@NotNull final Marker marker) {
+    // ------------------------
+    // Methods
+    // ------------------------
+    public void zoomOnLocation(Location location) {
+        if (location != null) {
+            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
-        return true;
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(location.getLatitude(), location.getLongitude())) // Sets the center of the map to location user
+                    .zoom(13)                   // Sets the zoom
+                    .build();                   // Creates a CameraPosition from the builder
+            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
     }
 }
