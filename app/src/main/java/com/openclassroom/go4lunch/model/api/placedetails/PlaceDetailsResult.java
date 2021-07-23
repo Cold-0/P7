@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public class DetailsResult implements Serializable {
+public class PlaceDetailsResult implements Serializable {
 
     @SerializedName("name")
     private String mName;

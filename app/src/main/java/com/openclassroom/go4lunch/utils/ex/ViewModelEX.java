@@ -12,9 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.AndroidViewModel;
 
+import com.openclassroom.go4lunch.listener.OnResponseListener;
+import com.openclassroom.go4lunch.model.api.autocomplete.AutocompleteResponse;
+import com.openclassroom.go4lunch.model.api.placedetails.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.repository.Repository;
-import com.openclassroom.go4lunch.listener.OnDetailListener;
-import com.openclassroom.go4lunch.listener.OnAutoCompleteListener;
 import com.openclassroom.go4lunch.listener.OnUserListListener;
 
 import org.jetbrains.annotations.NotNull;
@@ -54,12 +55,12 @@ abstract public class ViewModelEX extends AndroidViewModel {
     // --------------------
     // Caller
     // --------------------
-    public void callDetail(String placeID, OnDetailListener onDetailResponse) {
-        mRepository.callDetail(placeID, onDetailResponse);
+    public void callPlaceDetails(String placeID, OnResponseListener<PlaceDetailsResponse> listener) {
+        mRepository.callPlaceDetails(placeID, listener);
     }
 
-    public void callAutocomplete(String text, String localisation, String type, OnAutoCompleteListener onAutoCompleteResponse) {
-        mRepository.callAutocomplete(text, localisation, type, onAutoCompleteResponse);
+    public void callAutocomplete(String text, String localisation, String type, OnResponseListener<AutocompleteResponse> listener) {
+        mRepository.callAutocomplete(text, localisation, type, listener);
     }
 
     public void callUserList(OnUserListListener listener) {

@@ -52,14 +52,12 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
 
     public void clearRestaurantList() {
         Objects.requireNonNull(mRestaurantList.getValue()).clear();
-        Log.w(TAG, "clearRestaurantList");
         notifyDataSetChanged();
     }
 
     public void addToRestaurantList(RestaurantAddMessage restaurant) {
         Objects.requireNonNull(mRestaurantList.getValue()).add(restaurant);
         notifyItemInserted(mRestaurantList.getValue().size() - 1);
-        Log.w(TAG, "addToRestaurantList");
     }
 
     public RestaurantsListAdapter(@NonNull FragmentActivity activity, @NonNull List<RestaurantAddMessage> restaurantList) {
@@ -163,10 +161,6 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
         RestaurantsListViewHolder(@NonNull ItemRestaurantBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
-        }
-
-        void bind() {
-
         }
     }
 }

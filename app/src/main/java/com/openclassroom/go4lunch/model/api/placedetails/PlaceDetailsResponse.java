@@ -10,7 +10,7 @@ public class PlaceDetailsResponse implements Serializable {
     @SerializedName("html_attributions")
     private List<Object> mHtmlAttributions;
     @SerializedName("result")
-    private DetailsResult mResult;
+    private PlaceDetailsResult mResult;
     @SerializedName("status")
     private String mStatus;
 
@@ -22,11 +22,11 @@ public class PlaceDetailsResponse implements Serializable {
         mHtmlAttributions = htmlAttributions;
     }
 
-    public DetailsResult getResult() {
+    public PlaceDetailsResult getResult() {
         return mResult;
     }
 
-    public void setResult(DetailsResult result) {
+    public void setResult(PlaceDetailsResult result) {
         mResult = result;
     }
 

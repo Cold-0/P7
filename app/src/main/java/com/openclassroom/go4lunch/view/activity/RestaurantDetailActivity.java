@@ -14,7 +14,7 @@ import android.os.Bundle;
 import com.openclassroom.go4lunch.BuildConfig;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.model.User;
-import com.openclassroom.go4lunch.model.api.placedetails.DetailsResult;
+import com.openclassroom.go4lunch.model.api.placedetails.PlaceDetailsResult;
 import com.openclassroom.go4lunch.view.recyclerview.ParticipantListAdapter;
 import com.openclassroom.go4lunch.databinding.ActivityRestaurantDetailBinding;
 import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
@@ -31,7 +31,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     // --------------------
     ActivityRestaurantDetailBinding mBinding;
     String mCurrentPlaceID = null;
-    DetailsResult mDetailsResult = null;
+    PlaceDetailsResult mDetailsResult = null;
     UserInfoViewModel mUserInfoViewModel;
     ParticipantListAdapter mParticipantListAdapter = new ParticipantListAdapter(new ArrayList<>(), this);
 
@@ -107,8 +107,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     // View Update
     // --------------------
     private void updateActivityViews() {
-        mUserInfoViewModel.callDetail(mCurrentPlaceID, detailsResult -> {
-            mDetailsResult = Objects.requireNonNull(detailsResult);
+        mUserInfoViewModel.callPlaceDetails(mCurrentPlaceID, response -> {
+            mDetailsResult = Objects.requireNonNull(response.getResult());
             mBinding.restaurantNameDetail.setText(mDetailsResult.getName());
             mBinding.restaurantAddressDetail.setText(mDetailsResult.getFormattedAddress());
             if (mDetailsResult.getPhotos() != null) {

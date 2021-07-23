@@ -17,7 +17,7 @@ import com.openclassroom.go4lunch.message.SearchValidateMessage;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResponse;
 import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResult;
-import com.openclassroom.go4lunch.model.api.placedetails.DetailsResult;
+import com.openclassroom.go4lunch.model.api.placedetails.PlaceDetailsResult;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.type.SearchType;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
@@ -123,14 +123,14 @@ public class SearchViewModel extends ViewModelEX {
     private void onSearchValidate(User currentUser, List<User> userList, @NotNull SearchValidateMessage searchValidationDataView) {
         // Get Details of the selected AutoComplete place (Get Position)
         if (searchValidationDataView.getSearchMethod() == SearchType.PREDICTION) {
-            callDetail(searchValidationDataView.getPrediction().getPlaceId(), detailsResult ->
-                    doNearbySearch(currentUser, userList, searchValidationDataView, detailsResult));
+            callPlaceDetails(searchValidationDataView.getPrediction().getPlaceId(), response ->
+                    doNearbySearch(currentUser, userList, searchValidationDataView, response.getResult()));
         } else {
             doNearbySearch(currentUser, userList, searchValidationDataView, null);
         }
     }
 
-    private void doNearbySearch(User currentUser, List<User> userList, SearchValidateMessage data, DetailsResult response) {
+    private void doNearbySearch(User currentUser, List<User> userList, SearchValidateMessage data, PlaceDetailsResult response) {
         mClearMapObservable.notifyObservers();
         Location loc = new Location("");
         if (response != null && data.getSearchMethod() == SearchType.PREDICTION) {
@@ -170,7 +170,7 @@ public class SearchViewModel extends ViewModelEX {
         callNearbySearch.enqueue(new Callback<NearbySearchResponse>() {
             @Override
             public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
-                doDetailFill(currentUser, userList, response);
+                doRestaurantAdd(currentUser, userList, response);
             }
 
             @Override
@@ -179,7 +179,7 @@ public class SearchViewModel extends ViewModelEX {
         });
     }
 
-    private void doDetailFill(User currentUser, List<User> userList, @NotNull Response<NearbySearchResponse> response) {
+    private void doRestaurantAdd(User currentUser, List<User> userList, @NotNull Response<NearbySearchResponse> response) {
         assert response.body() != null;
         mClearRestaurantList.notifyObservers();
         for (NearbySearchResult nearbysearchresult : response.body().getResults()) {

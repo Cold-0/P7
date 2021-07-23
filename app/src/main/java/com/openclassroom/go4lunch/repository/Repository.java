@@ -9,16 +9,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.openclassroom.go4lunch.listener.OnResponseListener;
 import com.openclassroom.go4lunch.listener.OnUserListListener;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.api.autocomplete.AutocompleteResponse;
 import com.openclassroom.go4lunch.message.UserListUpdateMessage;
+import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResponse;
 import com.openclassroom.go4lunch.model.api.placedetails.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitInstance;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitService;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
-import com.openclassroom.go4lunch.listener.OnAutoCompleteListener;
-import com.openclassroom.go4lunch.listener.OnDetailListener;
 import com.openclassroom.go4lunch.listener.OnToggledListener;
 
 import java.util.ArrayList;
@@ -87,12 +87,12 @@ public class Repository {
         return mRetrofitService;
     }
 
-    public void callAutocomplete(String text, String localisation, String type, OnAutoCompleteListener onAutoCompleteResponse) {
+    public void callAutocomplete(String text, String localisation, String type, OnResponseListener<AutocompleteResponse> listener) {
         Call<AutocompleteResponse> call = repository.getRetrofitService().getAutocomplete(text, 5000, localisation, type);
         call.enqueue(new Callback<AutocompleteResponse>() {
             @Override
             public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {
-                onAutoCompleteResponse.onResponse(response.body());
+                listener.onResponse(response.body());
             }
 
             @Override
@@ -102,16 +102,46 @@ public class Repository {
         });
     }
 
-    public void callDetail(String placeID, OnDetailListener onDetailResponse) {
+    public void callPlaceDetails(String placeID, OnResponseListener<PlaceDetailsResponse> listener) {
         Call<PlaceDetailsResponse> callDetails = repository.getRetrofitService().getDetails(placeID);
         callDetails.enqueue(new Callback<PlaceDetailsResponse>() {
             @Override
             public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {
-                onDetailResponse.onResponse(response.body().getResult());
+                listener.onResponse(response.body());
             }
 
             @Override
             public void onFailure(Call<PlaceDetailsResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void callNearbySearchByType(String location, String type, OnResponseListener<NearbySearchResponse> listener) {
+        Call<NearbySearchResponse> callDetails = repository.getRetrofitService().getNearbyByType(5000, location, type);
+        callDetails.enqueue(new Callback<NearbySearchResponse>() {
+            @Override
+            public void onResponse(Call<NearbySearchResponse> call, Response<NearbySearchResponse> response) {
+                listener.onResponse(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<NearbySearchResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void callNearbySearchByKeyword(String location, String keyword, OnResponseListener<NearbySearchResponse> listener) {
+        Call<NearbySearchResponse> callDetails = repository.getRetrofitService().getNearbyByKeyword(5000, location, keyword);
+        callDetails.enqueue(new Callback<NearbySearchResponse>() {
+            @Override
+            public void onResponse(Call<NearbySearchResponse> call, Response<NearbySearchResponse> response) {
+                listener.onResponse(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<NearbySearchResponse> call, Throwable t) {
 
             }
         });

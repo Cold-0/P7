@@ -34,6 +34,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Observable;
+import java.util.Observer;
 
 public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
 
@@ -64,8 +66,7 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
         mBinding.mapView.getMapAsync(this);
 
         mSearchViewModel.getClearMapObservable().addObserver((o, arg) -> {
-            mGoogleMap.clear();
-            mMarkerStringHashMap.clear();
+            clearMap();
         });
 
         mSearchViewModel.getZoomMapObservable().addObserver((o, arg) -> {
@@ -98,10 +99,11 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
                 ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-
         mGoogleMap.setMyLocationEnabled(true);
-
         zoomOnLocation(getMyLocation());
+
+        // Clear in case
+        clearMap();
 
         // Perform an Automated empty search
         SearchValidateMessage svd = new SearchValidateMessage()
@@ -117,11 +119,20 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
     @Override
     public void onResume() {
         super.onResume();
+
+        clearMap();
+
         SearchValidateMessage svd = new SearchValidateMessage()
                 .searchmethod(SearchType.CLOSER)
                 .viewtype(FragmentViewType.MAP);
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
         mBinding.mapView.onResume();
+    }
+
+    private void clearMap() {
+        if (mGoogleMap != null)
+            mGoogleMap.clear();
+        mMarkerStringHashMap.clear();
     }
 
     @Override
