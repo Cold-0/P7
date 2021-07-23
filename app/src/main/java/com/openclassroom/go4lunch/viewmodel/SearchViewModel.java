@@ -19,6 +19,7 @@ import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResponse;
 import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResult;
 import com.openclassroom.go4lunch.model.api.placedetails.DetailsResult;
 import com.openclassroom.go4lunch.R;
+import com.openclassroom.go4lunch.type.SearchType;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
 import com.openclassroom.go4lunch.utils.ex.ViewModelEX;
 import com.openclassroom.go4lunch.listener.OnUserListUpdateListener;
@@ -120,7 +121,7 @@ public class SearchViewModel extends ViewModelEX {
     // ------------------------
     private void onSearchValidate(User currentUser, List<User> userList, @NotNull SearchValidateMessage searchValidationDataView) {
         // Get Details of the selected AutoComplete place (Get Position)
-        if (searchValidationDataView.searchMethod == SearchValidateMessage.SearchMethod.PREDICTION) {
+        if (searchValidationDataView.searchMethod == SearchType.PREDICTION) {
             callDetail(searchValidationDataView.prediction.getPlaceId(), detailsResult -> {
                 doNearbySearch(currentUser, userList, searchValidationDataView, detailsResult);
             });
@@ -132,7 +133,7 @@ public class SearchViewModel extends ViewModelEX {
     private void doNearbySearch(User currentUser, List<User> userList, SearchValidateMessage data, DetailsResult response) {
         mClearMapObservable.notifyObservers();
         Location loc = new Location("");
-        if (response != null && data.searchMethod == SearchValidateMessage.SearchMethod.PREDICTION) {
+        if (response != null && data.searchMethod == SearchType.PREDICTION) {
             Double lat = response.getGeometry().getLocation().getLat();
             Double lng = response.getGeometry().getLocation().getLng();
             loc.setLatitude(lat);
@@ -159,9 +160,9 @@ public class SearchViewModel extends ViewModelEX {
         // Get Nearby Search Respond using the Details as location
         Call<NearbySearchResponse> callNearbySearch = null;
 
-        if (data.searchMethod == SearchValidateMessage.SearchMethod.PREDICTION || data.searchMethod == SearchValidateMessage.SearchMethod.CLOSER) {
+        if (data.searchMethod == SearchType.PREDICTION || data.searchMethod == SearchType.CLOSER) {
             callNearbySearch = getRepository().getRetrofitService().getNearbyByType(5000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant");
-        } else if (data.searchMethod == SearchValidateMessage.SearchMethod.SEARCH_STRING) {
+        } else if (data.searchMethod == SearchType.SEARCH_STRING) {
             callNearbySearch = getRepository().getRetrofitService().getNearbyByKeyword(5000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.searchString);
         }
 

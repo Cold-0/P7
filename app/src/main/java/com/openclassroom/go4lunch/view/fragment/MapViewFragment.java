@@ -25,8 +25,9 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.message.SearchValidateMessage;
+import com.openclassroom.go4lunch.type.SearchType;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
-import com.openclassroom.go4lunch.view.ViewTypeTabEnum;
+import com.openclassroom.go4lunch.type.FragmentViewType;
 import com.openclassroom.go4lunch.message.MarkerAddMessage;
 import com.openclassroom.go4lunch.viewmodel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentMapviewBinding;
@@ -119,8 +120,8 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
         zoomOnLocation(getMyLocation());
 
         SearchValidateMessage svd = new SearchValidateMessage();
-        svd.searchMethod = SearchValidateMessage.SearchMethod.CLOSER;
-        svd.viewType = ViewTypeTabEnum.MAP;
+        svd.searchMethod = SearchType.CLOSER;
+        svd.viewType = FragmentViewType.MAP;
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
 
         googleMap.setOnInfoWindowClickListener(marker -> {
@@ -150,8 +151,8 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback, G
     public void onResume() {
         super.onResume();
         SearchValidateMessage svd = new SearchValidateMessage();
-        svd.searchMethod = SearchValidateMessage.SearchMethod.CLOSER;
-        svd.viewType = ViewTypeTabEnum.MAP;
+        svd.searchMethod = SearchType.CLOSER;
+        svd.viewType = FragmentViewType.MAP;
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
         mBinding.mapView.onResume();
     }

@@ -26,12 +26,21 @@ import java.util.Objects;
 
 public class SettingsActivity extends ActivityEX {
 
+    // --------------------
+    // Static Properties
+    // --------------------
     private static final String TAG = SettingsActivity.class.getName();
 
+    // --------------------
+    // Properties
+    // --------------------
     private ActivitySettingsBinding mBinding;
     private UserInfoViewModel mUserInfoViewModel;
     private ActivityResultLauncher<Intent> mSignInLauncher;
 
+    // --------------------
+    // Override
+    // --------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,22 +54,28 @@ public class SettingsActivity extends ActivityEX {
                 this::onSignInResult
         );
 
-        setButtonsCallback();
+        configureButtons();
 
         if (mUserInfoViewModel.isCurrentUserLogged()) {
-            updateProfile();
+            updateSettingsViews();
         } else {
             SignIn();
         }
     }
 
-    private void setButtonsCallback() {
+    // --------------------
+    // Configure
+    // --------------------
+    private void configureButtons() {
         mBinding.signInButton.setOnClickListener(v -> SignIn());
         mBinding.signOutButton.setOnClickListener(v -> SignOut());
         mBinding.deleteButton.setOnClickListener(v -> DeleteAccount());
     }
 
-    private void updateProfile() {
+    // --------------------
+    // Update View
+    // --------------------
+    private void updateSettingsViews() {
         FirebaseUser user = mUserInfoViewModel.getCurrentFirebaseUser();
 
         // Update Profile
@@ -107,24 +122,9 @@ public class SettingsActivity extends ActivityEX {
         }
     }
 
-    private void DeleteAccount() {
-        AuthUI.getInstance()
-                .delete(this)
-                .addOnCompleteListener(task -> {
-                    Snackbar.make(mBinding.getRoot(), R.string.account_have_been_deleted, Snackbar.LENGTH_SHORT).show();
-                    updateProfile();
-                });
-    }
-
-    private void SignOut() {
-        AuthUI.getInstance()
-                .signOut(this)
-                .addOnCompleteListener(task -> {
-                    Snackbar.make(mBinding.getRoot(), R.string.signed_out, Snackbar.LENGTH_SHORT).show();
-                    updateProfile();
-                });
-    }
-
+    // --------------------
+    // Action Callback
+    // --------------------
     private void SignIn() {
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -143,6 +143,15 @@ public class SettingsActivity extends ActivityEX {
         mSignInLauncher.launch(signInIntent);
     }
 
+    private void SignOut() {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(task -> {
+                    Snackbar.make(mBinding.getRoot(), R.string.signed_out, Snackbar.LENGTH_SHORT).show();
+                    updateSettingsViews();
+                });
+    }
+
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         IdpResponse response = result.getIdpResponse();
 
@@ -157,6 +166,15 @@ public class SettingsActivity extends ActivityEX {
             Snackbar.make(mBinding.getRoot(), R.string.sign_in_failed, Snackbar.LENGTH_SHORT).show();
         }
 
-        updateProfile();
+        updateSettingsViews();
+    }
+
+    private void DeleteAccount() {
+        AuthUI.getInstance()
+                .delete(this)
+                .addOnCompleteListener(task -> {
+                    Snackbar.make(mBinding.getRoot(), R.string.account_have_been_deleted, Snackbar.LENGTH_SHORT).show();
+                    updateSettingsViews();
+                });
     }
 }

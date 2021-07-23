@@ -37,10 +37,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.api.autocomplete.Prediction;
 import com.openclassroom.go4lunch.message.SearchValidateMessage;
+import com.openclassroom.go4lunch.type.SearchType;
 import com.openclassroom.go4lunch.utils.transform.CircleCropTransform;
 import com.openclassroom.go4lunch.utils.ex.ActivityEX;
 import com.openclassroom.go4lunch.R;
-import com.openclassroom.go4lunch.view.ViewTypeTabEnum;
+import com.openclassroom.go4lunch.type.FragmentViewType;
 import com.openclassroom.go4lunch.viewmodel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.ActivityMainBinding;
 import com.openclassroom.go4lunch.databinding.HeaderNavViewBinding;
@@ -61,6 +62,7 @@ import java.util.Objects;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends ActivityEX {
+
     // --------------------
     // Static Properties
     // --------------------
@@ -76,7 +78,7 @@ public class MainActivity extends ActivityEX {
     private UserInfoViewModel mUserInfoViewModel;
     private ActivityResultLauncher<Intent> mSignInLauncher;
     private User mCurrentUser;
-    private ViewTypeTabEnum mCurrentView;
+    private FragmentViewType mCurrentView;
 
     // --------------------
     // Activity Override
@@ -258,7 +260,7 @@ public class MainActivity extends ActivityEX {
                 SearchValidateMessage searchValidationDataView = new SearchValidateMessage();
                 searchValidationDataView.prediction = null;
                 searchValidationDataView.viewType = mCurrentView;
-                searchValidationDataView.searchMethod = SearchValidateMessage.SearchMethod.SEARCH_STRING;
+                searchValidationDataView.searchMethod = SearchType.SEARCH_STRING;
                 searchValidationDataView.searchString = currentSearch[0];
 
                 mSearchViewModel.setSearchValidationDataViewMutable(searchValidationDataView);
@@ -320,11 +322,11 @@ public class MainActivity extends ActivityEX {
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             assert destination.getLabel() != null;
             if (destination.getLabel().equals(getString(R.string.menu_map_view))) {
-                mCurrentView = ViewTypeTabEnum.MAP;
+                mCurrentView = FragmentViewType.MAP;
             } else if (destination.getLabel().equals(getString(R.string.menu_list_view))) {
-                mCurrentView = ViewTypeTabEnum.LIST;
+                mCurrentView = FragmentViewType.LIST;
             } else if (destination.getLabel().equals(getString(R.string.menu_workmates))) {
-                mCurrentView = ViewTypeTabEnum.WORKMATES;
+                mCurrentView = FragmentViewType.WORKMATES;
             }
         });
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);

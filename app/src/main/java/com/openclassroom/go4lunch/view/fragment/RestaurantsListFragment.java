@@ -11,8 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.openclassroom.go4lunch.message.RestaurantAddMessage;
 import com.openclassroom.go4lunch.message.SearchValidateMessage;
+import com.openclassroom.go4lunch.type.SearchType;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
-import com.openclassroom.go4lunch.view.ViewTypeTabEnum;
+import com.openclassroom.go4lunch.type.FragmentViewType;
 import com.openclassroom.go4lunch.view.recyclerview.RestaurantsListAdapter;
 import com.openclassroom.go4lunch.viewmodel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentListviewBinding;
@@ -45,8 +46,8 @@ public class RestaurantsListFragment extends FragmentEX {
         });
 
         SearchValidateMessage svd = new SearchValidateMessage();
-        svd.searchMethod = SearchValidateMessage.SearchMethod.CLOSER;
-        svd.viewType = ViewTypeTabEnum.LIST;
+        svd.searchMethod = SearchType.CLOSER;
+        svd.viewType = FragmentViewType.LIST;
         searchViewModel.setSearchValidationDataViewMutable(svd);
 
         return mBinding.getRoot();

@@ -2,18 +2,12 @@ package com.openclassroom.go4lunch.message;
 
 import com.openclassroom.go4lunch.model.api.autocomplete.Prediction;
 
-import com.openclassroom.go4lunch.view.ViewTypeTabEnum;
+import com.openclassroom.go4lunch.type.FragmentViewType;
+import com.openclassroom.go4lunch.type.SearchType;
 
 public class SearchValidateMessage {
-
-    public enum SearchMethod {
-        PREDICTION,
-        SEARCH_STRING,
-        CLOSER
-    }
-
     public Prediction prediction = null;
     public String searchString = null;
-    public SearchMethod searchMethod = SearchMethod.PREDICTION;
-    public ViewTypeTabEnum viewType = ViewTypeTabEnum.LIST;
+    public SearchType searchMethod = SearchType.PREDICTION;
+    public FragmentViewType viewType = FragmentViewType.LIST;
 }

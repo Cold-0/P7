@@ -1,11 +1,11 @@
 package com.openclassroom.go4lunch.view.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.ImageViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
@@ -26,13 +26,18 @@ import java.util.Objects;
 
 public class RestaurantDetailActivity extends AppCompatActivity {
 
+    // --------------------
+    // Properties
+    // --------------------
     ActivityRestaurantDetailBinding mBinding;
-
     String mCurrentPlaceID = null;
     DetailsResult mDetailsResult = null;
     UserInfoViewModel mUserInfoViewModel;
-    private final ParticipantListAdapter mParticipantListAdapter = new ParticipantListAdapter(new ArrayList<>(), this);
+    ParticipantListAdapter mParticipantListAdapter = new ParticipantListAdapter(new ArrayList<>(), this);
 
+    // --------------------
+    // Override
+    // --------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,10 +51,62 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
         configureRecyclerView();
         configureButtons();
-        updateAppearance();
+        updateActivityViews();
     }
 
-    private void updateAppearance() {
+    // --------------------
+    // Configure
+    // --------------------
+    private void configureButtons() {
+        // Return button
+        mBinding.returnButton.setOnClickListener(v -> {
+            finish();
+        });
+
+        // Fab Button
+        mBinding.fabEatingAt.setOnClickListener(v -> {
+            mUserInfoViewModel.callToggleEatingAt(mCurrentPlaceID, mDetailsResult.getName(), result -> {
+                mUserInfoViewModel.callUserList((currentUser, userList) -> {
+                    updateFabView(currentUser);
+                });
+            });
+        });
+
+        // Call Button
+        mBinding.layoutClickableCall.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse("tel:" + mDetailsResult.getFormattedPhoneNumber()));
+            startActivity(intent);
+        });
+
+        // Like Button
+        mBinding.layoutClickableLike.setOnClickListener(v -> {
+            mUserInfoViewModel.callToggleLike(mCurrentPlaceID, result -> {
+                mUserInfoViewModel.callUserList((currentUser, userList) -> {
+                    updateLikeView(currentUser);
+                });
+            });
+        });
+
+        // Website Button
+        mBinding.layoutClickableWebsite.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mDetailsResult.getWebsite()));
+            startActivity(browserIntent);
+        });
+    }
+
+    private void configureRecyclerView() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, linearLayoutManager.getOrientation());
+        mBinding.participantList.setLayoutManager(linearLayoutManager);
+        mBinding.participantList.setAdapter(mParticipantListAdapter);
+        mBinding.participantList.addItemDecoration(dividerItemDecoration);
+    }
+
+    // --------------------
+    // View Update
+    // --------------------
+    private void updateActivityViews() {
         mUserInfoViewModel.callDetail(mCurrentPlaceID, detailsResult -> {
             mDetailsResult = Objects.requireNonNull(detailsResult);
             mBinding.restaurantNameDetail.setText(mDetailsResult.getName());
@@ -65,8 +122,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
             }
 
             mUserInfoViewModel.callUserList((currentUser, userList) -> {
-                updateLike(currentUser);
-                updateFab(currentUser);
+                updateLikeView(currentUser);
+                updateFabView(currentUser);
 
                 mParticipantListAdapter.clearUserList();
                 for (User user : userList) {
@@ -77,7 +134,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void updateFab(User currentUser) {
+    private void updateFabView(User currentUser) {
         if (currentUser.getEatingAt() != null && !currentUser.getEatingAt().equals("") && currentUser.getEatingAt().equals(mCurrentPlaceID)) {
             mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
         } else {
@@ -85,8 +142,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("RestrictedApi")
-    private void updateLike(User currentUser) {
+    private void updateLikeView(User currentUser) {
         boolean isLiked = false;
         for (String like : currentUser.getLikeList()) {
             if (like.equals(mCurrentPlaceID)) {
@@ -95,51 +151,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
             }
         }
         if (isLiked) {
-            mBinding.likeStar.setSupportImageTintList(ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.orange_500)));
+            ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.orange_500)));
         } else
-            mBinding.likeStar.setSupportImageTintList(ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.lightgrey)));
-    }
-
-    private void configureButtons() {
-        mBinding.returnButton.setOnClickListener(v -> {
-            finish();
-        });
-
-        mBinding.fabEatingAt.setOnClickListener(v -> {
-            mUserInfoViewModel.callToggleEatingAt(mCurrentPlaceID, mDetailsResult.getName(), result -> {
-                mUserInfoViewModel.callUserList((currentUser, userList) -> {
-                    updateFab(currentUser);
-                });
-            });
-        });
-
-        mBinding.layoutClickableCall.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_DIAL);
-            intent.setData(Uri.parse("tel:" + mDetailsResult.getFormattedPhoneNumber()));
-            startActivity(intent);
-        });
-
-        mBinding.layoutClickableLike.setOnClickListener(v -> {
-            mUserInfoViewModel.callToggleLike(mCurrentPlaceID, result -> {
-                mUserInfoViewModel.callUserList((currentUser, userList) -> {
-                    updateLike(currentUser);
-                });
-            });
-        });
-
-        mBinding.layoutClickableWebsite.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mDetailsResult.getWebsite()));
-            startActivity(browserIntent);
-        });
-    }
-
-    private void configureRecyclerView() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
-                linearLayoutManager.getOrientation());
-
-        mBinding.participantList.setLayoutManager(linearLayoutManager);
-        mBinding.participantList.setAdapter(mParticipantListAdapter);
-        mBinding.participantList.addItemDecoration(dividerItemDecoration);
+            ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.lightgrey)));
     }
 }
