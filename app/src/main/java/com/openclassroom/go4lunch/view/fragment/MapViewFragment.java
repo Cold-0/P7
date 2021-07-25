@@ -34,8 +34,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Observable;
-import java.util.Observer;
 
 public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
 
@@ -107,8 +105,8 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
 
         // Perform an Automated empty search
         SearchValidateMessage svd = new SearchValidateMessage()
-                .searchmethod(SearchType.CLOSER)
-                .viewtype(FragmentViewType.MAP);
+                .setSearchMethod(SearchType.CLOSER)
+                .setViewType(FragmentViewType.MAP);
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
 
         // Open Restaurant detail when click on info in marker
@@ -123,8 +121,8 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
         clearMap();
 
         SearchValidateMessage svd = new SearchValidateMessage()
-                .searchmethod(SearchType.CLOSER)
-                .viewtype(FragmentViewType.MAP);
+                .setSearchMethod(SearchType.CLOSER)
+                .setViewType(FragmentViewType.MAP);
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
         mBinding.mapView.onResume();
     }

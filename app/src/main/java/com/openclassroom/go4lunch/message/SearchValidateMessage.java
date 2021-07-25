@@ -1,49 +1,48 @@
 package com.openclassroom.go4lunch.message;
 
 import com.openclassroom.go4lunch.model.api.autocomplete.Prediction;
-
 import com.openclassroom.go4lunch.type.FragmentViewType;
 import com.openclassroom.go4lunch.type.SearchType;
 
 public class SearchValidateMessage {
-    private Prediction prediction = null;
-    private String searchString = null;
-    private SearchType searchMethod = SearchType.PREDICTION;
-    private FragmentViewType viewType = FragmentViewType.LIST;
+    private Prediction mPrediction = null;
+    private String mSearchString = null;
+    private SearchType mSearchType = SearchType.PREDICTION;
+    private FragmentViewType mFragmentViewType = FragmentViewType.LIST;
 
     public Prediction getPrediction() {
-        return prediction;
+        return mPrediction;
     }
 
-    public SearchValidateMessage prediction(Prediction prediction) {
-        this.prediction = prediction;
+    public SearchValidateMessage setPrediction(Prediction prediction) {
+        this.mPrediction = prediction;
         return this;
     }
 
     public String getSearchString() {
-        return searchString;
+        return mSearchString;
     }
 
-    public SearchValidateMessage searchstring(String searchString) {
-        this.searchString = searchString;
+    public SearchValidateMessage setSearchString(String searchString) {
+        this.mSearchString = searchString;
         return this;
     }
 
-    public SearchType getSearchMethod() {
-        return searchMethod;
+    public SearchType getSearchType() {
+        return mSearchType;
     }
 
-    public SearchValidateMessage searchmethod(SearchType searchMethod) {
-        this.searchMethod = searchMethod;
+    public SearchValidateMessage setSearchMethod(SearchType searchMethod) {
+        this.mSearchType = searchMethod;
         return this;
     }
 
-    public FragmentViewType getViewType() {
-        return viewType;
+    public FragmentViewType getFragmentViewType() {
+        return mFragmentViewType;
     }
 
-    public SearchValidateMessage viewtype(FragmentViewType viewType) {
-        this.viewType = viewType;
+    public SearchValidateMessage setViewType(FragmentViewType viewType) {
+        this.mFragmentViewType = viewType;
         return this;
     }
 }

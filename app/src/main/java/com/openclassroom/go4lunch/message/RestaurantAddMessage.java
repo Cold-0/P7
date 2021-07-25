@@ -13,7 +13,7 @@ public class RestaurantAddMessage {
         return result;
     }
 
-    public RestaurantAddMessage nearbysearchresult(NearbySearchResult result) {
+    public RestaurantAddMessage setNearbySearchResult(NearbySearchResult result) {
         this.result = result;
         return this;
     }
@@ -22,7 +22,7 @@ public class RestaurantAddMessage {
         return userList;
     }
 
-    public RestaurantAddMessage userlist(List<User> userList) {
+    public RestaurantAddMessage setUserList(List<User> userList) {
         this.userList = userList;
         return this;
     }

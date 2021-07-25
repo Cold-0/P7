@@ -10,7 +10,7 @@ public class MarkerAddMessage {
         return markerOptions;
     }
 
-    public MarkerAddMessage markeroptions(MarkerOptions markerOptions) {
+    public MarkerAddMessage setMarkerOptions(MarkerOptions markerOptions) {
         this.markerOptions = markerOptions;
         return this;
     }
@@ -19,7 +19,7 @@ public class MarkerAddMessage {
         return placeID;
     }
 
-    public MarkerAddMessage placeid(String placeID) {
+    public MarkerAddMessage setPlaceID(String placeID) {
         this.placeID = placeID;
         return this;
     }

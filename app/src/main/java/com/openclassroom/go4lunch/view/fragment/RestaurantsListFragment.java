@@ -17,7 +17,6 @@ import com.openclassroom.go4lunch.type.FragmentViewType;
 import com.openclassroom.go4lunch.view.recyclerview.RestaurantsListAdapter;
 import com.openclassroom.go4lunch.viewmodel.SearchViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentListviewBinding;
-import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
 
 import java.util.ArrayList;
 
@@ -50,8 +49,8 @@ public class RestaurantsListFragment extends FragmentEX {
         });
 
         SearchValidateMessage svd = new SearchValidateMessage()
-                .searchmethod(SearchType.CLOSER)
-                .viewtype(FragmentViewType.LIST);
+                .setSearchMethod(SearchType.CLOSER)
+                .setViewType(FragmentViewType.LIST);
 
         searchViewModel.setSearchValidationDataViewMutable(svd);
 

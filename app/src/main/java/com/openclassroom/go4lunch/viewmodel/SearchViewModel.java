@@ -5,12 +5,10 @@ import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.auth.FirebaseUser;
 import com.openclassroom.go4lunch.listener.OnResponseListener;
 import com.openclassroom.go4lunch.message.MarkerAddMessage;
 import com.openclassroom.go4lunch.message.RestaurantAddMessage;
@@ -23,17 +21,11 @@ import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.type.SearchType;
 import com.openclassroom.go4lunch.utils.ex.ObservableEX;
 import com.openclassroom.go4lunch.utils.ex.ViewModelEX;
-import com.openclassroom.go4lunch.listener.OnUserListListener;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SearchViewModel extends ViewModelEX {
 
@@ -107,7 +99,7 @@ public class SearchViewModel extends ViewModelEX {
     // ------------------------
     private void onSearchValidate(User currentUser, List<User> userList, @NotNull SearchValidateMessage searchValidationDataView) {
         // Get Details of the selected AutoComplete place (Get Position)
-        if (searchValidationDataView.getSearchMethod() == SearchType.PREDICTION) {
+        if (searchValidationDataView.getSearchType() == SearchType.PREDICTION) {
             callPlaceDetails(searchValidationDataView.getPrediction().getPlaceId(), response ->
                     doNearbySearch(currentUser, userList, searchValidationDataView, response.getResult()));
         } else {
@@ -118,7 +110,7 @@ public class SearchViewModel extends ViewModelEX {
     private void doNearbySearch(User currentUser, List<User> userList, SearchValidateMessage data, PlaceDetailsResult response) {
         mClearMapObservable.notifyObservers();
         Location loc = new Location("");
-        if (response != null && data.getSearchMethod() == SearchType.PREDICTION) {
+        if (response != null && data.getSearchType() == SearchType.PREDICTION) {
             Double lat = response.getGeometry().getLocation().getLat();
             Double lng = response.getGeometry().getLocation().getLng();
             loc.setLatitude(lat);
@@ -131,8 +123,8 @@ public class SearchViewModel extends ViewModelEX {
                     .snippet(response.getVicinity());
 
             MarkerAddMessage state = new MarkerAddMessage();
-            state.markeroptions(userIndicator);
-            state.placeid(response.getPlaceId());
+            state.setMarkerOptions(userIndicator);
+            state.setPlaceID(response.getPlaceId());
             mAddMapMarker.notifyObservers(state);
 
         } else {
@@ -145,9 +137,9 @@ public class SearchViewModel extends ViewModelEX {
             doRestaurantAdd(currentUser, userList, listenerResponse);
         };
 
-        if (data.getSearchMethod() == SearchType.PREDICTION || data.getSearchMethod() == SearchType.CLOSER) {
+        if (data.getSearchType() == SearchType.PREDICTION || data.getSearchType() == SearchType.CLOSER) {
             getRepository().callNearbySearchByType(String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant", listener);
-        } else if (data.getSearchMethod() == SearchType.SEARCH_STRING) {
+        } else if (data.getSearchType() == SearchType.SEARCH_STRING) {
             getRepository().callNearbySearchByKeyword(String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.getSearchString(), listener);
         }
     }
@@ -184,13 +176,13 @@ public class SearchViewModel extends ViewModelEX {
 
             // Build MarkerAddMessage
             MarkerAddMessage state = new MarkerAddMessage()
-                    .markeroptions(userIndicator)
-                    .placeid(nearbysearchresult.getPlaceId());
+                    .setMarkerOptions(userIndicator)
+                    .setPlaceID(nearbysearchresult.getPlaceId());
 
             // Build RestaurantAddMessage
             RestaurantAddMessage restaurantInfoState = new RestaurantAddMessage()
-                    .nearbysearchresult(nearbysearchresult)
-                    .userlist(userList);
+                    .setNearbySearchResult(nearbysearchresult)
+                    .setUserList(userList);
 
             // Notify observer and send Messages
             mAddMapMarker.notifyObservers(state);
