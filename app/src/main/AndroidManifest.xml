@@ -16,12 +16,13 @@
         android:theme="@style/Theme.Go4Lunch"
         tools:ignore="AllowBackup">
 
-        <activity
-            android:name=".view.activity.RestaurantDetailActivity"
-            android:theme="@style/Theme.Go4Lunch.NoActionBar" />
+        <receiver android:name=".notification.NotificationReceiver" />
 
         <activity
-            android:name=".view.activity.MainActivity"
+            android:name=".views.activity.RestaurantDetailActivity"
+            android:theme="@style/Theme.Go4Lunch.NoActionBar" />
+        <activity
+            android:name=".views.activity.MainActivity"
             android:theme="@style/Theme.Go4Lunch.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,8 +34,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-
-        <activity android:name=".view.activity.SettingsActivity" />
+        <activity android:name=".views.activity.SettingsActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -42,7 +42,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
-
     </application>
 
 </manifest>

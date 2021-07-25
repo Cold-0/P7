@@ -12,7 +12,7 @@ import android.location.LocationManager;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.openclassroom.go4lunch.view.activity.RestaurantDetailActivity;
+import com.openclassroom.go4lunch.views.activity.RestaurantDetailActivity;
 
 public abstract class FragmentEX extends Fragment {
     // ----------------------------

@@ -1,9 +1,9 @@
 package com.openclassroom.go4lunch.repository.retrofit;
 
 import com.openclassroom.go4lunch.BuildConfig;
-import com.openclassroom.go4lunch.model.api.autocomplete.AutocompleteResponse;
-import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResponse;
-import com.openclassroom.go4lunch.model.api.placedetails.PlaceDetailsResponse;
+import com.openclassroom.go4lunch.models.api.autocomplete.AutocompleteResponse;
+import com.openclassroom.go4lunch.models.api.nearbysearch.NearbySearchResponse;
+import com.openclassroom.go4lunch.models.api.placedetails.PlaceDetailsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

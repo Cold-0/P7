@@ -11,15 +11,15 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.openclassroom.go4lunch.listener.OnResponseListener;
-import com.openclassroom.go4lunch.listener.OnUserListListener;
-import com.openclassroom.go4lunch.model.User;
-import com.openclassroom.go4lunch.model.api.autocomplete.AutocompleteResponse;
-import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResponse;
-import com.openclassroom.go4lunch.model.api.placedetails.PlaceDetailsResponse;
+import com.openclassroom.go4lunch.listeners.OnResponseListener;
+import com.openclassroom.go4lunch.listeners.OnUserListListener;
+import com.openclassroom.go4lunch.models.User;
+import com.openclassroom.go4lunch.models.api.autocomplete.AutocompleteResponse;
+import com.openclassroom.go4lunch.models.api.nearbysearch.NearbySearchResponse;
+import com.openclassroom.go4lunch.models.api.placedetails.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitInstance;
 import com.openclassroom.go4lunch.repository.retrofit.RetrofitService;
-import com.openclassroom.go4lunch.listener.OnToggledListener;
+import com.openclassroom.go4lunch.listeners.OnToggledListener;
 
 import org.jetbrains.annotations.NotNull;
 

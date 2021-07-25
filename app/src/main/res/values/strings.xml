@@ -32,4 +32,7 @@
     <string name="didnt_decided_yet">" hasn't decided yet"</string>
     <string name="is_eating_at">" is eating at "</string>
     <string name="is_joining">" is joining "</string>
+    <string name="you_are_eating_at">"You are eating at "</string>
+    <string name="with">With : \n</string>
+    <string name="alone">Alone</string>
 </resources>

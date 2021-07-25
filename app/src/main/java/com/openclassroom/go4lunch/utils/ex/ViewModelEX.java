@@ -11,12 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.openclassroom.go4lunch.listener.OnResponseListener;
-import com.openclassroom.go4lunch.model.api.autocomplete.AutocompleteResponse;
-import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResponse;
-import com.openclassroom.go4lunch.model.api.placedetails.PlaceDetailsResponse;
+import com.openclassroom.go4lunch.listeners.OnResponseListener;
+import com.openclassroom.go4lunch.models.api.autocomplete.AutocompleteResponse;
+import com.openclassroom.go4lunch.models.api.nearbysearch.NearbySearchResponse;
+import com.openclassroom.go4lunch.models.api.placedetails.PlaceDetailsResponse;
 import com.openclassroom.go4lunch.repository.Repository;
-import com.openclassroom.go4lunch.listener.OnUserListListener;
+import com.openclassroom.go4lunch.listeners.OnUserListListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,16 +42,20 @@ abstract public class ViewModelEX extends AndroidViewModel {
         return mRepository;
     }
 
+    private Location errorLocation() {
+        Location errorLocation = new Location("");
+        errorLocation.setLatitude(0.0);
+        errorLocation.setLongitude(0.0);
+        return errorLocation;
+    }
+
     public Location getMyLocation() {
         LocationManager mLocationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = mLocationManager.getProviders(true);
         Location bestLocation = null;
         for (String provider : providers) {
             if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Location errorLocation = new Location("");
-                errorLocation.setLatitude(0.0);
-                errorLocation.setLongitude(0.0);
-                return errorLocation;
+                return errorLocation();
             }
             Location l = mLocationManager.getLastKnownLocation(provider);
             if (l == null) {
@@ -61,6 +65,9 @@ abstract public class ViewModelEX extends AndroidViewModel {
                 // Found best last known location: %s", l);
                 bestLocation = l;
             }
+        }
+        if (bestLocation == null) {
+            return errorLocation();
         }
         return bestLocation;
     }

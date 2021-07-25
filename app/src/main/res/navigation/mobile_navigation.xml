@@ -6,19 +6,19 @@
 
     <fragment
         android:id="@+id/nav_map"
-        android:name="com.openclassroom.go4lunch.view.fragment.MapViewFragment"
+        android:name="com.openclassroom.go4lunch.views.fragment.MapViewFragment"
         android:label="@string/menu_map_view"
         tools:layout="@layout/fragment_mapview" />
 
     <fragment
         android:id="@+id/nav_list"
-        android:name="com.openclassroom.go4lunch.view.fragment.RestaurantsListFragment"
+        android:name="com.openclassroom.go4lunch.views.fragment.RestaurantsListFragment"
         android:label="@string/menu_list_view"
         tools:layout="@layout/fragment_listview" />
 
     <fragment
         android:id="@+id/nav_workmates"
-        android:name="com.openclassroom.go4lunch.view.fragment.WorkmatesFragment"
+        android:name="com.openclassroom.go4lunch.views.fragment.WorkmatesFragment"
         android:label="@string/menu_workmates"
         tools:layout="@layout/fragment_workmates" />
 </navigation>
