@@ -90,7 +90,7 @@ public class SettingsActivity extends ActivityEX {
 
             } else {
                 // Update User Picture
-                if (user.getPhotoUrl() != null) {
+                if (user.getPhotoUrl() != null && !user.getPhotoUrl().equals("")) {
                     Picasso.Builder builder = new Picasso.Builder(this);
                     builder.downloader(new OkHttp3Downloader(this));
                     builder.build().load(user.getPhotoUrl())

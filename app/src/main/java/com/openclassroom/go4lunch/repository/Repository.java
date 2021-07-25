@@ -70,21 +70,6 @@ public class Repository {
         mCurrentUser = new MutableLiveData<>();
     }
 
-    // ---------------
-    // Getter
-    // ---------------
-    public ObservableEX getOnUpdateUsersList() {
-        return mOnUpdateUsersList;
-    }
-
-    public MutableLiveData<List<User>> getUsersListLiveData() {
-        return mUserMutableLiveData;
-    }
-
-    public MutableLiveData<User> getCurrentUser() {
-        return mCurrentUser;
-    }
-
     // --------------
     // Retrofit Call
     // --------------
@@ -272,30 +257,42 @@ public class Repository {
     }
 
     public void callCurrentUser(OnResponseListener<User> listener) {
-        mFirebaseFirestore.collection("users")
-                .document(getCurrentFirebaseUser().getUid())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        List<String> castedLikes = (List<String>) document.get("likes");
-                        String newUserUID = document.getId();
-                        User newUser = new User(
-                                newUserUID,
-                                (String) document.get("name"),
-                                castedLikes,
-                                (String) document.get("avatarUrl"),
-                                (String) document.get("eatingAt"),
-                                (String) document.get("eatingAtName"),
-                                (String) document.get("email")
-                        );
-                        listener.onResponse(newUser);
-                    }
-                });
+        if (getCurrentFirebaseUser() != null) {
+            mFirebaseFirestore.collection("users")
+                    .document(getCurrentFirebaseUser().getUid())
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            List<String> castedLikes = (List<String>) document.get("likes");
+                            String newUserUID = document.getId();
+                            User newUser = new User(
+                                    newUserUID,
+                                    (String) document.get("name"),
+                                    castedLikes,
+                                    (String) document.get("avatarUrl"),
+                                    (String) document.get("eatingAt"),
+                                    (String) document.get("eatingAtName"),
+                                    (String) document.get("email")
+                            );
+                            listener.onResponse(newUser);
+                        }
+                    });
+        } else {
+            listener.onResponse(new User(
+                    "",
+                    "Not Connected",
+                    new ArrayList<>(),
+                    null,
+                    "",
+                    "",
+                    ""
+            ));
+        }
     }
 
     public Boolean isCurrentUserLogged() {
-        return (this.getCurrentUser() != null);
+        return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
 
     public void updateUserOnFirebase() {

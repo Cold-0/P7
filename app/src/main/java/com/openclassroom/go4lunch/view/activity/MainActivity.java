@@ -358,7 +358,7 @@ public class MainActivity extends ActivityEX {
                 mHeaderNavViewBinding.headerUserName.setText(user.getDisplayName());
                 mHeaderNavViewBinding.headerUserEmail.setText(user.getEmail());
 
-                if (user.getPhotoUrl() != null) {
+                if (user.getPhotoUrl() != null && !user.getPhotoUrl().equals("")) {
                     Picasso.Builder builder = new Picasso.Builder(this);
                     builder.downloader(new OkHttp3Downloader(this));
                     builder.build().load(user.getPhotoUrl())
