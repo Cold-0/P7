@@ -1,5 +1,6 @@
 package com.openclassroom.go4lunch.repository;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -7,6 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.openclassroom.go4lunch.listener.OnResponseListener;
@@ -22,7 +25,9 @@ import com.openclassroom.go4lunch.utils.ex.ObservableEX;
 import com.openclassroom.go4lunch.listener.OnToggledListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -232,53 +237,108 @@ public class Repository {
                 });
     }
 
-    public void updateUserList() {
+    public void callUserList(OnUserListListener listener) {
         mFirebaseFirestore.collection("users")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         List<User> userList = mUserMutableLiveData.getValue();
-                        assert userList != null;
-                        userList.clear();
+                        if (userList != null) {
+                            userList.clear();
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                List<String> castedLikes = (List<String>) document.get("likes");
+                                String newUserUID = document.getId();
+                                User newUser = new User(
+                                        newUserUID,
+                                        (String) document.get("name"),
+                                        castedLikes,
+                                        (String) document.get("avatarUrl"),
+                                        (String) document.get("eatingAt"),
+                                        (String) document.get("eatingAtName"),
+                                        (String) document.get("email")
+                                );
+                                userList.add(newUser);
 
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                            List<String> castedLikes = (List<String>) document.get("likes");
-                            String newUserUID = document.getId();
-                            User newUser = new User(
-                                    newUserUID,
-                                    (String) document.get("name"),
-                                    castedLikes,
-                                    (String) document.get("avatarUrl"),
-                                    (String) document.get("eatingAt"),
-                                    (String) document.get("eatingAtName")
-                            );
-                            userList.add(newUser);
-                            if (newUserUID.equals(getCurrentFirebaseUser().getUid())) {
-                                mCurrentUser.setValue(newUser);
+                                if (newUserUID.equals(getCurrentFirebaseUser().getUid())) {
+                                    mCurrentUser.setValue(newUser);
+                                }
                             }
                         }
-
-                        mUserMutableLiveData.setValue(userList);
-                        UserListUpdateMessage userListUpdateState = new UserListUpdateMessage();
-                        userListUpdateState.currentUser = mCurrentUser.getValue();
-                        userListUpdateState.userList = mUserMutableLiveData.getValue();
-                        mOnUpdateUsersList.notifyObservers(userListUpdateState);
-
+                        listener.onResponse(mCurrentUser.getValue(), mUserMutableLiveData.getValue());
                     } else {
                         Log.w(TAG, "Error getting documents.", task.getException());
                     }
                 });
     }
 
-    public void callUserList(OnUserListListener listener) {
-        updateUserList();
-        getOnUpdateUsersList().addObserver((o, arg) -> {
-            UserListUpdateMessage userListUpdateState = (UserListUpdateMessage) arg;
-            listener.onResponse(userListUpdateState.currentUser, userListUpdateState.userList);
-        });
+    public void callCurrentUser(OnResponseListener<User> listener) {
+        mFirebaseFirestore.collection("users")
+                .document(getCurrentFirebaseUser().getUid())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        List<String> castedLikes = (List<String>) document.get("likes");
+                        String newUserUID = document.getId();
+                        User newUser = new User(
+                                newUserUID,
+                                (String) document.get("name"),
+                                castedLikes,
+                                (String) document.get("avatarUrl"),
+                                (String) document.get("eatingAt"),
+                                (String) document.get("eatingAtName"),
+                                (String) document.get("email")
+                        );
+                        listener.onResponse(newUser);
+                    }
+                });
     }
 
     public Boolean isCurrentUserLogged() {
         return (this.getCurrentUser() != null);
+    }
+
+    public void updateUserOnFirebase() {
+        FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
+        FirebaseUser user = getCurrentFirebaseUser();
+        if (user != null) {
+            DocumentReference docRef = rootRef.collection("users").document(user.getUid());
+            docRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    Map<String, Object> userToUpdate = new HashMap<>();
+                    userToUpdate.put("name", user.getDisplayName());
+                    userToUpdate.put("email", user.getEmail());
+                    Uri photoUrl = user.getPhotoUrl();
+                    String photoUrlString;
+                    if (photoUrl == null)
+                        photoUrlString = "";
+                    else
+                        photoUrlString = photoUrl.toString();
+                    userToUpdate.put("avatarUrl", photoUrlString);
+
+                    if (!Objects.requireNonNull(document).exists()) {
+                        userToUpdate.put("likes", new ArrayList<String>());
+                        userToUpdate.put("eatingAt", "");
+                        userToUpdate.put("eatingAtName", "");
+                    } else {
+                        userToUpdate.put("likes", document.get("likes"));
+                        userToUpdate.put("eatingAt", document.get("eatingAt"));
+                        userToUpdate.put("eatingAtName", document.get("eatingAtName"));
+                    }
+
+                    rootRef.collection("users").document(user.getUid())
+                            .set(userToUpdate)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "User DocumentSnapshot successfully written!");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.w(TAG, "Error writing document", e);
+                            });
+                } else {
+                    Log.d(TAG, "Error getting Document with ", task.getException());
+                }
+            });
+        }
     }
 }

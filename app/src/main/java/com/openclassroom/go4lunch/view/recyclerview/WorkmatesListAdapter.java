@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassroom.go4lunch.R;
@@ -68,10 +67,10 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdap
             holder.mBinding.userInfo.setTextColor(mActivity.getResources().getColor(R.color.black));
         }
 
-        if (!user.getAvatarUrl().equals("") && user.getAvatarUrl() != null) {
+        if (!user.getPhotoUrl().equals("") && user.getPhotoUrl() != null) {
             Picasso.Builder builder = new Picasso.Builder(mActivity);
             builder.downloader(new OkHttp3Downloader(mActivity));
-            builder.build().load(user.getAvatarUrl())
+            builder.build().load(user.getPhotoUrl())
                     .error(R.drawable.ic_launcher_foreground)
                     .transform(new CircleCropTransform())
                     .into(holder.mBinding.userAvatar);

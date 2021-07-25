@@ -3,9 +3,8 @@ package com.openclassroom.go4lunch.view.fragment;
 import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.utils.ex.FragmentEX;
 import com.openclassroom.go4lunch.view.recyclerview.WorkmatesListAdapter;
-import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
-import com.openclassroom.go4lunch.viewmodel.WorkmatesViewModel;
 import com.openclassroom.go4lunch.databinding.FragmentWorkmatesBinding;
+import com.openclassroom.go4lunch.viewmodel.UserInfoViewModel;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class WorkmatesFragment extends FragmentEX {
     // ------------------------
@@ -31,19 +29,17 @@ public class WorkmatesFragment extends FragmentEX {
     // ------------------------
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        WorkmatesViewModel workmatesListViewModel = new ViewModelProvider(requireActivity()).get(WorkmatesViewModel.class);
-        UserInfoViewModel userInfoViewModel = new ViewModelProvider(requireActivity()).get(UserInfoViewModel.class);
+        UserInfoViewModel workmatesListViewModel = new ViewModelProvider(requireActivity()).get(UserInfoViewModel.class);
         mBinding = FragmentWorkmatesBinding.inflate(inflater, container, false);
 
-        WorkmatesListAdapter listViewAdapter = new WorkmatesListAdapter(requireActivity(), new ArrayList<>(Objects.requireNonNull(workmatesListViewModel.getUserList().getValue())));
+        WorkmatesListAdapter listViewAdapter = new WorkmatesListAdapter(requireActivity(), new ArrayList<>());
         mBinding.workmatesList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         mBinding.workmatesList.setAdapter(listViewAdapter);
 
-        // Observe user list and reload the Adapter with new data.
-        workmatesListViewModel.getUserList().observe(getViewLifecycleOwner(), users -> {
+        workmatesListViewModel.callUserList((currentUser, userList) -> {
             listViewAdapter.clearUserList();
-            for (User user : users) {
-                if (!user.getUid().equals(Objects.requireNonNull(userInfoViewModel.getCurrentUser().getValue()).getUid())) {
+            for (User user : userList) {
+                if (!user.getUid().equals(currentUser.getUid())) {
                     listViewAdapter.addUserList(user);
                 }
             }

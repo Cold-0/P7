@@ -10,14 +10,16 @@ public class User {
     private String mAvatarUrl;
     private String mEatingAt;
     private String mEatingAtName;
+    private String mEmailAddress;
 
-    public User(String id, String displayName, List<String> likeList, String avatarUrl, String eatingAt, String eatingAtName) {
+    public User(String id, String displayName, List<String> likeList, String avatarUrl, String eatingAt, String eatingAtName, String emailAddress) {
         mUid = id;
         mDisplayName = displayName;
         mLikeList = likeList;
         mAvatarUrl = avatarUrl;
         mEatingAt = eatingAt;
         mEatingAtName = eatingAtName;
+        mEmailAddress = emailAddress;
     }
 
     public String getUid() {
@@ -44,7 +46,7 @@ public class User {
         mLikeList = likeList;
     }
 
-    public String getAvatarUrl() {
+    public String getPhotoUrl() {
         return mAvatarUrl;
     }
 
@@ -66,5 +68,13 @@ public class User {
 
     public void setEatingAtName(String eatingAtName) {
         mEatingAtName = eatingAtName;
+    }
+
+    public String getEmail() {
+        return mEmailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        mEmailAddress = emailAddress;
     }
 }

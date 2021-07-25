@@ -11,6 +11,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseUser;
+import com.openclassroom.go4lunch.listener.OnResponseListener;
 import com.openclassroom.go4lunch.message.MarkerAddMessage;
 import com.openclassroom.go4lunch.message.RestaurantAddMessage;
 import com.openclassroom.go4lunch.message.SearchValidateMessage;
@@ -47,10 +48,6 @@ public class SearchViewModel extends ViewModelEX {
     private final ObservableEX mClearRestaurantList = new ObservableEX();
     private final ObservableEX mAddMapMarker = new ObservableEX();
 
-    MutableLiveData<User> mCurrentUser;
-    MutableLiveData<List<User>> mUserList;
-    Observer<List<User>> mUserListObserver;
-
     // ------------------------
     // Constructor
     // ------------------------
@@ -61,19 +58,7 @@ public class SearchViewModel extends ViewModelEX {
                 searchValidationDataView ->
                         callUserList((currentUser, userList) ->
                                 onSearchValidate(currentUser, userList, searchValidationDataView)));
-
-        getRepository().updateUserList();
-        mUserList = getRepository().getUsersListLiveData();
-
-        mUserListObserver = users -> {
-            FirebaseUser firebaseUser = getRepository().getCurrentFirebaseUser();
-            for (User user : Objects.requireNonNull(getRepository().getUsersListLiveData().getValue())) {
-                if (user.getUid().equals(firebaseUser.getUid()))
-                    mCurrentUser.setValue(user);
-            }
-        };
     }
-
 
     // ------------------------
     // Override
@@ -145,7 +130,6 @@ public class SearchViewModel extends ViewModelEX {
                     .title(response.getName())
                     .snippet(response.getVicinity());
 
-
             MarkerAddMessage state = new MarkerAddMessage();
             state.markeroptions(userIndicator);
             state.placeid(response.getPlaceId());
@@ -157,81 +141,60 @@ public class SearchViewModel extends ViewModelEX {
 
         mZoomMapObservable.notifyObservers(loc);
 
-        // Get Nearby Search Respond using the Details as location
-        Call<NearbySearchResponse> callNearbySearch = null;
+        OnResponseListener<NearbySearchResponse> listener = listenerResponse -> {
+            doRestaurantAdd(currentUser, userList, listenerResponse);
+        };
 
         if (data.getSearchMethod() == SearchType.PREDICTION || data.getSearchMethod() == SearchType.CLOSER) {
-            callNearbySearch = getRepository().getRetrofitService().getNearbyByType(5000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant");
+            getRepository().callNearbySearchByType(String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant", listener);
         } else if (data.getSearchMethod() == SearchType.SEARCH_STRING) {
-            callNearbySearch = getRepository().getRetrofitService().getNearbyByKeyword(5000, String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.getSearchString());
+            getRepository().callNearbySearchByKeyword(String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.getSearchString(), listener);
         }
-
-        assert callNearbySearch != null;
-        callNearbySearch.enqueue(new Callback<NearbySearchResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
-                doRestaurantAdd(currentUser, userList, response);
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<NearbySearchResponse> call, @NotNull Throwable t) {
-            }
-        });
     }
 
-    private void doRestaurantAdd(User currentUser, List<User> userList, @NotNull Response<NearbySearchResponse> response) {
-        assert response.body() != null;
+    private void doRestaurantAdd(User currentUser, List<User> userList, @NotNull NearbySearchResponse response) {
         mClearRestaurantList.notifyObservers();
-        for (NearbySearchResult nearbysearchresult : response.body().getResults()) {
-            if (response.body() != null) {
-                // Build LatLng instance
-                Double lat = nearbysearchresult.getGeometry().getLocation().getLat();
-                Double lng = nearbysearchresult.getGeometry().getLocation().getLng();
-                LatLng loc = new LatLng(lat, lng);
+        for (NearbySearchResult nearbysearchresult : response.getResults()) {
+            // Build LatLng instance
+            Double lat = nearbysearchresult.getGeometry().getLocation().getLat();
+            Double lng = nearbysearchresult.getGeometry().getLocation().getLng();
+            LatLng loc = new LatLng(lat, lng);
 
-                // Default Red
-                float hue = BitmapDescriptorFactory.HUE_RED;
+            // Default Red
+            float hue = BitmapDescriptorFactory.HUE_RED;
 
-                // If anyone EatAt then make it Green
-                for (User user : userList) {
-                    if (nearbysearchresult.getPlaceId().equals(user.getEatingAt())) {
-                        hue = BitmapDescriptorFactory.HUE_GREEN;
-                        break;
-                    }
+            // If anyone EatAt then make it Green
+            for (User user : userList) {
+                if (nearbysearchresult.getPlaceId().equals(user.getEatingAt())) {
+                    hue = BitmapDescriptorFactory.HUE_GREEN;
+                    break;
                 }
-
-                // If you EatAt then make it Blue
-                if (nearbysearchresult.getPlaceId().equals(currentUser.getEatingAt()))
-                    hue = BitmapDescriptorFactory.HUE_AZURE;
-
-                // Build MarkerOptions
-                MarkerOptions userIndicator = new MarkerOptions()
-                        .position(loc)
-                        .icon(BitmapDescriptorFactory.defaultMarker(hue))
-                        .title(nearbysearchresult.getName())
-                        .snippet(nearbysearchresult.getVicinity());
-
-                // Build MarkerAddMessage
-                MarkerAddMessage state = new MarkerAddMessage()
-                        .markeroptions(userIndicator)
-                        .placeid(nearbysearchresult.getPlaceId());
-
-                // Build RestaurantAddMessage
-                RestaurantAddMessage restaurantInfoState = new RestaurantAddMessage()
-                        .nearbysearchresult(nearbysearchresult)
-                        .userlist(userList);
-
-                // Notify observer and send Messages
-                mAddMapMarker.notifyObservers(state);
-                mAddRestaurantToList.notifyObservers(restaurantInfoState);
             }
-        }
-    }
 
-    // ------------------------
-    // Call
-    // ------------------------
-    public void callUserList(OnUserListListener listener) {
-        getRepository().callUserList(listener);
+            // If you EatAt then make it Blue
+            if (nearbysearchresult.getPlaceId().equals(currentUser.getEatingAt()))
+                hue = BitmapDescriptorFactory.HUE_AZURE;
+
+            // Build MarkerOptions
+            MarkerOptions userIndicator = new MarkerOptions()
+                    .position(loc)
+                    .icon(BitmapDescriptorFactory.defaultMarker(hue))
+                    .title(nearbysearchresult.getName())
+                    .snippet(nearbysearchresult.getVicinity());
+
+            // Build MarkerAddMessage
+            MarkerAddMessage state = new MarkerAddMessage()
+                    .markeroptions(userIndicator)
+                    .placeid(nearbysearchresult.getPlaceId());
+
+            // Build RestaurantAddMessage
+            RestaurantAddMessage restaurantInfoState = new RestaurantAddMessage()
+                    .nearbysearchresult(nearbysearchresult)
+                    .userlist(userList);
+
+            // Notify observer and send Messages
+            mAddMapMarker.notifyObservers(state);
+            mAddRestaurantToList.notifyObservers(restaurantInfoState);
+        }
     }
 }

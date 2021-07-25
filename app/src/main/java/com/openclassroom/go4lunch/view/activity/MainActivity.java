@@ -18,7 +18,6 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.database.MatrixCursor;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -30,11 +29,6 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.openclassroom.go4lunch.model.User;
 import com.openclassroom.go4lunch.model.api.autocomplete.Prediction;
 import com.openclassroom.go4lunch.message.SearchValidateMessage;
 import com.openclassroom.go4lunch.type.SearchType;
@@ -53,11 +47,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -77,7 +68,6 @@ public class MainActivity extends ActivityEX {
     private SearchViewModel mSearchViewModel;
     private UserInfoViewModel mUserInfoViewModel;
     private ActivityResultLauncher<Intent> mSignInLauncher;
-    private User mCurrentUser;
     private FragmentViewType mCurrentView;
 
     // --------------------
@@ -91,10 +81,6 @@ public class MainActivity extends ActivityEX {
 
         mSearchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
         mUserInfoViewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);
-
-        mUserInfoViewModel.getCurrentUser().observe(this, user -> {
-            mCurrentUser = user;
-        });
 
         configureToolBar();
         configureBottomNavBar();
@@ -164,15 +150,14 @@ public class MainActivity extends ActivityEX {
 
         if (response == null) {
             // Canceled Signed In
+            Log.i(TAG, "onSignInResult: Sign In Canceled");
             SignIn();
-            Snackbar.make(mActivityMainBinding.getRoot(), R.string.canceled_sign_in, Snackbar.LENGTH_SHORT).show();
         } else if (result.getResultCode() == RESULT_OK) {
-            // Sign in Success
-            mUserInfoViewModel.updateUserList();
-            Snackbar.make(mActivityMainBinding.getRoot(), getString(R.string.signed_in_as_user, Objects.requireNonNull(mUserInfoViewModel.getCurrentFirebaseUser()).getDisplayName()), Snackbar.LENGTH_SHORT).show();
+            // Sign in Worked
+            Log.i(TAG, "onSignInResult: Sign In Success");
         } else {
             // Sign in failed
-            Snackbar.make(mActivityMainBinding.getRoot(), R.string.sign_in_failed, Snackbar.LENGTH_SHORT).show();
+            Log.i(TAG, "onSignInResult: Sign In Failed");
         }
 
         updateLeftDrawerLayoutProfile();
@@ -345,12 +330,14 @@ public class MainActivity extends ActivityEX {
             int id = item.getItemId();
 
             if (id == R.id.menu_nav_your_lunch) {
-                String eatingAt = mCurrentUser.getEatingAt();
-                if (eatingAt == null || eatingAt.equals("")) {
-                    Snackbar.make(mActivityMainBinding.getRoot(), "You haven't chose a restaurant yet", Snackbar.LENGTH_SHORT).show();
-                } else {
-                    openDetailRestaurant(eatingAt);
-                }
+                mUserInfoViewModel.callCurrentUser(response -> {
+                    String eatingAt = response.getEatingAt();
+                    if (eatingAt == null || eatingAt.equals("")) {
+                        Snackbar.make(mActivityMainBinding.getRoot(), "You haven't chose a restaurant yet", Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        openDetailRestaurant(eatingAt);
+                    }
+                });
             } else if (id == R.id.menu_nav_settings) {
                 Intent settingIntent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(settingIntent);
@@ -366,24 +353,22 @@ public class MainActivity extends ActivityEX {
 
     private void updateLeftDrawerLayoutProfile() {
         updateUserOnFirebase();
+        mUserInfoViewModel.callCurrentUser(user -> {
+            if (user != null) {
+                mHeaderNavViewBinding.headerUserName.setText(user.getDisplayName());
+                mHeaderNavViewBinding.headerUserEmail.setText(user.getEmail());
 
-        FirebaseUser user = mUserInfoViewModel.getCurrentFirebaseUser();
-        if (user != null) {
-            mHeaderNavViewBinding.headerUserName.setText(user.getDisplayName());
-            mHeaderNavViewBinding.headerUserEmail.setText(user.getEmail());
-
-            if (user.getPhotoUrl() != null) {
-                Picasso.Builder builder = new Picasso.Builder(this);
-                builder.downloader(new OkHttp3Downloader(this));
-                builder.build().load(user.getPhotoUrl())
-                        .placeholder((R.drawable.ic_launcher_background))
-                        .error(R.drawable.ic_launcher_foreground)
-                        .transform(new CircleCropTransform())
-                        .into(mHeaderNavViewBinding.headerUserAvatar);
+                if (user.getPhotoUrl() != null) {
+                    Picasso.Builder builder = new Picasso.Builder(this);
+                    builder.downloader(new OkHttp3Downloader(this));
+                    builder.build().load(user.getPhotoUrl())
+                            .placeholder((R.drawable.ic_launcher_background))
+                            .error(R.drawable.ic_launcher_foreground)
+                            .transform(new CircleCropTransform())
+                            .into(mHeaderNavViewBinding.headerUserAvatar);
+                }
             }
-        }
-
-        mUserInfoViewModel.updateUserList();
+        });
     }
 
     // -----------------------------
@@ -409,46 +394,6 @@ public class MainActivity extends ActivityEX {
     // Firebase
     // --------------------------
     private void updateUserOnFirebase() {
-        FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
-        FirebaseUser user = mUserInfoViewModel.getCurrentFirebaseUser();
-        if (user != null) {
-            DocumentReference docRef = rootRef.collection("users").document(user.getUid());
-            docRef.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    Map<String, Object> userToUpdate = new HashMap<>();
-                    userToUpdate.put("name", user.getDisplayName());
-                    userToUpdate.put("email", user.getEmail());
-                    Uri photoUrl = user.getPhotoUrl();
-                    String photoUrlString;
-                    if (photoUrl == null)
-                        photoUrlString = "";
-                    else
-                        photoUrlString = photoUrl.toString();
-                    userToUpdate.put("avatarUrl", photoUrlString);
-
-                    if (!Objects.requireNonNull(document).exists()) {
-                        userToUpdate.put("likes", new ArrayList<String>());
-                        userToUpdate.put("eatingAt", "");
-                        userToUpdate.put("eatingAtName", "");
-                    } else {
-                        userToUpdate.put("likes", document.get("likes"));
-                        userToUpdate.put("eatingAt", document.get("eatingAt"));
-                        userToUpdate.put("eatingAtName", document.get("eatingAtName"));
-                    }
-
-                    rootRef.collection("users").document(user.getUid())
-                            .set(userToUpdate)
-                            .addOnSuccessListener(aVoid -> {
-                                Log.d(TAG, "User DocumentSnapshot successfully written!");
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.w(TAG, "Error writing document", e);
-                            });
-                } else {
-                    Log.d(TAG, "Error getting Document with ", task.getException());
-                }
-            });
-        }
+        mUserInfoViewModel.updateUserOnFirebase();
     }
 }
