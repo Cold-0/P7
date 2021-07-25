@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 
@@ -20,6 +19,8 @@ import com.openclassroom.go4lunch.repository.Repository;
 import com.openclassroom.go4lunch.listener.OnUserListListener;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 abstract public class ViewModelEX extends AndroidViewModel {
     // --------------------
@@ -42,15 +43,26 @@ abstract public class ViewModelEX extends AndroidViewModel {
     }
 
     public Location getMyLocation() {
-        LocationManager locationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Location loc = new Location("");
-            loc.setLatitude(0.0);
-            loc.setLongitude(0.0);
-            return loc;
+        LocationManager mLocationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Location errorLocation = new Location("");
+                errorLocation.setLatitude(0.0);
+                errorLocation.setLongitude(0.0);
+                return errorLocation;
+            }
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
         }
-        return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        return bestLocation;
     }
 
     // --------------------

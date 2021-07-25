@@ -13,6 +13,8 @@ import androidx.core.app.ActivityCompat;
 
 import com.openclassroom.go4lunch.view.activity.RestaurantDetailActivity;
 
+import java.util.List;
+
 public abstract class ActivityEX extends AppCompatActivity {
     // ----------------------------
     // Intent
@@ -26,21 +28,26 @@ public abstract class ActivityEX extends AppCompatActivity {
     // ----------------------------
     // Getter
     // ----------------------------
-    protected Location getLastKnowLocation() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        try {
-            // Walk through each enabled location provider and return the first found, last-known location
-            for (String thisLocProvider : locationManager.getProviders(true)) {
-                Location lastKnown = locationManager.getLastKnownLocation(thisLocProvider);
-
-                if (lastKnown != null) {
-                    return lastKnown;
-                }
+    protected Location getCurrentLocation() {
+        LocationManager mLocationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Location errorLocation = new Location("");
+                errorLocation.setLatitude(0.0);
+                errorLocation.setLongitude(0.0);
+                return errorLocation;
             }
-        } catch (SecurityException exception) {
-            exception.printStackTrace();
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
         }
-        // Always possible there's no means to determine location
-        return null;
+        return bestLocation;
     }
 }

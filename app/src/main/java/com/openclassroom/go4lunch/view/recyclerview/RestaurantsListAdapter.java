@@ -71,7 +71,7 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
         NearbySearchResult restaurant = Objects.requireNonNull(mRestaurantList.getValue()).get(position).getResult();
         List<User> userList = Objects.requireNonNull(mRestaurantList.getValue()).get(position).getUserList();
 
-        Location loc = getMyLocation();
+        Location loc = getCurrentLocation();
 
         holder.mBinding.restaurantName.setText(restaurant.getName());
 
@@ -135,18 +135,6 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
         return Objects.requireNonNull(mRestaurantList.getValue()).size();
     }
 
-    public Location getMyLocation() {
-        LocationManager locationManager = (LocationManager) mActivity.getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission((mActivity), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Location loc = new Location("");
-            loc.setLatitude(0.0);
-            loc.setLongitude(0.0);
-            return loc;
-        }
-        return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-    }
-
     static class RestaurantsListViewHolder extends RecyclerView.ViewHolder {
         public final ItemRestaurantBinding mBinding;
 
@@ -154,5 +142,28 @@ public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsList
             super(binding.getRoot());
             mBinding = binding;
         }
+    }
+
+    protected Location getCurrentLocation() {
+        LocationManager mLocationManager = (LocationManager) mActivity.getSystemService(Context.LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Location errorLocation = new Location("");
+                errorLocation.setLatitude(0.0);
+                errorLocation.setLongitude(0.0);
+                return errorLocation;
+            }
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
     }
 }
