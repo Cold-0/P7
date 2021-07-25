@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 
 import com.openclassroom.go4lunch.BuildConfig;
 import com.openclassroom.go4lunch.R;
@@ -59,18 +60,13 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     // --------------------
     private void configureButtons() {
         // Return button
-        mBinding.returnButton.setOnClickListener(v -> {
-            finish();
-        });
+        mBinding.returnButton.setOnClickListener(this::onClick);
 
         // Fab Button
-        mBinding.fabEatingAt.setOnClickListener(v -> {
-            mUserInfoViewModel.callToggleEatingAt(mCurrentPlaceID, mDetailsResult.getName(), result -> {
-                mUserInfoViewModel.callUserList((currentUser, userList) -> {
-                    updateFabView(currentUser);
-                });
-            });
-        });
+        mBinding.fabEatingAt.setOnClickListener(v ->
+                mUserInfoViewModel.callToggleEatingAt(mCurrentPlaceID, mDetailsResult.getName(), result ->
+                        mUserInfoViewModel.callUserList((currentUser, userList) ->
+                                updateFabView(currentUser))));
 
         // Call Button
         mBinding.layoutClickableCall.setOnClickListener(v -> {
@@ -80,13 +76,13 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         });
 
         // Like Button
-        mBinding.layoutClickableLike.setOnClickListener(v -> {
-            mUserInfoViewModel.callToggleLike(mCurrentPlaceID, result -> {
-                mUserInfoViewModel.callUserList((currentUser, userList) -> {
-                    updateLikeView(currentUser);
-                });
-            });
-        });
+        mBinding.layoutClickableLike.setOnClickListener(v ->
+                mUserInfoViewModel.callToggleLike(mCurrentPlaceID, result ->
+                        mUserInfoViewModel.callUserList((currentUser, userList) ->
+                                updateLikeView(currentUser)
+                        )
+                )
+        );
 
         // Website Button
         mBinding.layoutClickableWebsite.setOnClickListener(v -> {
@@ -154,5 +150,9 @@ public class RestaurantDetailActivity extends AppCompatActivity {
             ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.orange_500)));
         } else
             ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.lightgrey)));
+    }
+
+    private void onClick(View v) {
+        finish();
     }
 }

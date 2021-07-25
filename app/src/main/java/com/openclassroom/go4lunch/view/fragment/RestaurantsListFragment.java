@@ -44,13 +44,10 @@ public class RestaurantsListFragment extends FragmentEX {
                 mRestaurantsListAdapter.addToRestaurantList((RestaurantAddMessage) arg);
         });
 
-        searchViewModel.getClearRestaurantList().addObserver((o, arg) -> {
-            mRestaurantsListAdapter.clearRestaurantList();
-        });
+        searchViewModel.getClearRestaurantList().addObserver((o, arg) -> mRestaurantsListAdapter.clearRestaurantList());
 
         SearchValidateMessage svd = new SearchValidateMessage()
-                .setSearchMethod(SearchType.CLOSER)
-                .setViewType(FragmentViewType.LIST);
+                .setSearchMethod(SearchType.CLOSER);
 
         searchViewModel.setSearchValidationDataViewMutable(svd);
 

@@ -138,7 +138,7 @@ public class Repository {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    public void toggleEatingAt(String placeID, String placeName, OnToggledListener toggledEatingAt) {
+    public void callToggleEatingAt(String placeID, String placeName, OnToggledListener toggledEatingAt) {
         mFirebaseFirestore.collection("users")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -177,7 +177,7 @@ public class Repository {
     }
 
     @SuppressWarnings("unchecked")
-    public void toggleLike(String placeID, OnToggledListener toggledLike) {
+    public void callToggleLike(String placeID, OnToggledListener toggledLike) {
         mFirebaseFirestore.collection("users")
                 .get()
                 .addOnCompleteListener(task -> {

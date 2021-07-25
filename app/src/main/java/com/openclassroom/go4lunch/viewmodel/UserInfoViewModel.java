@@ -46,11 +46,11 @@ public class UserInfoViewModel extends ViewModelEX {
     // Call
     // ----------------------------
     public void callToggleLike(String placeID, OnToggledListener toggledLike) {
-        getRepository().toggleLike(placeID, toggledLike);
+        getRepository().callToggleLike(placeID, toggledLike);
     }
 
     public void callToggleEatingAt(String eatingAt, String eatingAtName, OnToggledListener toggled) {
-        getRepository().toggleEatingAt(eatingAt, eatingAtName, toggled);
+        getRepository().callToggleEatingAt(eatingAt, eatingAtName, toggled);
     }
 
     public void callUserList(OnUserListListener listener) {

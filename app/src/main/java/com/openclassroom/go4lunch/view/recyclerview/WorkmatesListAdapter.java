@@ -91,10 +91,6 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdap
             super(binding.getRoot());
             mBinding = binding;
         }
-
-        void bind() {
-
-        }
     }
 
 }

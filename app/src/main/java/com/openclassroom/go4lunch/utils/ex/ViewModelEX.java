@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.openclassroom.go4lunch.R;
 import com.openclassroom.go4lunch.listener.OnResponseListener;
 import com.openclassroom.go4lunch.model.api.autocomplete.AutocompleteResponse;
 import com.openclassroom.go4lunch.model.api.nearbysearch.NearbySearchResponse;
@@ -21,8 +20,6 @@ import com.openclassroom.go4lunch.repository.Repository;
 import com.openclassroom.go4lunch.listener.OnUserListListener;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 
 abstract public class ViewModelEX extends AndroidViewModel {
     // --------------------

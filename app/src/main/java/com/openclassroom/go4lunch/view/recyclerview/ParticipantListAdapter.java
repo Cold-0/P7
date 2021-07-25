@@ -24,7 +24,7 @@ import java.util.Objects;
 public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantListAdapter.ParticipantListViewHolder> {
 
     @NonNull
-    private List<User> mParticipantList;
+    private final List<User> mParticipantList;
 
     @NonNull
     private final FragmentActivity mActivity;
@@ -92,10 +92,5 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<ParticipantList
             super(binding.getRoot());
             mBinding = binding;
         }
-
-        void bind() {
-
-        }
     }
-
 }

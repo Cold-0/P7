@@ -8,7 +8,6 @@ public class SearchValidateMessage {
     private Prediction mPrediction = null;
     private String mSearchString = null;
     private SearchType mSearchType = SearchType.PREDICTION;
-    private FragmentViewType mFragmentViewType = FragmentViewType.LIST;
 
     public Prediction getPrediction() {
         return mPrediction;
@@ -34,15 +33,6 @@ public class SearchValidateMessage {
 
     public SearchValidateMessage setSearchMethod(SearchType searchMethod) {
         this.mSearchType = searchMethod;
-        return this;
-    }
-
-    public FragmentViewType getFragmentViewType() {
-        return mFragmentViewType;
-    }
-
-    public SearchValidateMessage setViewType(FragmentViewType viewType) {
-        this.mFragmentViewType = viewType;
         return this;
     }
 }

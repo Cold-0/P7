@@ -219,8 +219,7 @@ public class MainActivity extends ActivityEX {
 
                 // Create the Data containing the search to send to needed Fragment.
                 SearchValidateMessage searchValidationDataView = new SearchValidateMessage()
-                        .setPrediction(predictionList.get(position))
-                        .setViewType(mCurrentView);
+                        .setPrediction(predictionList.get(position));
 
                 // Send in the ViewModel the current Search Data
                 mSearchViewModel.setSearchValidationDataViewMutable(searchValidationDataView);
@@ -244,7 +243,6 @@ public class MainActivity extends ActivityEX {
 
                 SearchValidateMessage searchValidationDataView = new SearchValidateMessage()
                         .setPrediction(null)
-                        .setViewType(mCurrentView)
                         .setSearchMethod(SearchType.SEARCH_STRING)
                         .setSearchString(currentSearch[0]);
 

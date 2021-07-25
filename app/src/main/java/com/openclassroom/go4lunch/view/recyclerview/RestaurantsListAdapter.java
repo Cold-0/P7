@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,18 +36,11 @@ import java.util.Objects;
 
 public class RestaurantsListAdapter extends RecyclerView.Adapter<RestaurantsListAdapter.RestaurantsListViewHolder> {
 
-    private static final String TAG = RestaurantsListAdapter.class.toString();
-
     @NonNull
     private final FragmentActivity mActivity;
 
     @NonNull
     private final LiveData<List<RestaurantAddMessage>> mRestaurantList;
-
-    @NonNull
-    public LiveData<List<RestaurantAddMessage>> getRestaurantList() {
-        return mRestaurantList;
-    }
 
     public void clearRestaurantList() {
         Objects.requireNonNull(mRestaurantList.getValue()).clear();

@@ -43,16 +43,4 @@ public abstract class ActivityEX extends AppCompatActivity {
         // Always possible there's no means to determine location
         return null;
     }
-
-    public Location getMyLocation() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Location loc = new Location("");
-            loc.setLatitude(0.0);
-            loc.setLongitude(0.0);
-            return loc;
-        }
-        return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-    }
 }

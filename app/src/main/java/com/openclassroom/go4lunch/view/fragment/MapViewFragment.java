@@ -36,12 +36,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
-
-    // ------------------------
-    // Static Properties
-    // ------------------------
-    private static final String TAG = MapViewFragment.class.toString();
-
     // ------------------------
     // Properties
     // ------------------------
@@ -63,9 +57,7 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
 
         mBinding.mapView.getMapAsync(this);
 
-        mSearchViewModel.getClearMapObservable().addObserver((o, arg) -> {
-            clearMap();
-        });
+        mSearchViewModel.getClearMapObservable().addObserver((o, arg) -> clearMap());
 
         mSearchViewModel.getZoomMapObservable().addObserver((o, arg) -> {
             if (arg instanceof Location)
@@ -105,8 +97,7 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
 
         // Perform an Automated empty search
         SearchValidateMessage svd = new SearchValidateMessage()
-                .setSearchMethod(SearchType.CLOSER)
-                .setViewType(FragmentViewType.MAP);
+                .setSearchMethod(SearchType.CLOSER);
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
 
         // Open Restaurant detail when click on info in marker
@@ -121,8 +112,7 @@ public class MapViewFragment extends FragmentEX implements OnMapReadyCallback {
         clearMap();
 
         SearchValidateMessage svd = new SearchValidateMessage()
-                .setSearchMethod(SearchType.CLOSER)
-                .setViewType(FragmentViewType.MAP);
+                .setSearchMethod(SearchType.CLOSER);
         mSearchViewModel.setSearchValidationDataViewMutable(svd);
         mBinding.mapView.onResume();
     }

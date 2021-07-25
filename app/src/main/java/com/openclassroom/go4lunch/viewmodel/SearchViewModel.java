@@ -133,14 +133,12 @@ public class SearchViewModel extends ViewModelEX {
 
         mZoomMapObservable.notifyObservers(loc);
 
-        OnResponseListener<NearbySearchResponse> listener = listenerResponse -> {
-            doRestaurantAdd(currentUser, userList, listenerResponse);
-        };
+        OnResponseListener<NearbySearchResponse> listener = listenerResponse -> doRestaurantAdd(currentUser, userList, listenerResponse);
 
         if (data.getSearchType() == SearchType.PREDICTION || data.getSearchType() == SearchType.CLOSER) {
-            getRepository().callNearbySearchByType(String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant", listener);
+            callNearbySearchByType(String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), "restaurant", listener);
         } else if (data.getSearchType() == SearchType.SEARCH_STRING) {
-            getRepository().callNearbySearchByKeyword(String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.getSearchString(), listener);
+            callNearbySearchByKeyword(String.format(Locale.CANADA, getApplication().getString(R.string.location_formating), loc.getLatitude(), loc.getLongitude()), data.getSearchString(), listener);
         }
     }
 
