@@ -64,6 +64,11 @@ public class Repository {
         mFirebaseFirestore = FirebaseFirestore.getInstance();
     }
 
+    Repository(FirebaseFirestore instance) {
+        mRetrofitService = RetrofitInstance.getRetrofitInstance().create(RetrofitService.class);
+        mFirebaseFirestore = instance;
+    }
+
     // --------------
     // Retrofit Call
     // --------------

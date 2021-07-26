@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class SearchViewModel extends ViewModelEX {
-
     // ------------------------
     // Constructor
     // ------------------------
@@ -85,6 +84,10 @@ public class SearchViewModel extends ViewModelEX {
 
     public ObservableEX getAddMapMarker() {
         return mAddMapMarker;
+    }
+
+    public MutableLiveData<SearchValidateMessage> getSearchValidationDataViewMutableLiveData() {
+        return mSearchValidationDataViewMutableLiveData;
     }
 
     // ------------------------
