@@ -23,7 +23,7 @@
     <string name="didnt_decided_yet">" n'a pas encore choisis"</string>
     <string name="is_eating_at">" mange a "</string>
     <string name="is_joining">" a rejoins"</string>
-    <string name="you_are_eating_at">Vous mangez à</string>
+    <string name="you_are_eating_at">"Vous mangez à "</string>
     <string name="with">Avec : \\n</string>
     <string name="alone">Seul</string>
 </resources>

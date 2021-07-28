@@ -60,7 +60,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     // --------------------
     private void configureButtons() {
         // Return button
-        mBinding.returnButton.setOnClickListener(this::onClick);
+        mBinding.returnButton.setOnClickListener(v -> finish());
 
         // Fab Button
         mBinding.fabEatingAt.setOnClickListener(v ->
@@ -147,12 +147,10 @@ public class RestaurantDetailActivity extends AppCompatActivity {
             }
         }
         if (isLiked) {
+            mBinding.nextToNameStar.setVisibility(View.VISIBLE);
             ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.orange_500)));
         } else
+            mBinding.nextToNameStar.setVisibility(View.INVISIBLE);
             ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.lightgrey)));
-    }
-
-    private void onClick(View v) {
-        finish();
     }
 }

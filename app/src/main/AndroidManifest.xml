@@ -16,7 +16,7 @@
         android:theme="@style/Theme.Go4Lunch"
         tools:ignore="AllowBackup">
 
-        <receiver android:name=".notification.NotificationReceiver" />
+        <receiver android:name=".notification.EatingAtNotificationReceiver" />
 
         <activity
             android:name=".views.activity.RestaurantDetailActivity"

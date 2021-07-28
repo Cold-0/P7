@@ -33,7 +33,7 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.material.snackbar.Snackbar;
 import com.openclassroom.go4lunch.models.api.autocomplete.Prediction;
 import com.openclassroom.go4lunch.messages.SearchValidateMessage;
-import com.openclassroom.go4lunch.notification.NotificationReceiver;
+import com.openclassroom.go4lunch.notification.EatingAtNotificationReceiver;
 import com.openclassroom.go4lunch.types.SearchType;
 import com.openclassroom.go4lunch.utils.transform.CircleCropTransform;
 import com.openclassroom.go4lunch.utils.ex.ActivityEX;
@@ -105,7 +105,7 @@ public class MainActivity extends ActivityEX {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
 
         // Set Intent for Broadcast
-        Intent intent = new Intent(getApplicationContext(), NotificationReceiver.class);
+        Intent intent = new Intent(getApplicationContext(), EatingAtNotificationReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Set as an Alarm

@@ -86,6 +86,18 @@
                 app:layout_constraintTop_toBottomOf="@+id/restaurantNameDetail"
                 tools:ignore="HardcodedText" />
 
+            <ImageView
+                android:id="@+id/nextToNameStar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:padding="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/restaurantNameDetail"
+                app:layout_constraintStart_toEndOf="@+id/restaurantNameDetail"
+                app:layout_constraintTop_toTopOf="@+id/restaurantNameDetail"
+                app:srcCompat="@drawable/ic_baseline_star_24"
+                app:tint="@color/yellow_500" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -119,10 +131,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:textColor="@color/orange_500"
+                    android:text="@string/call"
                     android:textAllCaps="true"
-                    android:textStyle="bold"
-                    android:text="@string/call" />
+                    android:textColor="@color/orange_500"
+                    android:textStyle="bold" />
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -151,10 +163,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:textColor="@color/orange_500"
+                    android:text="@string/like"
                     android:textAllCaps="true"
-                    android:textStyle="bold"
-                    android:text="@string/like" />
+                    android:textColor="@color/orange_500"
+                    android:textStyle="bold" />
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -182,9 +194,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/website"
-                    android:textColor="@color/orange_500"
                     android:textAllCaps="true"
-                    android:textStyle="bold"/>
+                    android:textColor="@color/orange_500"
+                    android:textStyle="bold" />
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>

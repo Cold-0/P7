@@ -15,21 +15,21 @@ import com.openclassroom.go4lunch.models.User;
 import com.openclassroom.go4lunch.repository.Repository;
 import com.openclassroom.go4lunch.views.activity.MainActivity;
 
-class NotificationHelper {
+class EatingAtNotificationSender {
 
     private final Context mContext;
     private static final String NOTIFICATION_CHANNEL_ID = "10001";
 
-    NotificationHelper(Context context) {
+    EatingAtNotificationSender(Context context) {
         mContext = context;
     }
 
-    void createNotification() {
+    void sendNotification() {
         Repository.getRepository().callUserList((currentUser, userList) -> {
             Intent intent = new Intent(mContext, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext,
-                    0 /* Request code */, intent,
+                    0, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext, NOTIFICATION_CHANNEL_ID);
             mBuilder.setSmallIcon(R.mipmap.ic_launcher);
@@ -57,13 +57,13 @@ class NotificationHelper {
                 notificationChannel.enableLights(true);
                 notificationChannel.setLightColor(Color.RED);
                 notificationChannel.enableVibration(true);
-                notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                notificationChannel.setVibrationPattern(new long[]{100, 0, 100, 0, 200, 0, 200, 0, 500, 0, 500, 0});
                 assert mNotificationManager != null;
                 mBuilder.setChannelId(NOTIFICATION_CHANNEL_ID);
                 mNotificationManager.createNotificationChannel(notificationChannel);
             }
             assert mNotificationManager != null;
-            mNotificationManager.notify(0 /* Request Code */, mBuilder.build());
+            mNotificationManager.notify(0, mBuilder.build());
         });
     }
 }
