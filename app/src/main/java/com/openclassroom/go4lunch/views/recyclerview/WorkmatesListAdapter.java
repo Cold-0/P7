@@ -60,7 +60,7 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdap
         if (user.getEatingAt().equals("")) {
             holder.mBinding.userInfo.setText(user.getDisplayName() + mActivity.getString(R.string.didnt_decided_yet));
             holder.mBinding.userInfo.setTypeface(null, Typeface.ITALIC);
-            holder.mBinding.userInfo.setTextColor(mActivity.getResources().getColor(R.color.lightgrey));
+            holder.mBinding.userInfo.setTextColor(mActivity.getResources().getColor(R.color.light_grey));
         } else {
             holder.mBinding.userInfo.setText(user.getDisplayName() + mActivity.getString(R.string.is_eating_at) + user.getEatingAtName());
             holder.mBinding.userInfo.setTypeface(null, Typeface.NORMAL);

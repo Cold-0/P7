@@ -2,7 +2,6 @@ package com.openclassroom.go4lunch.views.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,7 +10,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 
 import com.openclassroom.go4lunch.BuildConfig;
 import com.openclassroom.go4lunch.R;
@@ -137,7 +135,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         if (currentUser.getEatingAt() != null && !currentUser.getEatingAt().equals("") && currentUser.getEatingAt().equals(mCurrentPlaceID)) {
             mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
         } else {
-            mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.lightgrey)));
+            mBinding.fabEatingAt.setSupportImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_grey)));
         }
     }
 
@@ -150,13 +148,9 @@ public class RestaurantDetailActivity extends AppCompatActivity {
             }
         }
         if (isLiked) {
-
             mBinding.likeStar.setColorFilter(ContextCompat.getColor(this, R.color.orange_500));
-            //ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.orange_500)));
         } else {
-
-            mBinding.likeStar.setColorFilter(ContextCompat.getColor(this, R.color.lightgrey));
-            //ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.lightgrey)));
+            mBinding.likeStar.setColorFilter(ContextCompat.getColor(this, R.color.light_grey));
         }
 
     }
