@@ -1,6 +1,7 @@
 package com.openclassroom.go4lunch.views.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -105,6 +106,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     private void updateActivityViews() {
         mUserInfoViewModel.callPlaceDetails(mCurrentPlaceID, response -> {
             mDetailsResult = Objects.requireNonNull(response.getResult());
+            if (mDetailsResult.getRating() != null)
+                mBinding.restaurantRating.setRating((float) (mDetailsResult.getRating() / 5.0 * 3.0));
             mBinding.restaurantNameDetail.setText(mDetailsResult.getName());
             mBinding.restaurantAddressDetail.setText(mDetailsResult.getFormattedAddress());
             if (mDetailsResult.getPhotos() != null) {
@@ -147,10 +150,14 @@ public class RestaurantDetailActivity extends AppCompatActivity {
             }
         }
         if (isLiked) {
-            mBinding.nextToNameStar.setVisibility(View.VISIBLE);
-            ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.orange_500)));
-        } else
-            mBinding.nextToNameStar.setVisibility(View.INVISIBLE);
-            ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.lightgrey)));
+
+            mBinding.likeStar.setColorFilter(ContextCompat.getColor(this, R.color.orange_500));
+            //ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.orange_500)));
+        } else {
+
+            mBinding.likeStar.setColorFilter(ContextCompat.getColor(this, R.color.lightgrey));
+            //ImageViewCompat.setImageTintList(mBinding.likeStar, ColorStateList.valueOf(RestaurantDetailActivity.this.getResources().getColor(R.color.lightgrey)));
+        }
+
     }
 }

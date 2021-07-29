@@ -10,6 +10,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 public class ModelUnitTest {
+
     @Test
     public void UserCreation() {
         User user = new User(
