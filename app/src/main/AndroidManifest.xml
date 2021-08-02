@@ -23,6 +23,7 @@
             android:theme="@style/Theme.Go4Lunch.NoActionBar" />
         <activity
             android:name=".views.activity.MainActivity"
+            android:exported="false"
             android:theme="@style/Theme.Go4Lunch.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
