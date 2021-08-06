@@ -390,7 +390,10 @@ public class MainActivity extends ActivityEX {
                             .error(R.drawable.ic_launcher_foreground)
                             .transform(new CircleCropTransform())
                             .into(mHeaderNavViewBinding.headerUserAvatar);
+                } else {
+                    mHeaderNavViewBinding.headerUserAvatar.setImageResource(R.drawable.ic_baseline_account_circle_24);
                 }
+
             }
         });
     }
